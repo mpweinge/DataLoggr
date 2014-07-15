@@ -1,0 +1,575 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FF6209D51973B59E0032348F /* DLTitleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6209D41973B59E0032348F /* DLTitleTableViewCell.m */; };
+		FF6209D81973C24F0032348F /* DLNewDataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6209D71973C24F0032348F /* DLNewDataViewController.m */; };
+		FF6209DC1973C39C0032348F /* DLNewDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6209DB1973C39C0032348F /* DLNewDataView.m */; };
+		FFA6542A196E7D8D002BA286 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFA65429196E7D8D002BA286 /* Foundation.framework */; };
+		FFA6542C196E7D8D002BA286 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFA6542B196E7D8D002BA286 /* CoreGraphics.framework */; };
+		FFA6542E196E7D8D002BA286 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFA6542D196E7D8D002BA286 /* UIKit.framework */; };
+		FFA65434196E7D8D002BA286 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FFA65432196E7D8D002BA286 /* InfoPlist.strings */; };
+		FFA65436196E7D8D002BA286 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA65435196E7D8D002BA286 /* main.m */; };
+		FFA6543A196E7D8D002BA286 /* DLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA65439196E7D8D002BA286 /* DLAppDelegate.m */; };
+		FFA6543C196E7D8D002BA286 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FFA6543B196E7D8D002BA286 /* Images.xcassets */; };
+		FFA65443196E7D8D002BA286 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFA65442196E7D8D002BA286 /* XCTest.framework */; };
+		FFA65444196E7D8D002BA286 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFA65429196E7D8D002BA286 /* Foundation.framework */; };
+		FFA65445196E7D8D002BA286 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFA6542D196E7D8D002BA286 /* UIKit.framework */; };
+		FFA6544D196E7D8D002BA286 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FFA6544B196E7D8D002BA286 /* InfoPlist.strings */; };
+		FFA6544F196E7D8D002BA286 /* DataLoggrTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA6544E196E7D8D002BA286 /* DataLoggrTests.m */; };
+		FFA6545A196E7ED1002BA286 /* DLHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA65459196E7ED1002BA286 /* DLHomeViewController.m */; };
+		FFA6545D196E8833002BA286 /* DLHomeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA6545C196E8833002BA286 /* DLHomeTableViewCell.m */; };
+		FFA65460196F5376002BA286 /* DLDataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA6545F196F5376002BA286 /* DLDataViewController.m */; };
+		FFA6546B196F8FAC002BA286 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FFA6546A196F8FAC002BA286 /* libsqlite3.dylib */; };
+		FFA6546E196F908F002BA286 /* DLDatabaseManager.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA6546D196F908F002BA286 /* DLDatabaseManager.m */; };
+		FFA6547A1970840C002BA286 /* DLNewDataButton.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA654791970840C002BA286 /* DLNewDataButton.m */; };
+		FFA6548C1971D1DE002BA286 /* FAImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA654871971D1DE002BA286 /* FAImageView.m */; };
+		FFA6548D1971D1DE002BA286 /* NSString+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA654891971D1DE002BA286 /* NSString+FontAwesome.m */; };
+		FFA6548E1971D1DE002BA286 /* UIFont+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA6548B1971D1DE002BA286 /* UIFont+FontAwesome.m */; };
+		FFA654901971D21C002BA286 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FFA6548F1971D21C002BA286 /* FontAwesome.ttf */; };
+		FFA65495197350FE002BA286 /* DLDataViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA65494197350FE002BA286 /* DLDataViewCell.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		FFA65446196E7D8D002BA286 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FFA6541E196E7D8D002BA286 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FFA65425196E7D8D002BA286;
+			remoteInfo = DataLoggr;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		FF6209D31973B59E0032348F /* DLTitleTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLTitleTableViewCell.h; sourceTree = "<group>"; };
+		FF6209D41973B59E0032348F /* DLTitleTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLTitleTableViewCell.m; sourceTree = "<group>"; };
+		FF6209D61973C24F0032348F /* DLNewDataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLNewDataViewController.h; sourceTree = "<group>"; };
+		FF6209D71973C24F0032348F /* DLNewDataViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNewDataViewController.m; sourceTree = "<group>"; };
+		FF6209DA1973C39C0032348F /* DLNewDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLNewDataView.h; sourceTree = "<group>"; };
+		FF6209DB1973C39C0032348F /* DLNewDataView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNewDataView.m; sourceTree = "<group>"; };
+		FFA65426196E7D8D002BA286 /* DataLoggr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DataLoggr.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FFA65429196E7D8D002BA286 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		FFA6542B196E7D8D002BA286 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		FFA6542D196E7D8D002BA286 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		FFA65431196E7D8D002BA286 /* DataLoggr-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DataLoggr-Info.plist"; sourceTree = "<group>"; };
+		FFA65433196E7D8D002BA286 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FFA65435196E7D8D002BA286 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		FFA65437196E7D8D002BA286 /* DataLoggr-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DataLoggr-Prefix.pch"; sourceTree = "<group>"; };
+		FFA65438196E7D8D002BA286 /* DLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DLAppDelegate.h; sourceTree = "<group>"; };
+		FFA65439196E7D8D002BA286 /* DLAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DLAppDelegate.m; sourceTree = "<group>"; };
+		FFA6543B196E7D8D002BA286 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		FFA65441196E7D8D002BA286 /* DataLoggrTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DataLoggrTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FFA65442196E7D8D002BA286 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		FFA6544A196E7D8D002BA286 /* DataLoggrTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DataLoggrTests-Info.plist"; sourceTree = "<group>"; };
+		FFA6544C196E7D8D002BA286 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FFA6544E196E7D8D002BA286 /* DataLoggrTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataLoggrTests.m; sourceTree = "<group>"; };
+		FFA65458196E7ED1002BA286 /* DLHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DLHomeViewController.h; path = DataLoggr/DLHomeViewController.h; sourceTree = "<group>"; };
+		FFA65459196E7ED1002BA286 /* DLHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DLHomeViewController.m; path = DataLoggr/DLHomeViewController.m; sourceTree = "<group>"; };
+		FFA6545B196E8833002BA286 /* DLHomeTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DLHomeTableViewCell.h; path = DataLoggr/DLHomeTableViewCell.h; sourceTree = "<group>"; };
+		FFA6545C196E8833002BA286 /* DLHomeTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DLHomeTableViewCell.m; path = DataLoggr/DLHomeTableViewCell.m; sourceTree = "<group>"; };
+		FFA6545E196F5376002BA286 /* DLDataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DLDataViewController.h; path = DataLoggr/DLDataViewController.h; sourceTree = "<group>"; };
+		FFA6545F196F5376002BA286 /* DLDataViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DLDataViewController.m; path = DataLoggr/DLDataViewController.m; sourceTree = "<group>"; };
+		FFA6546A196F8FAC002BA286 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		FFA6546C196F908F002BA286 /* DLDatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDatabaseManager.h; sourceTree = "<group>"; };
+		FFA6546D196F908F002BA286 /* DLDatabaseManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLDatabaseManager.m; sourceTree = "<group>"; };
+		FFA654781970840C002BA286 /* DLNewDataButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLNewDataButton.h; sourceTree = "<group>"; };
+		FFA654791970840C002BA286 /* DLNewDataButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNewDataButton.m; sourceTree = "<group>"; };
+		FFA654861971D1DE002BA286 /* FAImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FAImageView.h; sourceTree = "<group>"; };
+		FFA654871971D1DE002BA286 /* FAImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FAImageView.m; sourceTree = "<group>"; };
+		FFA654881971D1DE002BA286 /* NSString+FontAwesome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+FontAwesome.h"; sourceTree = "<group>"; };
+		FFA654891971D1DE002BA286 /* NSString+FontAwesome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+FontAwesome.m"; sourceTree = "<group>"; };
+		FFA6548A1971D1DE002BA286 /* UIFont+FontAwesome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+FontAwesome.h"; sourceTree = "<group>"; };
+		FFA6548B1971D1DE002BA286 /* UIFont+FontAwesome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+FontAwesome.m"; sourceTree = "<group>"; };
+		FFA6548F1971D21C002BA286 /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.ttf; sourceTree = "<group>"; };
+		FFA65493197350FE002BA286 /* DLDataViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDataViewCell.h; sourceTree = "<group>"; };
+		FFA65494197350FE002BA286 /* DLDataViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLDataViewCell.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FFA65423196E7D8D002BA286 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FFA6546B196F8FAC002BA286 /* libsqlite3.dylib in Frameworks */,
+				FFA6542C196E7D8D002BA286 /* CoreGraphics.framework in Frameworks */,
+				FFA6542E196E7D8D002BA286 /* UIKit.framework in Frameworks */,
+				FFA6542A196E7D8D002BA286 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FFA6543E196E7D8D002BA286 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FFA65443196E7D8D002BA286 /* XCTest.framework in Frameworks */,
+				FFA65445196E7D8D002BA286 /* UIKit.framework in Frameworks */,
+				FFA65444196E7D8D002BA286 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FF6209D91973C3860032348F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				FF6209DA1973C39C0032348F /* DLNewDataView.h */,
+				FF6209DB1973C39C0032348F /* DLNewDataView.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		FFA6541D196E7D8D002BA286 = {
+			isa = PBXGroup;
+			children = (
+				FF6209D91973C3860032348F /* Views */,
+				FFA65492197350C7002BA286 /* TableViewCells */,
+				FFA65491197350BA002BA286 /* ViewControllers */,
+				FFA654851971D1A3002BA286 /* Resources */,
+				FFA6547B1971D03E002BA286 /* FontAwesome */,
+				FFA6542F196E7D8D002BA286 /* DataLoggr */,
+				FFA65448196E7D8D002BA286 /* DataLoggrTests */,
+				FFA65428196E7D8D002BA286 /* Frameworks */,
+				FFA65427196E7D8D002BA286 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FFA65427196E7D8D002BA286 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FFA65426196E7D8D002BA286 /* DataLoggr.app */,
+				FFA65441196E7D8D002BA286 /* DataLoggrTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FFA65428196E7D8D002BA286 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FFA6546A196F8FAC002BA286 /* libsqlite3.dylib */,
+				FFA65429196E7D8D002BA286 /* Foundation.framework */,
+				FFA6542B196E7D8D002BA286 /* CoreGraphics.framework */,
+				FFA6542D196E7D8D002BA286 /* UIKit.framework */,
+				FFA65442196E7D8D002BA286 /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FFA6542F196E7D8D002BA286 /* DataLoggr */ = {
+			isa = PBXGroup;
+			children = (
+				FFA65438196E7D8D002BA286 /* DLAppDelegate.h */,
+				FFA65439196E7D8D002BA286 /* DLAppDelegate.m */,
+				FFA6543B196E7D8D002BA286 /* Images.xcassets */,
+				FFA65430196E7D8D002BA286 /* Supporting Files */,
+				FFA6546C196F908F002BA286 /* DLDatabaseManager.h */,
+				FFA6546D196F908F002BA286 /* DLDatabaseManager.m */,
+				FFA654781970840C002BA286 /* DLNewDataButton.h */,
+				FFA654791970840C002BA286 /* DLNewDataButton.m */,
+			);
+			path = DataLoggr;
+			sourceTree = "<group>";
+		};
+		FFA65430196E7D8D002BA286 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FFA65431196E7D8D002BA286 /* DataLoggr-Info.plist */,
+				FFA65432196E7D8D002BA286 /* InfoPlist.strings */,
+				FFA65435196E7D8D002BA286 /* main.m */,
+				FFA65437196E7D8D002BA286 /* DataLoggr-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FFA65448196E7D8D002BA286 /* DataLoggrTests */ = {
+			isa = PBXGroup;
+			children = (
+				FFA6544E196E7D8D002BA286 /* DataLoggrTests.m */,
+				FFA65449196E7D8D002BA286 /* Supporting Files */,
+			);
+			path = DataLoggrTests;
+			sourceTree = "<group>";
+		};
+		FFA65449196E7D8D002BA286 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FFA6544A196E7D8D002BA286 /* DataLoggrTests-Info.plist */,
+				FFA6544B196E7D8D002BA286 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		FFA6547B1971D03E002BA286 /* FontAwesome */ = {
+			isa = PBXGroup;
+			children = (
+				FFA654861971D1DE002BA286 /* FAImageView.h */,
+				FFA654871971D1DE002BA286 /* FAImageView.m */,
+				FFA654881971D1DE002BA286 /* NSString+FontAwesome.h */,
+				FFA654891971D1DE002BA286 /* NSString+FontAwesome.m */,
+				FFA6548A1971D1DE002BA286 /* UIFont+FontAwesome.h */,
+				FFA6548B1971D1DE002BA286 /* UIFont+FontAwesome.m */,
+			);
+			name = FontAwesome;
+			sourceTree = "<group>";
+		};
+		FFA654851971D1A3002BA286 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FFA6548F1971D21C002BA286 /* FontAwesome.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		FFA65491197350BA002BA286 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				FFA65458196E7ED1002BA286 /* DLHomeViewController.h */,
+				FFA65459196E7ED1002BA286 /* DLHomeViewController.m */,
+				FFA6545E196F5376002BA286 /* DLDataViewController.h */,
+				FFA6545F196F5376002BA286 /* DLDataViewController.m */,
+				FF6209D61973C24F0032348F /* DLNewDataViewController.h */,
+				FF6209D71973C24F0032348F /* DLNewDataViewController.m */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		FFA65492197350C7002BA286 /* TableViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				FFA6545B196E8833002BA286 /* DLHomeTableViewCell.h */,
+				FFA6545C196E8833002BA286 /* DLHomeTableViewCell.m */,
+				FFA65493197350FE002BA286 /* DLDataViewCell.h */,
+				FFA65494197350FE002BA286 /* DLDataViewCell.m */,
+				FF6209D31973B59E0032348F /* DLTitleTableViewCell.h */,
+				FF6209D41973B59E0032348F /* DLTitleTableViewCell.m */,
+			);
+			name = TableViewCells;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FFA65425196E7D8D002BA286 /* DataLoggr */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FFA65452196E7D8D002BA286 /* Build configuration list for PBXNativeTarget "DataLoggr" */;
+			buildPhases = (
+				FFA65422196E7D8D002BA286 /* Sources */,
+				FFA65423196E7D8D002BA286 /* Frameworks */,
+				FFA65424196E7D8D002BA286 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DataLoggr;
+			productName = DataLoggr;
+			productReference = FFA65426196E7D8D002BA286 /* DataLoggr.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FFA65440196E7D8D002BA286 /* DataLoggrTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FFA65455196E7D8D002BA286 /* Build configuration list for PBXNativeTarget "DataLoggrTests" */;
+			buildPhases = (
+				FFA6543D196E7D8D002BA286 /* Sources */,
+				FFA6543E196E7D8D002BA286 /* Frameworks */,
+				FFA6543F196E7D8D002BA286 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FFA65447196E7D8D002BA286 /* PBXTargetDependency */,
+			);
+			name = DataLoggrTests;
+			productName = DataLoggrTests;
+			productReference = FFA65441196E7D8D002BA286 /* DataLoggrTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FFA6541E196E7D8D002BA286 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = DL;
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = Weingert;
+				TargetAttributes = {
+					FFA65440196E7D8D002BA286 = {
+						TestTargetID = FFA65425196E7D8D002BA286;
+					};
+				};
+			};
+			buildConfigurationList = FFA65421196E7D8D002BA286 /* Build configuration list for PBXProject "DataLoggr" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = FFA6541D196E7D8D002BA286;
+			productRefGroup = FFA65427196E7D8D002BA286 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FFA65425196E7D8D002BA286 /* DataLoggr */,
+				FFA65440196E7D8D002BA286 /* DataLoggrTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FFA65424196E7D8D002BA286 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FFA65434196E7D8D002BA286 /* InfoPlist.strings in Resources */,
+				FFA6543C196E7D8D002BA286 /* Images.xcassets in Resources */,
+				FFA654901971D21C002BA286 /* FontAwesome.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FFA6543F196E7D8D002BA286 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FFA6544D196E7D8D002BA286 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FFA65422196E7D8D002BA286 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FFA6545D196E8833002BA286 /* DLHomeTableViewCell.m in Sources */,
+				FFA65460196F5376002BA286 /* DLDataViewController.m in Sources */,
+				FF6209D51973B59E0032348F /* DLTitleTableViewCell.m in Sources */,
+				FFA6548D1971D1DE002BA286 /* NSString+FontAwesome.m in Sources */,
+				FFA6548E1971D1DE002BA286 /* UIFont+FontAwesome.m in Sources */,
+				FFA6545A196E7ED1002BA286 /* DLHomeViewController.m in Sources */,
+				FFA6543A196E7D8D002BA286 /* DLAppDelegate.m in Sources */,
+				FFA6546E196F908F002BA286 /* DLDatabaseManager.m in Sources */,
+				FF6209D81973C24F0032348F /* DLNewDataViewController.m in Sources */,
+				FFA6548C1971D1DE002BA286 /* FAImageView.m in Sources */,
+				FFA65495197350FE002BA286 /* DLDataViewCell.m in Sources */,
+				FFA65436196E7D8D002BA286 /* main.m in Sources */,
+				FFA6547A1970840C002BA286 /* DLNewDataButton.m in Sources */,
+				FF6209DC1973C39C0032348F /* DLNewDataView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FFA6543D196E7D8D002BA286 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FFA6544F196E7D8D002BA286 /* DataLoggrTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		FFA65447196E7D8D002BA286 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FFA65425196E7D8D002BA286 /* DataLoggr */;
+			targetProxy = FFA65446196E7D8D002BA286 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		FFA65432196E7D8D002BA286 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FFA65433196E7D8D002BA286 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		FFA6544B196E7D8D002BA286 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FFA6544C196E7D8D002BA286 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		FFA65450196E7D8D002BA286 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		FFA65451196E7D8D002BA286 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FFA65453196E7D8D002BA286 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DataLoggr/DataLoggr-Prefix.pch";
+				INFOPLIST_FILE = "DataLoggr/DataLoggr-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		FFA65454196E7D8D002BA286 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DataLoggr/DataLoggr-Prefix.pch";
+				INFOPLIST_FILE = "DataLoggr/DataLoggr-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		FFA65456196E7D8D002BA286 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/DataLoggr.app/DataLoggr";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DataLoggr/DataLoggr-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "DataLoggrTests/DataLoggrTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		FFA65457196E7D8D002BA286 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/DataLoggr.app/DataLoggr";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DataLoggr/DataLoggr-Prefix.pch";
+				INFOPLIST_FILE = "DataLoggrTests/DataLoggrTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FFA65421196E7D8D002BA286 /* Build configuration list for PBXProject "DataLoggr" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FFA65450196E7D8D002BA286 /* Debug */,
+				FFA65451196E7D8D002BA286 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FFA65452196E7D8D002BA286 /* Build configuration list for PBXNativeTarget "DataLoggr" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FFA65453196E7D8D002BA286 /* Debug */,
+				FFA65454196E7D8D002BA286 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FFA65455196E7D8D002BA286 /* Build configuration list for PBXNativeTarget "DataLoggrTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FFA65456196E7D8D002BA286 /* Debug */,
+				FFA65457196E7D8D002BA286 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FFA6541E196E7D8D002BA286 /* Project object */;
+}
