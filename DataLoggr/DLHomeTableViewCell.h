@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "NSString+FontAwesome.h"
 
 @protocol DLHomeTableViewCellDelegate
 
@@ -18,5 +19,10 @@
 @interface DLHomeTableViewCell : UITableViewCell
 
 @property id <DLHomeTableViewCellDelegate> delegate;
+
+- (id)initWithStyle:(UITableViewCellStyle)style
+    reuseIdentifier:(NSString *)reuseIdentifier
+            caption:(NSString *)caption
+               icon:(FAIcon)icon;
 
 @end

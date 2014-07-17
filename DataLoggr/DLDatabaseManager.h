@@ -28,7 +28,11 @@
 
 -(BOOL)createTable:(NSString *)tableName withFields: (NSArray *)fields;
 
--(BOOL) saveData : (NSString*) DatabaseName withObject:(id<DLSerializableProtocol>) object;
+-(BOOL)saveRow: (id<DLSerializableProtocol>) row;
+
+-(NSMutableArray *) fetchDataPoints: (NSString *) setName;
+
+-(NSMutableArray *) fetchDataNames;
 
 -(NSMutableArray *) fetchData : (NSString *)databaseName;
 

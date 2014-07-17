@@ -11,19 +11,22 @@
 
 @implementation DLHomeTableViewCell
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+- (id)initWithStyle:(UITableViewCellStyle)style
+    reuseIdentifier:(NSString *)reuseIdentifier
+            caption:(NSString *)caption
+               icon:(FAIcon)icon;
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
       UILabel* chartIcon=[[UILabel alloc] initWithFrame:CGRectMake(20, 13, 100, 22)];
       chartIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
-      chartIcon.text = [NSString fontAwesomeIconStringForEnum:FAGithub];
+      chartIcon.text = [NSString fontAwesomeIconStringForEnum:icon];
       [self addSubview:chartIcon];
       
       UILabel * chartName = [[UILabel alloc] initWithFrame:CGRectMake(50, 13, 100, 22)];
       chartName.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-      chartName.text = @"Sample Row";
+      chartName.text = caption;
       [self addSubview:chartName];
       
       UILabel* advanceIcon=[[UILabel alloc] initWithFrame:CGRectMake(300, 13, 100, 22)];

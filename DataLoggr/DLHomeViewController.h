@@ -9,7 +9,11 @@
 #import <UIKit/UIKit.h>
 
 @protocol DLHomeTableViewCellDelegate;
+@protocol DLTitleTableViewCellDelegate;
+@protocol DLNewDataViewControllerDelegate;
 
-@interface DLHomeViewController : UIViewController < UITableViewDataSource, DLHomeTableViewCellDelegate>
+@interface DLHomeViewController : UIViewController < UITableViewDataSource, DLHomeTableViewCellDelegate,
+  DLTitleTableViewCellDelegate,
+DLNewDataViewControllerDelegate>
 
 @end

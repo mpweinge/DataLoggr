@@ -11,7 +11,7 @@
 @protocol DLTitleTableViewCellDelegate
 
 @required
--(void) CellViewTouched:(NSInteger) number;
+-(void) TitleCellTouched:(NSInteger) number;
 
 @end
 

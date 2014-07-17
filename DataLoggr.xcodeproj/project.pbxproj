@@ -10,6 +10,7 @@
 		FF6209D51973B59E0032348F /* DLTitleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6209D41973B59E0032348F /* DLTitleTableViewCell.m */; };
 		FF6209D81973C24F0032348F /* DLNewDataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6209D71973C24F0032348F /* DLNewDataViewController.m */; };
 		FF6209DC1973C39C0032348F /* DLNewDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6209DB1973C39C0032348F /* DLNewDataView.m */; };
+		FF664C791977B4EE00CFE1A0 /* DLDataRowObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FF664C781977B4EE00CFE1A0 /* DLDataRowObject.m */; };
 		FFA6542A196E7D8D002BA286 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFA65429196E7D8D002BA286 /* Foundation.framework */; };
 		FFA6542C196E7D8D002BA286 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFA6542B196E7D8D002BA286 /* CoreGraphics.framework */; };
 		FFA6542E196E7D8D002BA286 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FFA6542D196E7D8D002BA286 /* UIKit.framework */; };
@@ -52,6 +53,8 @@
 		FF6209D71973C24F0032348F /* DLNewDataViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNewDataViewController.m; sourceTree = "<group>"; };
 		FF6209DA1973C39C0032348F /* DLNewDataView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLNewDataView.h; sourceTree = "<group>"; };
 		FF6209DB1973C39C0032348F /* DLNewDataView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNewDataView.m; sourceTree = "<group>"; };
+		FF664C771977B4EE00CFE1A0 /* DLDataRowObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDataRowObject.h; sourceTree = "<group>"; };
+		FF664C781977B4EE00CFE1A0 /* DLDataRowObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLDataRowObject.m; sourceTree = "<group>"; };
 		FFA65426196E7D8D002BA286 /* DataLoggr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DataLoggr.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFA65429196E7D8D002BA286 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FFA6542B196E7D8D002BA286 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -127,6 +130,8 @@
 		FFA6541D196E7D8D002BA286 = {
 			isa = PBXGroup;
 			children = (
+				FF664C771977B4EE00CFE1A0 /* DLDataRowObject.h */,
+				FF664C781977B4EE00CFE1A0 /* DLDataRowObject.m */,
 				FF6209D91973C3860032348F /* Views */,
 				FFA65492197350C7002BA286 /* TableViewCells */,
 				FFA65491197350BA002BA286 /* ViewControllers */,
@@ -353,6 +358,7 @@
 				FF6209D51973B59E0032348F /* DLTitleTableViewCell.m in Sources */,
 				FFA6548D1971D1DE002BA286 /* NSString+FontAwesome.m in Sources */,
 				FFA6548E1971D1DE002BA286 /* UIFont+FontAwesome.m in Sources */,
+				FF664C791977B4EE00CFE1A0 /* DLDataRowObject.m in Sources */,
 				FFA6545A196E7ED1002BA286 /* DLHomeViewController.m in Sources */,
 				FFA6543A196E7D8D002BA286 /* DLAppDelegate.m in Sources */,
 				FFA6546E196F908F002BA286 /* DLDatabaseManager.m in Sources */,

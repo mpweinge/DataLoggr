@@ -7,10 +7,14 @@
 //
 
 #import "DLDatabaseManager.h"
+#import "DLDataRowObject.h"
 
 static DLDatabaseManager *sharedInstance = nil;
 static sqlite3 *database = nil;
 static sqlite3_stmt *statement = nil;
+
+static NSString* kDataPointDatabaseName = @"DataPoints";
+static NSString* kDataTypeName = @"DataTypes";
 
 @interface DLDatabaseManager () {
   NSMutableDictionary* tableValues;
@@ -24,7 +28,6 @@ static sqlite3_stmt *statement = nil;
 {
   if (!sharedInstance) {
     sharedInstance = [[super allocWithZone:NULL]init];
-    [sharedInstance init];
   }
   return sharedInstance;
 }
@@ -33,7 +36,17 @@ static sqlite3_stmt *statement = nil;
 {
   self = [super init];
   tableValues = [[NSMutableDictionary alloc] init];
+  [self SetupDatabase];
   return self;
+}
+
+- (void) SetupDatabase
+{
+  NSArray *dataPointFields = @[ @"DataName text primary key", @"DataValue text" ];
+  [self createTable:kDataPointDatabaseName withFields:dataPointFields];
+  
+  NSArray *dataTypeFields = @[ @"DataName text primary key", @"DataType text", @"icon text" ];
+  [self createTable:kDataTypeName withFields:dataTypeFields];
 }
 
 -(BOOL)createTable:(NSString *)tableName withFields: (NSArray *)fields
@@ -113,7 +126,7 @@ static sqlite3_stmt *statement = nil;
   return isSuccess;
 }
 
--(BOOL) saveData : (NSString*) DatabaseName withObject:(id<DLSerializableProtocol>) object
+-(BOOL)saveRow: (id<DLSerializableProtocol>) row;
 {
   //Go to the dictionary to translate the database name into a series of properties
 
@@ -123,11 +136,11 @@ static sqlite3_stmt *statement = nil;
   if (sqlite3_open(dbpath, &database) == SQLITE_OK)
   {
     //Serialize the object
-    NSString *objData = [object serializeData];
+    NSString *objData = [row serializeData];
     NSMutableString *insertSQL = [NSMutableString string];
     [insertSQL appendString:@"INSERT INTO "];
-    [insertSQL appendString: DatabaseName];
-    [insertSQL appendString: tableValues[DatabaseName]];
+    [insertSQL appendString: kDataTypeName];
+    [insertSQL appendString: tableValues[kDataTypeName]];
     [insertSQL appendString: @" VALUES"];
     [insertSQL appendString: objData];
     
@@ -146,6 +159,11 @@ static sqlite3_stmt *statement = nil;
   return nil;
 }
 
+- (NSMutableArray *) fetchDataNames
+{
+  return [self fetchData:kDataTypeName];
+}
+
 -(NSMutableArray *) fetchData : (NSString *)databaseName
 {
   const char *dbpath = [databasePath UTF8String];
@@ -157,17 +175,18 @@ static sqlite3_stmt *statement = nil;
     if (sqlite3_prepare_v2(database,
                            query_stmt, -1, &statement, NULL) == SQLITE_OK)
     {
-      if (sqlite3_step(statement) == SQLITE_ROW)
+      while (sqlite3_step(statement) == SQLITE_ROW)
       {
-        NSString *name = [[NSString alloc] initWithUTF8String:
+        NSString *dataName = [[NSString alloc] initWithUTF8String:
                           (const char *) sqlite3_column_text(statement, 0)];
-        [resultArray addObject:name];
-        return resultArray;
+        NSString *dataType = [[NSString alloc] initWithUTF8String:
+                          (const char *) sqlite3_column_text(statement, 1)];
+        NSString *dataIcon = [[NSString alloc] initWithUTF8String:
+                          (const char *) sqlite3_column_text(statement, 2)];
+        
+        [resultArray addObject:[[DLDataRowObject alloc] initWithName:dataName type:dataType iconName:dataIcon]];
       }
-      else{
-        NSLog(@"Not found");
-        return nil;
-      }
+      return resultArray;
       sqlite3_reset(statement);
     }
   }

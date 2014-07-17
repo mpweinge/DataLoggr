@@ -8,6 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+@class DLDataRowObject;
+
+@protocol DLNewDataViewControllerDelegate
+
+- (void) didCreateNewObject: (DLDataRowObject *) newObject;
+
+@end
+
 @interface DLNewDataViewController : UIViewController
+
+@property (nonatomic) id<DLNewDataViewControllerDelegate> delegate;
 
 @end

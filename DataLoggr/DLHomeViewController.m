@@ -10,6 +10,9 @@
 #import "DLDataViewController.h"
 #import "DLHomeTableViewCell.h"
 #import "DLTitleTableViewCell.h"
+#import "DLNewDataViewController.h"
+#import "NSString+FontAwesome.h"
+#import "DLDataRowObject.h"
 
 #import "DLDatabaseManager.h"
 
@@ -18,22 +21,9 @@
 @interface DLHomeViewController ()
 {
   UITableView* chartTable;
+  BOOL invalidatedData;
+  NSMutableArray* rowData;
 }
-@end
-
-@interface DataRow :NSObject < DLSerializableProtocol >
-{
-  
-}
-@end
-
-@implementation DataRow
-
-- (NSString* ) serializeData
-{
-  return @"('NOW')";
-}
-
 @end
 
 @implementation DLHomeViewController
@@ -56,14 +46,6 @@
   chartTable.dataSource = self;
   
   self.view = chartTable;
-  
-  DLDatabaseManager *sharedInstance = [DLDatabaseManager getSharedInstance];
-  
-  NSArray *fields = @[ @"MainText text primary key" ];
-  
-  [sharedInstance createTable:@"TEST" withFields:fields];
-  [sharedInstance saveData:@"TEST" withObject:[[DataRow alloc] init]];
-  NSMutableArray *ret = [sharedInstance fetchData:@"TEST"];
   
   self.title = @"Your Data";
   
@@ -96,7 +78,17 @@
   DLHomeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:myIdentifier];
   
   if (cell == nil) {
-    cell = [[DLHomeTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:myIdentifier];
+    DLDataRowObject *currItem;
+    
+    if ([indexPath row] <= [rowData count])
+      currItem = rowData[[indexPath row] - 1];
+    else
+      currItem = [[DLDataRowObject alloc] initWithName:@"SampleData" type:@"NotImportant" iconName:@"FAGithub"];
+      
+    cell = [[DLHomeTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                      reuseIdentifier:myIdentifier
+                                              caption: currItem.DataName
+                                                 icon: [NSString fontAwesomeEnumForIconIdentifier:currItem.IconName ]];
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.delegate = self;
@@ -120,10 +112,30 @@
   [self.navigationController pushViewController:newDataController animated:YES];
 }
 
+-(void) TitleCellTouched:(NSInteger) number
+{
+  DLNewDataViewController *newDataController = [[ DLNewDataViewController alloc] init];
+  
+  [self.navigationController pushViewController:newDataController animated:YES];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+}
+
+- (void) didCreateNewObject:(DLDataRowObject *)newObject
+{
+  //Just invalidate data now. Do a fresh reinstall
+  invalidatedData = YES;
+}
+
+- (void) viewWillAppear:(BOOL)animated
+{
+  DLDatabaseManager *sharedInstance = [DLDatabaseManager getSharedInstance];
+  
+  rowData = [sharedInstance fetchDataNames];
 }
 
 - (void)didReceiveMemoryWarning

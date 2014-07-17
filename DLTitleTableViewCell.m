@@ -38,7 +38,7 @@
 
 -(void) tappedCell : (UIGestureRecognizer *)gestureRecognizer
 {
-  [self.delegate CellViewTouched:0];
+  [self.delegate TitleCellTouched:0];
 }
 
 - (void)awakeFromNib
