@@ -9,10 +9,15 @@
 #import "DLDataViewController.h"
 #import "DLDatabaseManager.h"
 #import "DLDataViewCell.h"
+#import "DLDataPointRowObject.h"
+#import "DLTitleTableViewCell.h"
+#import "DLAddPointViewController.h"
 
 @interface DLDataViewController ()
 {
   UITableView* chartTable;
+  NSMutableArray *dataValues;
+  NSString* _setName;
 }
 
 @end
@@ -28,7 +33,7 @@
     return self;
 }
 
-- (instancetype) initWithDataValue: (NSInteger) cellIdentifier
+- (instancetype) initWithDataValue: (NSString *) setName
 {
   self = [super init];
   
@@ -37,19 +42,14 @@
   //chartTable.delegate = self;
   chartTable.dataSource = self;
   
+  _setName = setName;
+  
   self.view = chartTable;
   
-  //DLDatabaseManager *sharedInstance = [DLDatabaseManager getSharedInstance];
+  //Let's take the cellIdentifier and get all the data points from it
+  dataValues = [[DLDatabaseManager getSharedInstance] fetchDataPoints:setName];
   
-  //NSArray *fields = @[ @"MainText text primary key" ];
-  
-  //[sharedInstance createTable:@"TEST" withFields:fields];
-  //[sharedInstance saveData:@"TEST" withObject:[[DataRow alloc] init]];
-  //NSMutableArray *ret = [sharedInstance fetchData:@"TEST"];
-  
-  self.title = @"Sample Data";
-  
-  //NSLog(ret);
+  self.title = setName;
   
   return self;
 }
@@ -58,19 +58,56 @@
 {
   static NSString *myIdentifier = @"HomeCells";
   
-  DLDataViewCell *cell = [tableView dequeueReusableCellWithIdentifier:myIdentifier];
+  UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:myIdentifier];
   
-  if (cell == nil) {
-    cell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:myIdentifier];
+  if ( [indexPath row] == 0 ) {
+    if (cell == nil) {
+      DLTitleTableViewCell * titleCell = [[DLTitleTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier];
+      
+      titleCell.selectionStyle = UITableViewCellSelectionStyleNone;
+      titleCell.delegate = self;
+      
+      cell = titleCell;
+    }
+  }
+  else if (cell == nil) {
     
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    cell.delegate = self;
+    DLDataPointRowObject *currItem = nil;
+    if ([indexPath row] <= [dataValues count])
+    {
+      currItem = dataValues[[indexPath row] - 1];
+    }
+    
+    DLDataViewCell * newCell;
+    
+    if (currItem != nil) {
+      newCell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                 reuseIdentifier:myIdentifier
+                                           value:currItem.DataValue
+                                            time:currItem.DataTime];
+    }
+    else {
+      newCell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                   reuseIdentifier:myIdentifier
+                                             value:@"Insert values!"
+                                              time:@"No time yet"];
+    }
+    
+    newCell.selectionStyle = UITableViewCellSelectionStyleNone;
+    newCell.delegate = self;
+    
+    cell = newCell;
   }
   
-  //Configure the cell
-  //cell.textLabel.text = @"GYM";
-  
   return cell;
+}
+
+-(void) TitleCellTouched:(NSInteger) number
+{
+  //This is a call to create a new value
+  DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName];
+  
+  [self.navigationController pushViewController:newPointController animated:YES];
 }
 
 - (NSInteger) tableView: (UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -82,6 +119,13 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+}
+
+- (void) viewWillAppear:(BOOL)animated
+{
+  DLDatabaseManager *sharedInstance = [DLDatabaseManager getSharedInstance];
+  
+  dataValues = [sharedInstance fetchDataPoints:_setName];
 }
 
 - (void)didReceiveMemoryWarning

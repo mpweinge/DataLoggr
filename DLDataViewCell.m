@@ -8,29 +8,42 @@
 
 #import "DLDataViewCell.h"
 
+@interface DLDataViewCell() {
+  NSString * _title;
+}
+@end
+
 @implementation DLDataViewCell
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+- (id)initWithStyle:(UITableViewCellStyle)style
+    reuseIdentifier:(NSString *)reuseIdentifier
+              value:(NSString *)value
+               time:(NSString *)time
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
       UILabel * date = [[UILabel alloc] initWithFrame:CGRectMake(50, 13, 100, 22)];
       date.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-      date.text = @"Date";
+      date.text = time;
       [self addSubview:date];
       
-      UILabel * dataValue = [[UILabel alloc] initWithFrame:CGRectMake(100, 13, 100, 22)];
+      UILabel * dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
       dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-      dataValue.text = @"Value";
+      dataValue.text = value;
       [self addSubview:dataValue];
       
-      UILabel * chartName = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
+      /*UILabel * chartName = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
       chartName.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
       chartName.text = @"Units";
-      [self addSubview:chartName];
+      [self addSubview:chartName];*/
     }
     return self;
+}
+
+-(NSString *)getTitle
+{
+  return _title;
 }
 
 - (void)awakeFromNib

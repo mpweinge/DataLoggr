@@ -9,9 +9,13 @@
 #import <UIKit/UIKit.h>
 
 @protocol DLDataViewCellDelegate;
+@protocol DLTitleTableViewCellDelegate;
 
-@interface DLDataViewController : UIViewController < UITableViewDataSource, DLDataViewCellDelegate >
+@interface DLDataViewController : UIViewController <
+  UITableViewDataSource,
+  DLDataViewCellDelegate,
+  DLTitleTableViewCellDelegate >
 
--(instancetype) initWithDataValue: (NSInteger) cellIdentifier;
+-(instancetype) initWithDataValue: (NSString*) setName;
 
 @end

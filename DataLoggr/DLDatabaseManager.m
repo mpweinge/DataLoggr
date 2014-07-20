@@ -8,6 +8,7 @@
 
 #import "DLDatabaseManager.h"
 #import "DLDataRowObject.h"
+#import "DLDataPointRowObject.h"
 
 static DLDatabaseManager *sharedInstance = nil;
 static sqlite3 *database = nil;
@@ -42,7 +43,7 @@ static NSString* kDataTypeName = @"DataTypes";
 
 - (void) SetupDatabase
 {
-  NSArray *dataPointFields = @[ @"DataName text primary key", @"DataValue text" ];
+  NSArray *dataPointFields = @[ @"DataName text primary key", @"DataValue text", @"AddTime text" ];
   [self createTable:kDataPointDatabaseName withFields:dataPointFields];
   
   NSArray *dataTypeFields = @[ @"DataName text primary key", @"DataType text", @"icon text" ];
@@ -126,7 +127,38 @@ static NSString* kDataTypeName = @"DataTypes";
   return isSuccess;
 }
 
--(BOOL)saveRow: (id<DLSerializableProtocol>) row;
+- (BOOL) savePoint: (id<DLSerializableProtocol>) dataPoint
+{
+  //Check to make sure the serialized object has the same number of properties
+  const char *dbpath = [databasePath UTF8String];
+  
+  if (sqlite3_open(dbpath, &database) == SQLITE_OK)
+  {
+    //Serialize the object
+    NSString *objData = [dataPoint serializeData];
+    NSMutableString *insertSQL = [NSMutableString string];
+    [insertSQL appendString:@"INSERT INTO "];
+    [insertSQL appendString: kDataPointDatabaseName];
+    [insertSQL appendString: tableValues[kDataPointDatabaseName]];
+    [insertSQL appendString: @" VALUES"];
+    [insertSQL appendString: objData];
+    
+    const char *insert_stmt = [insertSQL UTF8String];
+    sqlite3_prepare_v2(database, insert_stmt,-1, &statement, NULL);
+    if (sqlite3_step(statement) == SQLITE_DONE)
+    {
+      return YES;
+    }
+    else {
+      return NO;
+    }
+    sqlite3_reset(statement);
+  }
+  //INSERT INTO DATABASENAME(x, x, x) VALUES(x, x, x)
+  return NO;
+}
+
+-(BOOL)saveRow: (id<DLSerializableProtocol>) row
 {
   //Go to the dictionary to translate the database name into a series of properties
 
@@ -156,12 +188,41 @@ static NSString* kDataTypeName = @"DataTypes";
     sqlite3_reset(statement);
   }
   //INSERT INTO DATABASENAME(x, x, x) VALUES(x, x, x)
-  return nil;
+  return NO;
 }
 
 - (NSMutableArray *) fetchDataNames
 {
   return [self fetchData:kDataTypeName];
+}
+
+- (NSMutableArray *)fetchDataPoints : (NSString *) setName
+{
+  const char *dbpath = [databasePath UTF8String];
+  if (sqlite3_open(dbpath, &database) == SQLITE_OK)
+  {
+    NSString *querySQL = [NSString stringWithFormat:@"SELECT * FROM %@ WHERE DataName = '%@'", kDataPointDatabaseName, setName];
+    const char *query_stmt = [querySQL UTF8String];
+    NSMutableArray *resultArray = [[NSMutableArray alloc]init];
+    if (sqlite3_prepare_v2(database,
+                           query_stmt, -1, &statement, NULL) == SQLITE_OK)
+    {
+      while (sqlite3_step(statement) == SQLITE_ROW)
+      {
+        NSString *dataName = [[NSString alloc] initWithUTF8String:
+                              (const char *) sqlite3_column_text(statement, 0)];
+        NSString *dataValue = [[NSString alloc] initWithUTF8String:
+                              (const char *) sqlite3_column_text(statement, 1)];
+        NSString *dataTime = [[NSString alloc] initWithUTF8String:
+                              (const char *) sqlite3_column_text(statement, 2)];
+        
+        [resultArray addObject:[[DLDataPointRowObject alloc] initWithName:dataName value:dataValue time: dataTime]];
+      }
+      return resultArray;
+      sqlite3_reset(statement);
+    }
+  }
+  return nil;
 }
 
 -(NSMutableArray *) fetchData : (NSString *)databaseName

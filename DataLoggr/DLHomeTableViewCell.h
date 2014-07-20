@@ -9,16 +9,20 @@
 #import <UIKit/UIKit.h>
 #import "NSString+FontAwesome.h"
 
+@class DLDataViewCell;
+
 @protocol DLHomeTableViewCellDelegate
 
 @required
-- (void) CellViewTouched :(NSInteger) cellIdentifier;
+- (void) CellViewTouched :(DLDataViewCell *) cell;
 
 @end
 
 @interface DLHomeTableViewCell : UITableViewCell
 
 @property id <DLHomeTableViewCellDelegate> delegate;
+
+- (NSString *)getTitle;
 
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier

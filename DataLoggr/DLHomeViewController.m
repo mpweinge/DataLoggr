@@ -13,6 +13,7 @@
 #import "DLNewDataViewController.h"
 #import "NSString+FontAwesome.h"
 #import "DLDataRowObject.h"
+#import "DLDataViewCell.h"
 
 #import "DLDatabaseManager.h"
 
@@ -105,9 +106,9 @@
   return 5;
 }
 
-- (void) CellViewTouched :(NSInteger) cellIdentifier
+- (void) CellViewTouched :(DLDataViewCell *) cell
 {
-  DLDataViewController *newDataController = [[DLDataViewController alloc]initWithDataValue: cellIdentifier];
+  DLDataViewController *newDataController = [[DLDataViewController alloc]initWithDataValue: [cell getTitle]];
   
   [self.navigationController pushViewController:newDataController animated:YES];
 }

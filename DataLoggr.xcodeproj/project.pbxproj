@@ -34,6 +34,8 @@
 		FFA6548E1971D1DE002BA286 /* UIFont+FontAwesome.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA6548B1971D1DE002BA286 /* UIFont+FontAwesome.m */; };
 		FFA654901971D21C002BA286 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FFA6548F1971D21C002BA286 /* FontAwesome.ttf */; };
 		FFA65495197350FE002BA286 /* DLDataViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FFA65494197350FE002BA286 /* DLDataViewCell.m */; };
+		FFBD9897197B8014005088D7 /* DLDataPointRowObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FFBD9896197B8014005088D7 /* DLDataPointRowObject.m */; };
+		FFBD989A197B9299005088D7 /* DLAddPointViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FFBD9899197B9299005088D7 /* DLAddPointViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +93,10 @@
 		FFA6548F1971D21C002BA286 /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.ttf; sourceTree = "<group>"; };
 		FFA65493197350FE002BA286 /* DLDataViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDataViewCell.h; sourceTree = "<group>"; };
 		FFA65494197350FE002BA286 /* DLDataViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLDataViewCell.m; sourceTree = "<group>"; };
+		FFBD9895197B8014005088D7 /* DLDataPointRowObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDataPointRowObject.h; sourceTree = "<group>"; };
+		FFBD9896197B8014005088D7 /* DLDataPointRowObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLDataPointRowObject.m; sourceTree = "<group>"; };
+		FFBD9898197B9299005088D7 /* DLAddPointViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLAddPointViewController.h; sourceTree = "<group>"; };
+		FFBD9899197B9299005088D7 /* DLAddPointViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLAddPointViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +136,8 @@
 		FFA6541D196E7D8D002BA286 = {
 			isa = PBXGroup;
 			children = (
+				FFBD9895197B8014005088D7 /* DLDataPointRowObject.h */,
+				FFBD9896197B8014005088D7 /* DLDataPointRowObject.m */,
 				FF664C771977B4EE00CFE1A0 /* DLDataRowObject.h */,
 				FF664C781977B4EE00CFE1A0 /* DLDataRowObject.m */,
 				FF6209D91973C3860032348F /* Views */,
@@ -239,6 +247,8 @@
 				FFA6545F196F5376002BA286 /* DLDataViewController.m */,
 				FF6209D61973C24F0032348F /* DLNewDataViewController.h */,
 				FF6209D71973C24F0032348F /* DLNewDataViewController.m */,
+				FFBD9898197B9299005088D7 /* DLAddPointViewController.h */,
+				FFBD9899197B9299005088D7 /* DLAddPointViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -357,6 +367,7 @@
 				FFA65460196F5376002BA286 /* DLDataViewController.m in Sources */,
 				FF6209D51973B59E0032348F /* DLTitleTableViewCell.m in Sources */,
 				FFA6548D1971D1DE002BA286 /* NSString+FontAwesome.m in Sources */,
+				FFBD9897197B8014005088D7 /* DLDataPointRowObject.m in Sources */,
 				FFA6548E1971D1DE002BA286 /* UIFont+FontAwesome.m in Sources */,
 				FF664C791977B4EE00CFE1A0 /* DLDataRowObject.m in Sources */,
 				FFA6545A196E7ED1002BA286 /* DLHomeViewController.m in Sources */,
@@ -366,6 +377,7 @@
 				FFA6548C1971D1DE002BA286 /* FAImageView.m in Sources */,
 				FFA65495197350FE002BA286 /* DLDataViewCell.m in Sources */,
 				FFA65436196E7D8D002BA286 /* main.m in Sources */,
+				FFBD989A197B9299005088D7 /* DLAddPointViewController.m in Sources */,
 				FFA6547A1970840C002BA286 /* DLNewDataButton.m in Sources */,
 				FF6209DC1973C39C0032348F /* DLNewDataView.m in Sources */,
 			);

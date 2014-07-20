@@ -28,6 +28,8 @@
 
 -(BOOL)createTable:(NSString *)tableName withFields: (NSArray *)fields;
 
+-(BOOL) savePoint: (id<DLSerializableProtocol>) dataPoint;
+
 -(BOOL)saveRow: (id<DLSerializableProtocol>) row;
 
 -(NSMutableArray *) fetchDataPoints: (NSString *) setName;

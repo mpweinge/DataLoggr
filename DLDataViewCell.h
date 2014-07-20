@@ -8,15 +8,24 @@
 
 #import <UIKit/UIKit.h>
 
+@class DLDataViewCell;
+
 @protocol DLDataViewCellDelegate
 
 @required
-- (void) CellViewTouched :(NSInteger) cellIdentifier;
+- (void) CellViewTouched :(DLDataViewCell *) cell;
 
 @end
 
 @interface DLDataViewCell : UITableViewCell
 
 @property id <DLDataViewCellDelegate> delegate;
+
+- (NSString *)getTitle;
+
+- (id)initWithStyle:(UITableViewCellStyle)style
+    reuseIdentifier:(NSString *)reuseIdentifier
+              value:(NSString *)value
+               time:(NSString *)time;
 
 @end

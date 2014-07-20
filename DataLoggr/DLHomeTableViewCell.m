@@ -9,6 +9,12 @@
 #import "DLHomeTableViewCell.h"
 #import "NSString+FontAwesome.h"
 
+@interface DLHomeTableViewCell ()
+{
+  NSString *_caption;
+}
+@end
+
 @implementation DLHomeTableViewCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style
@@ -33,6 +39,8 @@
       advanceIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
       advanceIcon.text = [NSString fontAwesomeIconStringForEnum:FAAngleRight];
       [self addSubview:advanceIcon];
+      
+      _caption = caption;
     }
 
   UITapGestureRecognizer *touchRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedCell:)];
@@ -45,12 +53,17 @@
 
 -(void) tappedCell : (UIGestureRecognizer *)gestureRecognizer
 {
-  [self.delegate CellViewTouched:0];
+  [self.delegate CellViewTouched:self];
 }
 
 - (void)awakeFromNib
 {
     // Initialization code
+}
+
+- (NSString *) getTitle
+{
+  return _caption;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
