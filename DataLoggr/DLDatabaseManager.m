@@ -43,7 +43,7 @@ static NSString* kDataTypeName = @"DataTypes";
 
 - (void) SetupDatabase
 {
-  NSArray *dataPointFields = @[ @"DataName text primary key", @"DataValue text", @"AddTime text" ];
+  NSArray *dataPointFields = @[ @"DataName text", @"DataValue text", @"AddTime text" ];
   [self createTable:kDataPointDatabaseName withFields:dataPointFields];
   
   NSArray *dataTypeFields = @[ @"DataName text primary key", @"DataType text", @"icon text" ];
@@ -202,6 +202,7 @@ static NSString* kDataTypeName = @"DataTypes";
   if (sqlite3_open(dbpath, &database) == SQLITE_OK)
   {
     NSString *querySQL = [NSString stringWithFormat:@"SELECT * FROM %@ WHERE DataName = '%@'", kDataPointDatabaseName, setName];
+    //NSString *querySQL = [NSString stringWithFormat:@"SELECT * FROM %@ ", kDataPointDatabaseName];
     const char *query_stmt = [querySQL UTF8String];
     NSMutableArray *resultArray = [[NSMutableArray alloc]init];
     if (sqlite3_prepare_v2(database,

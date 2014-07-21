@@ -24,6 +24,7 @@
   UITableView* chartTable;
   BOOL invalidatedData;
   NSMutableArray* rowData;
+  BOOL newData;
 }
 @end
 
@@ -50,6 +51,8 @@
   
   self.title = @"Your Data";
   
+  invalidatedData = YES;
+  newData = NO;
   //NSLog(ret);
   
   return self;
@@ -103,7 +106,7 @@
 
 - (NSInteger) tableView: (UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-  return 5;
+  return ([rowData count] + 1);
 }
 
 - (void) CellViewTouched :(DLDataViewCell *) cell
@@ -115,7 +118,7 @@
 
 -(void) TitleCellTouched:(NSInteger) number
 {
-  DLNewDataViewController *newDataController = [[ DLNewDataViewController alloc] init];
+  DLNewDataViewController *newDataController = [[ DLNewDataViewController alloc] initWithDelegate:self];
   
   [self.navigationController pushViewController:newDataController animated:YES];
 }
@@ -129,14 +132,25 @@
 - (void) didCreateNewObject:(DLDataRowObject *)newObject
 {
   //Just invalidate data now. Do a fresh reinstall
-  invalidatedData = YES;
+  newData = YES;
+  //Add data to row
+  [rowData addObject:newObject];
 }
 
 - (void) viewWillAppear:(BOOL)animated
 {
-  DLDatabaseManager *sharedInstance = [DLDatabaseManager getSharedInstance];
-  
-  rowData = [sharedInstance fetchDataNames];
+  if (invalidatedData) {
+    DLDatabaseManager *sharedInstance = [DLDatabaseManager getSharedInstance];
+    
+    rowData = [sharedInstance fetchDataNames];
+  }
+  else if (newData)
+  {
+    UITableView * tableView = (UITableView *)self.view;
+    [tableView reloadData];
+   // [tableView reloadRowsAtIndexPaths:[tableView indexPathsForVisibleRows]
+    //                 withRowAnimation:UITableViewRowAnimationNone];
+  }
 }
 
 - (void)didReceiveMemoryWarning

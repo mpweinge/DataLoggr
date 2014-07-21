@@ -35,6 +35,19 @@
     return self;
 }
 
+-(instancetype) initWithDelegate : (id<DLNewDataViewControllerDelegate>) delegate
+{
+  self = [super init];
+  if (self)
+  {
+    self.title = @"New Data";
+    dataTypeOptions = @[@"ManualData", @"GPS", @"Time"];
+    iconOptions = @[@"fa-github", @"fa-facebook", @"fa-cloud"];
+    _delegate = delegate;
+  }
+  return self;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];

@@ -24,13 +24,14 @@
 
 @implementation DLAddPointViewController
 
--(instancetype) initWithSetName: (NSString *) setName
+-(instancetype) initWithSetName: (NSString *) setName delegate:( id<DLAddPointViewControllerDelegate>) delegate
 {
   self = [super init];
   if (self) {
     self.title = setName;
     _setName = setName;
     dataTypeOptions = @[@"ManualData", @"GPS", @"Time"];
+    _delegate = delegate;
   }
   
   return self;

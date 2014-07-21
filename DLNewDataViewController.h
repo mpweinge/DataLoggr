@@ -20,4 +20,6 @@
 
 @property (nonatomic) id<DLNewDataViewControllerDelegate> delegate;
 
+-(instancetype) initWithDelegate : (id<DLNewDataViewControllerDelegate>) delegate;
+
 @end

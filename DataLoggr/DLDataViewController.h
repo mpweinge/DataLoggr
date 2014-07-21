@@ -10,11 +10,13 @@
 
 @protocol DLDataViewCellDelegate;
 @protocol DLTitleTableViewCellDelegate;
+@protocol DLAddPointViewControllerDelegate;
 
 @interface DLDataViewController : UIViewController <
   UITableViewDataSource,
   DLDataViewCellDelegate,
-  DLTitleTableViewCellDelegate >
+  DLTitleTableViewCellDelegate,
+  DLAddPointViewControllerDelegate>
 
 -(instancetype) initWithDataValue: (NSString*) setName;
 

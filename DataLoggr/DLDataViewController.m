@@ -18,6 +18,8 @@
   UITableView* chartTable;
   NSMutableArray *dataValues;
   NSString* _setName;
+  BOOL newData;
+  BOOL invalidateData;
 }
 
 @end
@@ -50,6 +52,8 @@
   dataValues = [[DLDatabaseManager getSharedInstance] fetchDataPoints:setName];
   
   self.title = setName;
+  
+  invalidateData = YES;
   
   return self;
 }
@@ -105,14 +109,14 @@
 -(void) TitleCellTouched:(NSInteger) number
 {
   //This is a call to create a new value
-  DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName];
+  DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName delegate:self];
   
   [self.navigationController pushViewController:newPointController animated:YES];
 }
 
 - (NSInteger) tableView: (UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-  return 5;
+  return [dataValues count];
 }
 
 - (void)viewDidLoad
@@ -123,9 +127,28 @@
 
 - (void) viewWillAppear:(BOOL)animated
 {
-  DLDatabaseManager *sharedInstance = [DLDatabaseManager getSharedInstance];
-  
-  dataValues = [sharedInstance fetchDataPoints:_setName];
+  if (invalidateData) {
+    DLDatabaseManager *sharedInstance = [DLDatabaseManager getSharedInstance];
+    
+    dataValues = [sharedInstance fetchDataPoints:_setName];
+    
+    invalidateData = NO;
+  }
+  else if (newData)
+  {
+    UITableView * tableView = (UITableView *)self.view;
+    [tableView reloadData];
+    // [tableView reloadRowsAtIndexPaths:[tableView indexPathsForVisibleRows]
+    //                 withRowAnimation:UITableViewRowAnimationNone];
+  }
+}
+
+- (void) didCreateNewObject: (DLDataPointRowObject *) newObject
+{
+  //Just invalidate data now. Do a fresh reinstall
+  newData = YES;
+  //Add data to row
+  [dataValues addObject:newObject];
 }
 
 - (void)didReceiveMemoryWarning
