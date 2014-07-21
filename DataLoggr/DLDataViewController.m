@@ -116,7 +116,7 @@
 
 - (NSInteger) tableView: (UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-  return [dataValues count];
+  return ([dataValues count] + 1);
 }
 
 - (void)viewDidLoad
