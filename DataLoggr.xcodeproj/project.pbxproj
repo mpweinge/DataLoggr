@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A6D5BE3C19A591F60009FAF3 /* DLDataIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D5BE3B19A591F60009FAF3 /* DLDataIconView.m */; };
 		FF6209D51973B59E0032348F /* DLTitleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6209D41973B59E0032348F /* DLTitleTableViewCell.m */; };
 		FF6209D81973C24F0032348F /* DLNewDataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6209D71973C24F0032348F /* DLNewDataViewController.m */; };
 		FF6209DC1973C39C0032348F /* DLNewDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6209DB1973C39C0032348F /* DLNewDataView.m */; };
@@ -49,6 +50,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A6D5BE3A19A591F60009FAF3 /* DLDataIconView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDataIconView.h; sourceTree = "<group>"; };
+		A6D5BE3B19A591F60009FAF3 /* DLDataIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLDataIconView.m; sourceTree = "<group>"; };
 		FF6209D31973B59E0032348F /* DLTitleTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLTitleTableViewCell.h; sourceTree = "<group>"; };
 		FF6209D41973B59E0032348F /* DLTitleTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLTitleTableViewCell.m; sourceTree = "<group>"; };
 		FF6209D61973C24F0032348F /* DLNewDataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLNewDataViewController.h; sourceTree = "<group>"; };
@@ -127,6 +130,8 @@
 		FF6209D91973C3860032348F /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A6D5BE3A19A591F60009FAF3 /* DLDataIconView.h */,
+				A6D5BE3B19A591F60009FAF3 /* DLDataIconView.m */,
 				FF6209DA1973C39C0032348F /* DLNewDataView.h */,
 				FF6209DB1973C39C0032348F /* DLNewDataView.m */,
 			);
@@ -369,6 +374,7 @@
 				FFA6548D1971D1DE002BA286 /* NSString+FontAwesome.m in Sources */,
 				FFBD9897197B8014005088D7 /* DLDataPointRowObject.m in Sources */,
 				FFA6548E1971D1DE002BA286 /* UIFont+FontAwesome.m in Sources */,
+				A6D5BE3C19A591F60009FAF3 /* DLDataIconView.m in Sources */,
 				FF664C791977B4EE00CFE1A0 /* DLDataRowObject.m in Sources */,
 				FFA6545A196E7ED1002BA286 /* DLHomeViewController.m in Sources */,
 				FFA6543A196E7D8D002BA286 /* DLAppDelegate.m in Sources */,

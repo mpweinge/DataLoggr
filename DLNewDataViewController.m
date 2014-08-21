@@ -8,12 +8,21 @@
 
 #import "DLNewDataViewController.h"
 #import "DLDataRowObject.h"
+#import "NSString+FontAwesome.h"
+#import "DLDataIconView.h"
 
-@interface DLNewDataViewController () < UIPickerViewDataSource, UIPickerViewDelegate >
+@interface DLNewDataViewController () < UIPickerViewDataSource, UIPickerViewDelegate, UIGestureRecognizerDelegate, DLDataIconViewDelegate, UITextFieldDelegate >
 {
   UITextField* _dataName;
   UIPickerView* _typeDataView;
-  UIPickerView* _iconPickerView;
+  UIScrollView* _iconSwitcherView;
+    
+    DLDataIconView *_timeIcon;
+    DLDataIconView *_gpsIcon;
+    DLDataIconView *_customIcon;
+    
+    DLDataIconView *_selectedIcon;
+    DLDataIconView *_selectedDataType;
   
   NSArray * dataTypeOptions;
   NSArray * iconOptions;
@@ -68,22 +77,60 @@
   UILabel *typeDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 200, 300, 50)];
   typeDataLabel.text = @"Data Type: ";
   typeDataLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-  
-  _typeDataView = [[UIPickerView alloc] initWithFrame:CGRectMake(60, 140, 300, 50)];
-  _typeDataView.dataSource = self;
-  _typeDataView.delegate = self;
-  _typeDataView.showsSelectionIndicator = YES;
-  [self.view addSubview:_typeDataView];
+    
+    _timeIcon = [[DLDataIconView alloc]initWithFrame:CGRectMake(100, 200, 70, 50) icon:FATimes title:@"Time"];
+    [self.view addSubview:_timeIcon];
+    _timeIcon.delegate = self;
+    
+    //Set first icon to be selected
+    _timeIcon.selected = YES;
+    _selectedDataType = _timeIcon;
+    
+    _gpsIcon = [[DLDataIconView alloc]initWithFrame:CGRectMake(170, 200, 70, 50) icon:FATimes title:@"GPS"];
+    [self.view addSubview:_gpsIcon];
+    _gpsIcon.delegate = self;
+    
+    _customIcon = [[DLDataIconView alloc]initWithFrame:CGRectMake(240, 200, 70, 50) icon:FATimes title:@"Custom"];
+    [self.view addSubview:_customIcon];
+    _customIcon.delegate = self;
   
   UILabel *iconDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 310, 300, 50)];
   iconDataLabel.text = @"Icon: ";
   iconDataLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
   
-  _iconPickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(60, 240, 300, 50)];
-  _iconPickerView.dataSource = self;
-  _iconPickerView.delegate = self;
-  _iconPickerView.showsSelectionIndicator = YES;
-  [self.view addSubview:_iconPickerView];
+    _iconSwitcherView = [[UIScrollView alloc] initWithFrame:CGRectMake(60, 280, 200, 150)];
+    _iconSwitcherView.contentSize = CGSizeMake(750, 50);
+    _iconSwitcherView.showsHorizontalScrollIndicator = YES;
+    _iconSwitcherView.backgroundColor = [UIColor lightGrayColor];
+    
+    NSDictionary* enumDict = [NSString enumDictionaryForData];
+    
+    NSEnumerator *enumerator = [enumDict objectEnumerator];
+    id value;
+    
+    int i = 0;
+    
+    while ((value = [enumerator nextObject])) {
+        /* code that acts on the dictionary’s values */
+        int rowNum = i / 3;
+        int colNum = (i % 3);
+        
+        NSInteger val = [value integerValue];
+        
+        DLDataIconView *dlDataView = [[DLDataIconView alloc] initWithFrame:CGRectMake(10 + rowNum * 50, colNum * 50, 50, 50) icon:val title:nil];
+        
+        dlDataView.delegate = self;
+        
+        [_iconSwitcherView addSubview:dlDataView];
+        
+        if (i == 0) {
+            //Set first icon to be selected
+            dlDataView.selected = YES;
+            _selectedIcon = dlDataView;
+        }
+        i++;
+    }
+  [self.view addSubview:_iconSwitcherView];
   
   UIButton *createButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
   [createButton setTitle:@"Create" forState:UIControlStateNormal];
@@ -98,14 +145,35 @@
   [self.view addSubview:_dataName];
 }
 
+-(void) iconClicked:(DLDataIconView *) selectedIcon
+{
+    //De select the other icons
+    if (_timeIcon == selectedIcon) {
+        _gpsIcon.selected = NO;
+        _customIcon.selected = NO;
+    }
+    else if (_gpsIcon == selectedIcon) {
+        _timeIcon.selected = NO;
+        _customIcon.selected = NO;
+    }
+    else if (_customIcon == selectedIcon) {
+        _timeIcon.selected = NO;
+        _gpsIcon.selected = NO;
+    } else {
+        if (_selectedIcon) {
+            _selectedIcon.selected = NO;
+        }
+        selectedIcon.selected = YES;
+        _selectedIcon = selectedIcon;
+    }
+}
+
 - (void) CreateClicked: (UIButton *)createButton
 {
   NSLog(@"Create Clicked");
   NSString* dataName = _dataName.text;
-  NSInteger row = [_typeDataView selectedRowInComponent:0];
-  NSString* dataType =  [dataTypeOptions objectAtIndex:row];
-  row = [_iconPickerView selectedRowInComponent:0];
-  NSString* iconStr = [iconOptions objectAtIndex:row];
+  NSString* dataType =  _selectedDataType.title;
+  NSString* iconStr = _selectedIcon.title;
   
   //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
   DLDataRowObject *newObject = [[DLDataRowObject alloc] initWithName:dataName type:dataType iconName:iconStr];
@@ -171,15 +239,11 @@
   return sectionWidth;
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    [textField resignFirstResponder];
+    
+    return YES;
 }
-*/
 
 @end

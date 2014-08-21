@@ -508,10 +508,16 @@ typedef NS_ENUM(NSInteger, FAIcon) {
  */
 + (NSString*)fontAwesomeIconStringForEnum:(FAIcon)value;
 
++ (NSString *) stringForFAIcon:(FAIcon) icon;
+
 /* 
  @abstract Returns the font-awesome character associated to the font-awesome identifier.
  @discussion The list of identifiers can be found here: http://fortawesome.github.com/Font-Awesome/#all-icons
  */
 + (NSString*)fontAwesomeIconStringForIconIdentifier:(NSString*)identifier;
+
++ (NSDictionary *)enumDictionaryForData;
+
++ (NSArray *)fontAwesomeUnicodeStrings;
 
 @end

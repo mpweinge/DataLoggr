@@ -14,17 +14,18 @@
   UITextField* _dataName;
   UIPickerView* _typeDataView;
   UITextField* _notes;
-  
   NSString* _setName;
-  
   NSArray * dataTypeOptions;
+  BOOL _isAdd;
 }
 
 @end
 
 @implementation DLAddPointViewController
 
--(instancetype) initWithSetName: (NSString *) setName delegate:( id<DLAddPointViewControllerDelegate>) delegate
+-(instancetype) initWithSetName: (NSString *) setName
+                       delegate:( id<DLAddPointViewControllerDelegate>) delegate
+                          isAdd:(BOOL) isAdd
 {
   self = [super init];
   if (self) {
@@ -32,6 +33,7 @@
     _setName = setName;
     dataTypeOptions = @[@"ManualData", @"GPS", @"Time"];
     _delegate = delegate;
+      _isAdd = isAdd;
   }
   
   return self;

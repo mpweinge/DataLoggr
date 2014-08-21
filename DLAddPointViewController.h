@@ -20,6 +20,8 @@
 
 @property (nonatomic) id<DLAddPointViewControllerDelegate> delegate;
 
--(instancetype) initWithSetName: (NSString *) setName delegate:( id<DLAddPointViewControllerDelegate>) delegate;
+-(instancetype) initWithSetName: (NSString *) setName
+                       delegate:( id<DLAddPointViewControllerDelegate>) delegate
+                          isAdd:(BOOL) isAdd;
 
 @end

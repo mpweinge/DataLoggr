@@ -58,6 +58,215 @@
     return fontAwesomeUnicodeStrings;
 }
 
++ (NSString *) stringForFAIcon:(FAIcon) icon
+{
+    NSString *result = nil;
+    switch (icon) {
+        case FAcar:
+            result = @"fa-car";
+            break;
+        case FAbank:
+            result = @"fa-bank";
+            break;
+        case FAchild:
+            result = @"fa-child";
+            break;
+        case FAgraduationCap:
+            result = @"fa-graduation-cap";
+            break;
+        case FApaw:
+            result = @"fa-paw";
+            break;
+        case FAreddit:
+            result = @"fa-reddit";
+            break;
+        case FAgoogle:
+            result = @"fa-google";
+            break;
+        case FAtree:
+            result = @"fa-tree";
+            break;
+        case FABeer:
+            result = @"fa-beer";
+            break;
+        case FABug:
+            result = @"fa-bug";
+            break;
+        case FAbomb:
+            result = @"fa-bomb";
+            break;
+        case FACamera:
+            result = @"fa-camera";
+            break;
+        case FAAnchor:
+            result = @"fa-anchor";
+            break;
+        case FABook:
+            result = @"fa-book";
+            break;
+        case FACoffee:
+            result = @"fa-coffee";
+            break;
+        case FABarChartO:
+            result = @"fa-bar-chart-o";
+            break;
+        case FABullhorn:
+            result = @"fa-bullhorn";
+            break;
+        case FACloud:
+            result = @"fa-cloud";
+            break;
+        case FACogs:
+            result = @"fa-cogs";
+            break;
+        case FAComments:
+            result = @"fa-comments";
+            break;
+        case FACreditCard:
+            result = @"fa-credit-card";
+            break;
+        case FADesktop:
+            result = @"fa-desktop";
+            break;
+        case FAEye:
+            result = @"fa-eye";
+            break;
+        case FAFighterJet:
+            result = @"fa-fighter-jet";
+            break;
+        case FAFemale:
+            result = @"fa-female";
+            break;
+        case FAFire:
+            result = @"fa-fire";
+            break;
+        case FAGlobe:
+            result = @"fa-globe";
+            break;
+        case FAHeart:
+            result = @"fa-heart";
+            break;
+        case FAHome:
+            result = @"fa-home";
+            break;
+        case FAGamepad:
+            result = @"fa-gamepad";
+            break;
+        case FAGavel:
+            result = @"fa-gavel";
+            break;
+        case FAGift:
+            result = @"fa-gift";
+            break;
+        case FAKey:
+            result = @"fa-key";
+            break;
+        case FAMagic:
+            result = @"fa-magic";
+            break;
+        case FALock:
+            result = @"fa-lock";
+            break;
+        case FAMale:
+            result = @"fa-male";
+            break;
+        case FAMusic:
+            result = @"fa-music";
+            break;
+        case FAPencil:
+            result = @"fa-pencil";
+            break;
+        case FAPhone:
+            result = @"fa-pencil";
+            break;
+        case FAMoney:
+            result = @"fa-money";
+            break;
+        case FARoad:
+            result = @"fa-road";
+            break;
+        case FAShoppingCart:
+            result = @"fa-shopping-cart";
+            break;
+        case FASuitcase:
+            result = @"fa-suitcase";
+            break;
+        case FASunO:
+            result = @"fa-sun-o";
+            break;
+        case FAUmbrella:
+            result = @"fa-umbrella";
+            break;
+        case FATrophy:
+            result = @"fa-trophy";
+            break;
+    }
+    return result;
+}
+
++ (NSDictionary *)enumDictionaryForData {
+    static NSDictionary *enumDictionary;
+    
+    static dispatch_once_t enumDictionaryOnceToken;
+    dispatch_once(&enumDictionaryOnceToken, ^{
+        
+		NSMutableDictionary *tmp = [[NSMutableDictionary alloc] init];
+        
+        tmp[@"fa-car"] = @(FAcar);
+        tmp[@"fa-bank"] = @(FAbank);
+        tmp[@"fa-child"] = @(FAchild);
+        tmp[@"fa-graduation-cap"] = @(FAgraduationCap);
+        tmp[@"fa-paw"] = @(FApaw);
+        tmp[@"fa-reddit"] = @(FAreddit);
+        tmp[@"fa-google"] = @(FAgoogle);
+        tmp[@"fa-tree"] = @(FAtree);
+        tmp[@"fa-beer"] = @(FABeer);
+        tmp[@"fa-bug"] = @(FABug);
+        tmp[@"fa-bomb"] = @(FAbomb);
+        tmp[@"fa-camera"] = @(FACamera);
+        tmp[@"fa-anchor"] = @(FAAnchor);
+        tmp[@"fa-book"] = @(FABook);
+        tmp[@"fa-coffee"] = @(FACoffee);
+        tmp[@"fa-bar-chart-o"] = @(FABarChartO);
+        tmp[@"fa-bullhorn"] = @(FABullhorn);
+        tmp[@"fa-cloud"] = @(FACloud);
+        tmp[@"fa-cogs"] = @(FACogs);
+        tmp[@"fa-comments"] = @(FAComments);
+        tmp[@"fa-credit-card"] = @(FACreditCard);
+        tmp[@"fa-desktop"] = @(FADesktop);
+        tmp[@"fa-eye"] = @(FAEye);
+        tmp[@"fa-fighter-jet"] = @(FAFighterJet);
+        tmp[@"fa-female"] = @(FAFemale);
+        tmp[@"fa-fire"] = @(FAFire);
+//        tmp[@"fa-flash"] = @(FAflag);
+        tmp[@"fa-globe"] = @(FAGlobe);
+        tmp[@"fa-heart"] = @(FAHeart);
+        tmp[@"fa-home"] = @(FAHome);
+        tmp[@"fa-gamepad"] = @(FAGamepad);
+        tmp[@"fa-gavel"] = @(FAGavel);
+        tmp[@"fa-gift"] = @(FAGift);
+        tmp[@"fa-key"] = @(FAKey);
+        tmp[@"fa-magic"] = @(FAMagic);
+        tmp[@"fa-lock"] = @(FALock);
+        tmp[@"fa-male"] = @(FAMale);
+        tmp[@"fa-music"] = @(FAMusic);
+        tmp[@"fa-pencil"] = @(FAPencil);
+        tmp[@"fa-phone"] = @(FAPhone);
+        tmp[@"fa-money"] = @(FAMoney);
+        tmp[@"fa-road"] = @(FARoad);
+        tmp[@"fa-shopping-cart"] = @(FAShoppingCart);
+        tmp[@"fa-suitcase"] = @(FASuitcase);
+        tmp[@"fa-sun-o"] = @(FASunO);
+        tmp[@"fa-umbrella"] = @(FAUmbrella);
+        tmp[@"fa-trophy"] = @(FATrophy);
+        
+		enumDictionary = tmp;
+	});
+    
+    return enumDictionary;
+
+}
+
 + (NSDictionary *)enumDictionary {
     
 	static NSDictionary *enumDictionary;

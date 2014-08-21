@@ -109,9 +109,15 @@
 -(void) TitleCellTouched:(NSInteger) number
 {
   //This is a call to create a new value
-  DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName delegate:self];
+    DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: YES];
   
   [self.navigationController pushViewController:newPointController animated:YES];
+}
+
+- (void) CellViewTouched:(DLDataViewCell *)cell
+{
+    //
+    DLAddPointViewController *editPointController = [[DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: NO];
 }
 
 - (NSInteger) tableView: (UITableView *)tableView numberOfRowsInSection:(NSInteger)section

@@ -143,6 +143,7 @@
     DLDatabaseManager *sharedInstance = [DLDatabaseManager getSharedInstance];
     
     rowData = [sharedInstance fetchDataNames];
+    invalidatedData = NO;
   }
   else if (newData)
   {
