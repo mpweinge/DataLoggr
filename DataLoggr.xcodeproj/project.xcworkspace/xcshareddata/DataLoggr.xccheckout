@@ -12,6 +12,8 @@
 	<dict>
 		<key>D46CECD1-92E6-45A3-9B06-EACC39E3F20C</key>
 		<string>https://github.com/mpweinge/DataLoggr.git</string>
+		<key>D77978CA-9196-434E-8A64-629523FCECE6</key>
+		<string>https://github.com/core-plot/core-plot.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>DataLoggr.xcodeproj/project.xcworkspace</string>
@@ -19,6 +21,8 @@
 	<dict>
 		<key>D46CECD1-92E6-45A3-9B06-EACC39E3F20C</key>
 		<string>../..</string>
+		<key>D77978CA-9196-434E-8A64-629523FCECE6</key>
+		<string>../../../core-plot</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/mpweinge/DataLoggr.git</string>
@@ -28,6 +32,14 @@
 	<string>D46CECD1-92E6-45A3-9B06-EACC39E3F20C</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D77978CA-9196-434E-8A64-629523FCECE6</string>
+			<key>IDESourceControlWCCName</key>
+			<string>core-plot</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>

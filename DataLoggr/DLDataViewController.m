@@ -13,6 +13,8 @@
 #import "DLTitleTableViewCell.h"
 #import "DLAddPointViewController.h"
 
+#import "CorePlot-CocoaTouch.h"
+
 @interface DLDataViewController ()
 {
   UITableView* chartTable;

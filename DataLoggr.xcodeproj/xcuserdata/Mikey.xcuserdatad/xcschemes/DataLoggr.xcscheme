@@ -14,6 +14,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BC9B83460FB8A0A40035D8DA"
+               BuildableName = "libCorePlot-CocoaTouch.a"
+               BlueprintName = "CorePlot-CocoaTouch"
+               ReferencedContainer = "container:../core-plot/framework/CorePlot-CocoaTouch.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "FFA65425196E7D8D002BA286"
                BuildableName = "DataLoggr.app"
                BlueprintName = "DataLoggr"
