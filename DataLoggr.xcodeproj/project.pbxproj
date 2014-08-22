@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		A6D5BE3C19A591F60009FAF3 /* DLDataIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D5BE3B19A591F60009FAF3 /* DLDataIconView.m */; };
+		A6D5BE8619A6C7920009FAF3 /* DLDatePlot.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D5BE8519A6C7920009FAF3 /* DLDatePlot.m */; };
+		A6D5BE8819A6CE430009FAF3 /* libCorePlot-CocoaTouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6D5BE8719A6CE430009FAF3 /* libCorePlot-CocoaTouch.a */; };
+		A6D5BE8A19A6CED70009FAF3 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A6D5BE8919A6CED70009FAF3 /* Accelerate.framework */; };
+		A6D5BE8D19A6D0BF0009FAF3 /* DLGraphViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D5BE8C19A6D0BF0009FAF3 /* DLGraphViewCell.m */; };
 		FF6209D51973B59E0032348F /* DLTitleTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6209D41973B59E0032348F /* DLTitleTableViewCell.m */; };
 		FF6209D81973C24F0032348F /* DLNewDataViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6209D71973C24F0032348F /* DLNewDataViewController.m */; };
 		FF6209DC1973C39C0032348F /* DLNewDataView.m in Sources */ = {isa = PBXBuildFile; fileRef = FF6209DB1973C39C0032348F /* DLNewDataView.m */; };
@@ -52,6 +56,12 @@
 /* Begin PBXFileReference section */
 		A6D5BE3A19A591F60009FAF3 /* DLDataIconView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDataIconView.h; sourceTree = "<group>"; };
 		A6D5BE3B19A591F60009FAF3 /* DLDataIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLDataIconView.m; sourceTree = "<group>"; };
+		A6D5BE8419A6C7920009FAF3 /* DLDatePlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDatePlot.h; sourceTree = "<group>"; };
+		A6D5BE8519A6C7920009FAF3 /* DLDatePlot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLDatePlot.m; sourceTree = "<group>"; };
+		A6D5BE8719A6CE430009FAF3 /* libCorePlot-CocoaTouch.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libCorePlot-CocoaTouch.a"; path = "core-plot/framework/../build/Debug-iphoneos/libCorePlot-CocoaTouch.a"; sourceTree = "<group>"; };
+		A6D5BE8919A6CED70009FAF3 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		A6D5BE8B19A6D0BF0009FAF3 /* DLGraphViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLGraphViewCell.h; sourceTree = "<group>"; };
+		A6D5BE8C19A6D0BF0009FAF3 /* DLGraphViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLGraphViewCell.m; sourceTree = "<group>"; };
 		FF6209D31973B59E0032348F /* DLTitleTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLTitleTableViewCell.h; sourceTree = "<group>"; };
 		FF6209D41973B59E0032348F /* DLTitleTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLTitleTableViewCell.m; sourceTree = "<group>"; };
 		FF6209D61973C24F0032348F /* DLNewDataViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLNewDataViewController.h; sourceTree = "<group>"; };
@@ -107,6 +117,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A6D5BE8A19A6CED70009FAF3 /* Accelerate.framework in Frameworks */,
+				A6D5BE8819A6CE430009FAF3 /* libCorePlot-CocoaTouch.a in Frameworks */,
 				FFA6546B196F8FAC002BA286 /* libsqlite3.dylib in Frameworks */,
 				FFA6542C196E7D8D002BA286 /* CoreGraphics.framework in Frameworks */,
 				FFA6542E196E7D8D002BA286 /* UIKit.framework in Frameworks */,
@@ -127,9 +139,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A6D5BE8019A6C7150009FAF3 /* Graphs */ = {
+			isa = PBXGroup;
+			children = (
+				A6D5BE8419A6C7920009FAF3 /* DLDatePlot.h */,
+				A6D5BE8519A6C7920009FAF3 /* DLDatePlot.m */,
+			);
+			name = Graphs;
+			sourceTree = "<group>";
+		};
 		FF6209D91973C3860032348F /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A6D5BE8019A6C7150009FAF3 /* Graphs */,
 				A6D5BE3A19A591F60009FAF3 /* DLDataIconView.h */,
 				A6D5BE3B19A591F60009FAF3 /* DLDataIconView.m */,
 				FF6209DA1973C39C0032348F /* DLNewDataView.h */,
@@ -169,6 +191,8 @@
 		FFA65428196E7D8D002BA286 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A6D5BE8919A6CED70009FAF3 /* Accelerate.framework */,
+				A6D5BE8719A6CE430009FAF3 /* libCorePlot-CocoaTouch.a */,
 				FFA6546A196F8FAC002BA286 /* libsqlite3.dylib */,
 				FFA65429196E7D8D002BA286 /* Foundation.framework */,
 				FFA6542B196E7D8D002BA286 /* CoreGraphics.framework */,
@@ -267,6 +291,8 @@
 				FFA65494197350FE002BA286 /* DLDataViewCell.m */,
 				FF6209D31973B59E0032348F /* DLTitleTableViewCell.h */,
 				FF6209D41973B59E0032348F /* DLTitleTableViewCell.m */,
+				A6D5BE8B19A6D0BF0009FAF3 /* DLGraphViewCell.h */,
+				A6D5BE8C19A6D0BF0009FAF3 /* DLGraphViewCell.m */,
 			);
 			name = TableViewCells;
 			sourceTree = "<group>";
@@ -368,6 +394,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A6D5BE8619A6C7920009FAF3 /* DLDatePlot.m in Sources */,
 				FFA6545D196E8833002BA286 /* DLHomeTableViewCell.m in Sources */,
 				FFA65460196F5376002BA286 /* DLDataViewController.m in Sources */,
 				FF6209D51973B59E0032348F /* DLTitleTableViewCell.m in Sources */,
@@ -377,6 +404,7 @@
 				A6D5BE3C19A591F60009FAF3 /* DLDataIconView.m in Sources */,
 				FF664C791977B4EE00CFE1A0 /* DLDataRowObject.m in Sources */,
 				FFA6545A196E7ED1002BA286 /* DLHomeViewController.m in Sources */,
+				A6D5BE8D19A6D0BF0009FAF3 /* DLGraphViewCell.m in Sources */,
 				FFA6543A196E7D8D002BA286 /* DLAppDelegate.m in Sources */,
 				FFA6546E196F908F002BA286 /* DLDatabaseManager.m in Sources */,
 				FF6209D81973C24F0032348F /* DLNewDataViewController.m in Sources */,
@@ -510,6 +538,10 @@
 					"\"${PROJECT_DIR}/core-plot/framework/\"/**",
 				);
 				INFOPLIST_FILE = "DataLoggr/DataLoggr-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/core-plot/build/Debug-iphoneos",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -529,6 +561,10 @@
 					"\"${PROJECT_DIR}/core-plot/framework/\"/**",
 				);
 				INFOPLIST_FILE = "DataLoggr/DataLoggr-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/core-plot/build/Debug-iphoneos",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

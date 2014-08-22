@@ -17,7 +17,7 @@
                BlueprintIdentifier = "BC9B83460FB8A0A40035D8DA"
                BuildableName = "libCorePlot-CocoaTouch.a"
                BlueprintName = "CorePlot-CocoaTouch"
-               ReferencedContainer = "container:../core-plot/framework/CorePlot-CocoaTouch.xcodeproj">
+               ReferencedContainer = "container:core-plot/framework/CorePlot-CocoaTouch.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry

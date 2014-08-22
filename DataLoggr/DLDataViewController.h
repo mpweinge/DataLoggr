@@ -16,7 +16,8 @@
   UITableViewDataSource,
   DLDataViewCellDelegate,
   DLTitleTableViewCellDelegate,
-  DLAddPointViewControllerDelegate>
+  DLAddPointViewControllerDelegate,
+  UITableViewDelegate>
 
 -(instancetype) initWithDataValue: (NSString*) setName;
 

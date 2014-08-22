@@ -12,6 +12,7 @@
 #import "DLDataPointRowObject.h"
 #import "DLTitleTableViewCell.h"
 #import "DLAddPointViewController.h"
+#import "DLGraphViewCell.h"
 
 #import "CorePlot-CocoaTouch.h"
 
@@ -43,7 +44,7 @@
   
   chartTable = [[UITableView alloc] initWithFrame: [[UIScreen mainScreen] applicationFrame] style:UITableViewStylePlain];
   chartTable.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
-  //chartTable.delegate = self;
+  chartTable.delegate = self;
   chartTable.dataSource = self;
   
   _setName = setName;
@@ -68,12 +69,13 @@
   
   if ( [indexPath row] == 0 ) {
     if (cell == nil) {
-      DLTitleTableViewCell * titleCell = [[DLTitleTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier];
+      /*DLTitleTableViewCell * titleCell = [[DLTitleTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier];
       
       titleCell.selectionStyle = UITableViewCellSelectionStyleNone;
-      titleCell.delegate = self;
+      titleCell.delegate = self;*/
+        DLGraphViewCell *graphCell = [[DLGraphViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier];
       
-      cell = titleCell;
+      cell = graphCell;
     }
   }
   else if (cell == nil) {
@@ -106,6 +108,17 @@
   }
   
   return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([indexPath row ] == 0)
+    {
+        //First cell is graph
+        return 310;
+    } else {
+        return 50;
+    }
 }
 
 -(void) TitleCellTouched:(NSInteger) number
