@@ -12,6 +12,7 @@
 @interface DLHomeTableViewCell ()
 {
   NSString *_caption;
+  NSString *_type;
 }
 @end
 
@@ -20,7 +21,8 @@
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
             caption:(NSString *)caption
-               icon:(FAIcon)icon;
+               icon:(FAIcon)icon
+               type:(NSString *)type
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
@@ -41,6 +43,7 @@
       [self addSubview:advanceIcon];
       
       _caption = caption;
+      _type = type;
     }
 
   UITapGestureRecognizer *touchRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedCell:)];
@@ -64,6 +67,11 @@
 - (NSString *) getTitle
 {
   return _caption;
+}
+
+- (NSString *)getType
+{
+  return _type;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

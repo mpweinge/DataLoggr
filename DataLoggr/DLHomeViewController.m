@@ -92,7 +92,8 @@
     cell = [[DLHomeTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                       reuseIdentifier:myIdentifier
                                               caption: currItem.DataName
-                                                 icon: [NSString fontAwesomeEnumForIconIdentifier:currItem.IconName ]];
+                                                 icon: [NSString fontAwesomeEnumForIconIdentifier:currItem.IconName ]
+                                                 type: currItem.DataType];
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.delegate = self;
@@ -111,7 +112,7 @@
 
 - (void) CellViewTouched :(DLDataViewCell *) cell
 {
-  DLDataViewController *newDataController = [[DLDataViewController alloc]initWithDataValue: [cell getTitle]];
+    DLDataViewController *newDataController = [[DLDataViewController alloc]initWithDataValue: [cell getTitle] dataType: [cell getType]];
   
   [self.navigationController pushViewController:newDataController animated:YES];
 }

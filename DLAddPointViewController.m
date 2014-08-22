@@ -15,17 +15,25 @@
   UIPickerView* _typeDataView;
   UITextField* _notes;
   NSString* _setName;
+  NSString *_typeName;
   NSArray * dataTypeOptions;
+  UILabel *_timerLabel;
+  UIButton *_startButton;
+  NSDate *_start;
   BOOL _isAdd;
+  BOOL _timerStarted;
+  NSTimer *_timer;
+
 }
 
 @end
 
 @implementation DLAddPointViewController
 
--(instancetype) initWithSetName: (NSString *) setName
-                       delegate:( id<DLAddPointViewControllerDelegate>) delegate
+-(instancetype) initWithSetName:(NSString *) setName
+                       delegate:(id<DLAddPointViewControllerDelegate>) delegate
                           isAdd:(BOOL) isAdd
+                       typeName:(NSString *)typeName
 {
   self = [super init];
   if (self) {
@@ -33,7 +41,9 @@
     _setName = setName;
     dataTypeOptions = @[@"ManualData", @"GPS", @"Time"];
     _delegate = delegate;
-      _isAdd = isAdd;
+    _isAdd = isAdd;
+    _typeName = typeName;
+    _timerStarted = FALSE;
   }
   
   return self;
@@ -99,6 +109,71 @@
   [self.view addSubview:typeDataLabel];
   [self.view addSubview:iconDataLabel];
   [self.view addSubview:_dataName];
+  
+  //Create view for time
+  if ([_typeName isEqualToString:@"Time"]) {
+    //For time add a giant label for a timer
+    [self setupTimer];
+  }else if ([_typeName isEqualToString:@"GPS"]) {
+    
+  }
+}
+
+- (void) setupTimer
+{
+  _timerLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 60, 300, 50)];
+  _timerLabel.text = @"00:00.00";
+  _timerLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:28.0];
+  [self.view addSubview:_timerLabel];
+  
+  //Add buttons for start, stop
+  _startButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  [_startButton setTitle:@"Start" forState:UIControlStateNormal];
+  [_startButton sizeToFit];
+  _startButton.center = CGPointMake(100, 400);
+  [_startButton addTarget:self action:@selector(StartTimerClicked:) forControlEvents:UIControlEventTouchUpInside];
+  
+  [self.view addSubview:_startButton];
+}
+
+- (void) StartTimerClicked: (UIButton *)startButton
+{
+  if (!_timerStarted) {
+      _start = [NSDate date];
+      _timer = [NSTimer scheduledTimerWithTimeInterval:0.01
+                                             target:self
+                                           selector:@selector(updateTime)
+                                           userInfo:nil
+                                            repeats:YES];
+    
+    [_startButton setTitle:@"Stop" forState:UIControlStateNormal];
+  } else {
+    [_timer invalidate];
+    _timer = nil;
+    [_startButton setTitle:@"Start" forState:UIControlStateNormal];
+  }
+  _timerStarted = !_timerStarted;
+}
+
+-(void) updateTime
+{
+  NSTimeInterval timeInterval = [_start timeIntervalSinceNow];
+  timeInterval *= -1;
+  
+  int numMinutes = timeInterval / 60;
+  int numMinutesTen = numMinutes / 10;
+  
+  int numSeconds = (timeInterval - numMinutes * 60);
+  int numSecondsTen = numSeconds / 10;
+  
+  int numMilli = (timeInterval - numSeconds) * 100;
+  int numMilliTen = numMilli / 10;
+  numMilli -= numMilliTen * 10;
+  
+  numMinutes -= numMinutesTen * 10;
+  numSeconds -= numSecondsTen * 10;
+  
+  _timerLabel.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
 }
 
 - (void) CreateClicked: (UIButton *)createButton

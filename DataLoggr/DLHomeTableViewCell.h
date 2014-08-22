@@ -24,9 +24,12 @@
 
 - (NSString *)getTitle;
 
+- (NSString *)getType;
+
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
             caption:(NSString *)caption
-               icon:(FAIcon)icon;
+               icon:(FAIcon)icon
+               type:(NSString *)type;
 
 @end

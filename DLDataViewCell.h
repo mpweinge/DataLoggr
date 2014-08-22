@@ -23,6 +23,8 @@
 
 - (NSString *)getTitle;
 
+- (NSString *)getType;
+
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
               value:(NSString *)value

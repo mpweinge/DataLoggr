@@ -21,6 +21,7 @@
   UITableView* chartTable;
   NSMutableArray *dataValues;
   NSString* _setName;
+  NSString *_typeName;
   BOOL newData;
   BOOL invalidateData;
 }
@@ -38,7 +39,7 @@
     return self;
 }
 
-- (instancetype) initWithDataValue: (NSString *) setName
+-(instancetype) initWithDataValue: (NSString*) setName dataType: (NSString *)dataType
 {
   self = [super init];
   
@@ -57,6 +58,13 @@
   self.title = setName;
   
   invalidateData = YES;
+    
+    
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Lolz" style:UIBarButtonItemStylePlain target:nil action:nil];
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"+" style:UIBarButtonItemStylePlain target:self action:@selector(AddClicked)];
+    
+    _typeName = dataType;
   
   return self;
 }
@@ -121,10 +129,15 @@
     }
 }
 
+- (void) AddClicked
+{
+    [self TitleCellTouched:0];
+}
+
 -(void) TitleCellTouched:(NSInteger) number
 {
   //This is a call to create a new value
-    DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: YES];
+    DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: YES typeName:_typeName];
   
   [self.navigationController pushViewController:newPointController animated:YES];
 }
@@ -132,7 +145,9 @@
 - (void) CellViewTouched:(DLDataViewCell *)cell
 {
     //
-    DLAddPointViewController *editPointController = [[DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: NO];
+  DLAddPointViewController *editPointController = [[DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: NO typeName:_typeName];
+    
+    [self.navigationController pushViewController:editPointController animated:YES];
 }
 
 - (NSInteger) tableView: (UITableView *)tableView numberOfRowsInSection:(NSInteger)section

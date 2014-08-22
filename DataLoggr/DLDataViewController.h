@@ -19,6 +19,6 @@
   DLAddPointViewControllerDelegate,
   UITableViewDelegate>
 
--(instancetype) initWithDataValue: (NSString*) setName;
+-(instancetype) initWithDataValue: (NSString*) setName dataType: (NSString *)dataType;
 
 @end

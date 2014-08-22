@@ -10,6 +10,7 @@
 
 @interface DLDataViewCell() {
   NSString * _title;
+  NSString *_type;
 }
 @end
 
@@ -44,6 +45,11 @@
 -(NSString *)getTitle
 {
   return _title;
+}
+
+-(NSString *)getType
+{
+  return _type;
 }
 
 - (void)awakeFromNib
