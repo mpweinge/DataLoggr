@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class DLDataPointRowObject;
+@class DLDataViewCell;
 
 @protocol DLAddPointViewControllerDelegate
 
@@ -23,6 +24,7 @@
 -(instancetype) initWithSetName:(NSString *) setName
                        delegate:(id<DLAddPointViewControllerDelegate>) delegate
                           isAdd:(BOOL) isAdd
+                       currCell:(DLDataViewCell *) currCell
                        typeName:(NSString *)typeName;
 
 @end

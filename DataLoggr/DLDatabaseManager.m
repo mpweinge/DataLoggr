@@ -19,6 +19,8 @@ static NSString* kDataTypeName = @"DataTypes";
 
 @interface DLDatabaseManager () {
   NSMutableDictionary* tableValues;
+  NSArray* _dataPointFieldNames;
+  NSArray* _dataTypeFieldNames;
 }
 
 @end
@@ -43,10 +45,12 @@ static NSString* kDataTypeName = @"DataTypes";
 
 - (void) SetupDatabase
 {
-  NSArray *dataPointFields = @[ @"DataName text", @"DataValue text", @"AddTime text" ];
+  NSArray *dataPointFields = @[ @"DataName text", @"DataValue text", @"AddTime text", @"Notes text" ];
+  _dataPointFieldNames = @[ @"DataName", @"DataValue", @"AddTime", @"Notes"];
   [self createTable:kDataPointDatabaseName withFields:dataPointFields];
   
   NSArray *dataTypeFields = @[ @"DataName text primary key", @"DataType text", @"icon text" ];
+  _dataTypeFieldNames = @[ @"DataName", @"DataType", @"icon" ];
   [self createTable:kDataTypeName withFields:dataTypeFields];
 }
 
@@ -158,6 +162,55 @@ static NSString* kDataTypeName = @"DataTypes";
   return NO;
 }
 
+- (BOOL) updateOldPoint: (id<DLSerializableProtocol>) oldDataPoint newPoint: (id<DLSerializableProtocol>) newPoint
+{
+  //Check to make sure the serialized object has the same number of properties
+  const char *dbpath = [databasePath UTF8String];
+  
+  if (sqlite3_open(dbpath, &database) == SQLITE_OK)
+  {
+    //Serialize the object
+    //NSString *objData = [dataPoint serializeData];
+
+    NSMutableString *insertSQL = [NSMutableString string];
+    [insertSQL appendString:@"UPDATE "];
+    [insertSQL appendString: kDataPointDatabaseName];
+    [insertSQL appendString: @" SET "];
+    [insertSQL appendString:[newPoint updateValuesString: _dataPointFieldNames ]];
+    
+    [insertSQL appendString: @"WHERE "];
+    [insertSQL appendString: _dataPointFieldNames[0]];
+    [insertSQL appendString: @"= \""];
+    [insertSQL appendString: [oldDataPoint valueAtIndex:0]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataPointFieldNames[1]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldDataPoint valueAtIndex:1]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataPointFieldNames[2]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldDataPoint valueAtIndex:2]];
+    [insertSQL appendString: @"\""];
+    
+    const char *insert_stmt = [insertSQL UTF8String];
+    sqlite3_prepare_v2(database, insert_stmt,-1, &statement, NULL);
+    if (sqlite3_step(statement) == SQLITE_DONE)
+    {
+      return YES;
+    }
+    else {
+      return NO;
+    }
+    sqlite3_reset(statement);
+  }
+  //INSERT INTO DATABASENAME(x, x, x) VALUES(x, x, x)
+  return NO;
+}
+
 -(BOOL)saveRow: (id<DLSerializableProtocol>) row
 {
   //Go to the dictionary to translate the database name into a series of properties
@@ -216,8 +269,13 @@ static NSString* kDataTypeName = @"DataTypes";
                               (const char *) sqlite3_column_text(statement, 1)];
         NSString *dataTime = [[NSString alloc] initWithUTF8String:
                               (const char *) sqlite3_column_text(statement, 2)];
+        NSString *dataNotes = [[NSString alloc] initWithUTF8String:
+                              (const char *) sqlite3_column_text(statement, 3)];
         
-        [resultArray addObject:[[DLDataPointRowObject alloc] initWithName:dataName value:dataValue time: dataTime]];
+        [resultArray addObject:[[DLDataPointRowObject alloc] initWithName:dataName
+                                                                    value:dataValue
+                                                                     time: dataTime
+                                                                    notes:dataNotes]];
       }
       return resultArray;
       sqlite3_reset(statement);

@@ -49,4 +49,40 @@
   return values;
 }
 
+- (NSString *) updateValuesString: (NSArray *)ValuesArray
+{
+  NSMutableString * values = [NSMutableString string];
+  
+  [values appendString:ValuesArray[0]];
+  [values appendString:@"="];
+  [values appendString:_DataName];
+  [values appendString:@", "];
+  
+  [values appendString:ValuesArray[1]];
+  [values appendString:@"="];
+  [values appendString:_DataType];
+  [values appendString:@", "];
+  
+  [values appendString:ValuesArray[2]];
+  [values appendString:@"="];
+  [values appendString:_IconName];
+  
+  return values;
+}
+
+- (NSString* ) valueAtIndex: (NSUInteger) index
+{
+  switch (index) {
+    case 0:
+      return _DataName;
+    case 1:
+      return _DataType;
+    case 2:
+      return _IconName;
+    default:
+      assert(0);
+      return nil;
+  }
+}
+
 @end

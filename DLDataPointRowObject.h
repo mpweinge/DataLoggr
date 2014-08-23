@@ -8,13 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
-@interface DLDataPointRowObject : NSObject
+#import "DLDatabaseManager.h"
+
+@interface DLDataPointRowObject : NSObject < DLSerializableProtocol >
 
 @property (nonatomic, strong) NSString * DataName;
 @property (nonatomic, strong) NSString * DataValue;
 @property (nonatomic, strong) NSString * DataTime;
+@property (nonatomic, strong) NSString * DataNotes;
 
-- (instancetype) initWithName: (NSString *)DataName value: (NSString *)DataType time: (NSString *)dataTime;
+- (instancetype) initWithName: (NSString *)DataName
+                        value: (NSString *)DataType
+                         time: (NSString *)dataTime
+                        notes: (NSString *)dataNotes;
 
 - (void) save;
 

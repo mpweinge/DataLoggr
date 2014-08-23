@@ -7,10 +7,14 @@
 //
 
 #import "DLDataViewCell.h"
+#import "NSString+FontAwesome.h"
 
 @interface DLDataViewCell() {
-  NSString * _title;
+  NSString *_title;
   NSString *_type;
+  NSString *_notes;
+  NSString *_time;
+  DLDataPointRowObject *_dataObject;
 }
 @end
 
@@ -18,8 +22,11 @@
 
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
+               name:(NSString *)name
               value:(NSString *)value
                time:(NSString *)time
+              notes:(NSString *)notes
+         dataObject:(DLDataPointRowObject *)dataObject;
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
@@ -38,8 +45,29 @@
       chartName.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
       chartName.text = @"Units";
       [self addSubview:chartName];*/
+      
+      UILabel* advanceIcon=[[UILabel alloc] initWithFrame:CGRectMake(300, 13, 100, 22)];
+      advanceIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
+      advanceIcon.text = [NSString fontAwesomeIconStringForEnum:FAPencil];
+      [self addSubview:advanceIcon];
+      
+      UITapGestureRecognizer *touchRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedCell:)];
+      
+      touchRecognizer.numberOfTapsRequired = 1;
+      
+      [self addGestureRecognizer:touchRecognizer];
+      
+      _notes = notes;
+      _title = value;
+      _time = time;
+      _dataObject = dataObject;
     }
     return self;
+}
+
+-(void) tappedCell : (UIGestureRecognizer *)gestureRecognizer
+{
+  [self.delegate CellViewTouched:self];
 }
 
 -(NSString *)getTitle
@@ -50,6 +78,16 @@
 -(NSString *)getType
 {
   return _type;
+}
+
+- (NSString *)getNotes
+{
+  return _notes;
+}
+
+-(DLDataPointRowObject *) dataPoint
+{
+  return _dataObject;
 }
 
 - (void)awakeFromNib

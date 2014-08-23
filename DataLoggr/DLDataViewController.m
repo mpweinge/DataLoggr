@@ -99,14 +99,20 @@
     if (currItem != nil) {
       newCell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                  reuseIdentifier:myIdentifier
+                                                name:currItem.DataName
                                            value:currItem.DataValue
-                                            time:currItem.DataTime];
+                                            time:currItem.DataTime
+                                           notes:currItem.DataNotes
+                                           dataObject:currItem];
     }
     else {
       newCell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                    reuseIdentifier:myIdentifier
+                                                 name:@"No Name Yet"
                                              value:@"Insert values!"
-                                              time:@"No time yet"];
+                                              time:@"No time yet"
+                                             notes:@"No notes yet"
+                                           dataObject:nil];
     }
     
     newCell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -137,7 +143,7 @@
 -(void) TitleCellTouched:(NSInteger) number
 {
   //This is a call to create a new value
-    DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: YES typeName:_typeName];
+  DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: YES currCell: nil typeName:_typeName];
   
   [self.navigationController pushViewController:newPointController animated:YES];
 }
@@ -145,7 +151,7 @@
 - (void) CellViewTouched:(DLDataViewCell *)cell
 {
     //
-  DLAddPointViewController *editPointController = [[DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: NO typeName:_typeName];
+  DLAddPointViewController *editPointController = [[DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: NO currCell: cell typeName:_typeName];
     
     [self.navigationController pushViewController:editPointController animated:YES];
 }

@@ -16,6 +16,8 @@
 @required
 //INSERT INTO DATABASE(x, x, x) VALUES (x, x, x)
 - (NSString* ) serializeData;
+- (NSString* ) updateValuesString: (NSArray *)ValuesString;
+- (NSString* ) valueAtIndex: (NSUInteger) index;
 
 @end
 
@@ -28,7 +30,7 @@
 
 -(BOOL)createTable:(NSString *)tableName withFields: (NSArray *)fields;
 
--(BOOL) savePoint: (id<DLSerializableProtocol>) dataPoint;
+-(BOOL)savePoint: (id<DLSerializableProtocol>) dataPoint;
 
 -(BOOL)saveRow: (id<DLSerializableProtocol>) row;
 
@@ -37,5 +39,7 @@
 -(NSMutableArray *) fetchDataNames;
 
 -(NSMutableArray *) fetchData : (NSString *)databaseName;
+
+- (BOOL) updateOldPoint: (id<DLSerializableProtocol>) oldDataPoint newPoint: (id<DLSerializableProtocol>) newPoint;
 
 @end

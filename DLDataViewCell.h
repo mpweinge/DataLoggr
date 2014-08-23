@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class DLDataViewCell;
+@class DLDataPointRowObject;
 
 @protocol DLDataViewCellDelegate
 
@@ -25,9 +26,16 @@
 
 - (NSString *)getType;
 
+- (NSString *)getNotes;
+
+-(DLDataPointRowObject *) dataPoint;
+
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
+               name:(NSString *)name
               value:(NSString *)value
-               time:(NSString *)time;
+               time:(NSString *)time
+              notes:(NSString *)notes
+         dataObject:(DLDataPointRowObject *)dataObject;
 
 @end

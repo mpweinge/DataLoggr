@@ -8,12 +8,15 @@
 
 #import "DLAddPointViewController.h"
 #import "DLDataPointRowObject.h"
+#import "DLDataViewCell.h"
+#import "DLDatabaseManager.h"
 
-@interface DLAddPointViewController () < UIPickerViewDataSource, UIPickerViewDelegate >
+@interface DLAddPointViewController () < UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate >
 {
   UITextField* _dataName;
   UIPickerView* _typeDataView;
   UITextField* _notes;
+  UITextView* _notesView;
   NSString* _setName;
   NSString *_typeName;
   NSArray * dataTypeOptions;
@@ -21,9 +24,10 @@
   UIButton *_startButton;
   NSDate *_start;
   BOOL _isAdd;
+  BOOL _didEdit;
   BOOL _timerStarted;
   NSTimer *_timer;
-
+  DLDataViewCell *_currCell;
 }
 
 @end
@@ -33,6 +37,7 @@
 -(instancetype) initWithSetName:(NSString *) setName
                        delegate:(id<DLAddPointViewControllerDelegate>) delegate
                           isAdd:(BOOL) isAdd
+                       currCell:(DLDataViewCell *) currCell
                        typeName:(NSString *)typeName
 {
   self = [super init];
@@ -44,6 +49,8 @@
     _isAdd = isAdd;
     _typeName = typeName;
     _timerStarted = FALSE;
+    _currCell = currCell;
+    _didEdit = NO;
   }
   
   return self;
@@ -66,6 +73,8 @@
   // Do any additional setup after loading the view.
   //Need some text fields and an icon picker
   
+  _didEdit = NO;
+  
   UILabel *dataNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 140, 300, 50)];
   dataNameLabel.text = @"Data Name: ";
   dataNameLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
@@ -77,6 +86,10 @@
   _dataName.delegate = self;
   _dataName.keyboardType = UIKeyboardTypeDefault;
   
+  if (!_isAdd) {
+    _dataName.text = [_currCell getTitle];
+  }
+  
   UILabel *typeDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 200, 300, 50)];
   typeDataLabel.text = @"Data Type: ";
   typeDataLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
@@ -85,21 +98,44 @@
   _typeDataView.dataSource = self;
   _typeDataView.delegate = self;
   _typeDataView.showsSelectionIndicator = YES;
+  
+  /*if (!_isAdd) {
+    _typeDataView.text = [_currCell getTitle];
+  }*/
+  
   [self.view addSubview:_typeDataView];
   
   UILabel *iconDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 310, 300, 50)];
   iconDataLabel.text = @"Notes: ";
   iconDataLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
   
-  _notes = [[UITextField alloc] initWithFrame:CGRectMake(100, 140, 200, 50)];
+  _notes = [[UITextField alloc] initWithFrame:CGRectMake(100, 310, 200, 50)];
   _notes.borderStyle = UITextBorderStyleRoundedRect;
   _notes.returnKeyType = UIReturnKeyDone;
   _notes.autocorrectionType = UITextAutocorrectionTypeNo;
   _notes.delegate = self;
   _notes.keyboardType = UIKeyboardTypeDefault;
   
+  CGRect frameRect = _notes.frame;
+  frameRect.size.height = 90;
+  _notes.frame = frameRect;
+  
+  _notesView = [[UITextView alloc] initWithFrame:frameRect];
+  _notesView.backgroundColor = [UIColor clearColor];
+  [self.view addSubview:_notes];
+  [self.view addSubview:_notesView];
+  
+  if (!_isAdd) {
+    _notesView.text = [_currCell getNotes];
+  }
+  
   UIButton *createButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
-  [createButton setTitle:@"Create" forState:UIControlStateNormal];
+  
+  if (_isAdd) {
+    [createButton setTitle:@"Create" forState:UIControlStateNormal];
+  } else {
+    [createButton setTitle:@"OK" forState:UIControlStateNormal];
+  }
   [createButton sizeToFit];
   createButton.center = CGPointMake(160, 450);
   [createButton addTarget:self action:@selector(CreateClicked:) forControlEvents:UIControlEventTouchUpInside];
@@ -178,25 +214,51 @@
 
 - (void) CreateClicked: (UIButton *)createButton
 {
-  NSLog(@"Create Clicked");
-  NSString* dataName = _setName;
-  //NSInteger row = [_typeDataView selectedRowInComponent:0];
-  NSString* dataValue =  _dataName.text;
-  //NSString* notes = _notes.text;
-  
-  NSDate *currentTime = [NSDate date];
-  NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-  [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
-  NSString *resultString = [dateFormatter stringFromDate: currentTime];
-  
-  //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
-  DLDataPointRowObject *newObject = [[DLDataPointRowObject alloc]
-                                     initWithName:dataName
-                                     value:dataValue
-                                     time:resultString];
-  
-  [newObject save];
-  [_delegate didCreateNewObject:newObject];
+  if (_isAdd)
+  {
+    NSLog(@"Create Clicked");
+    NSString* dataName = _setName;
+    //NSInteger row = [_typeDataView selectedRowInComponent:0];
+    NSString* dataValue =  _dataName.text;
+    NSString* notes = _notesView.text;
+    
+    NSDate *currentTime = [NSDate date];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+    NSString *resultString = [dateFormatter stringFromDate: currentTime];
+    
+    //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
+    DLDataPointRowObject *newObject = [[DLDataPointRowObject alloc]
+                                        initWithName:dataName
+                                               value:dataValue
+                                                time:resultString
+                                               notes:notes];
+    
+    [newObject save];
+    [_delegate didCreateNewObject:newObject];
+  } else if (_didEdit) {
+    // Save changes to database
+    NSString* dataName = _setName;
+    //NSInteger row = [_typeDataView selectedRowInComponent:0];
+    NSString* dataValue =  _dataName.text;
+    NSString* notes = _notesView.text;
+    
+    NSDate *currentTime = [NSDate date];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+    NSString *resultString = [dateFormatter stringFromDate: currentTime];
+    
+    //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
+    DLDataPointRowObject *newObject = [[DLDataPointRowObject alloc]
+                                       initWithName:dataName
+                                       value:dataValue
+                                       time:resultString
+                                       notes:notes];
+    
+    [[DLDatabaseManager getSharedInstance] updateOldPoint: [_currCell dataPoint] newPoint: newObject];
+    
+    // Save changes to table
+  }
   
   [self.navigationController popViewControllerAnimated:YES];
 }
@@ -207,7 +269,8 @@
   // Dispose of any resources that can be recreated.
 }
 
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component {
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component
+{
   // Handle the selection
 }
 
@@ -254,6 +317,16 @@
   int sectionWidth = 300;
   
   return sectionWidth;
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField           // became first responder
+{
+  _didEdit = YES;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField              // called when 'return' key pressed. return NO to ignore.
+{
+  return YES;
 }
 
 @end
