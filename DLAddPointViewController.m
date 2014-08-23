@@ -87,7 +87,7 @@
   _dataName.keyboardType = UIKeyboardTypeDefault;
   
   if (!_isAdd) {
-    _dataName.text = [_currCell getTitle];
+    _dataName.text = _currCell.title;
   }
   
   UILabel *typeDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 200, 300, 50)];
@@ -126,7 +126,7 @@
   [self.view addSubview:_notesView];
   
   if (!_isAdd) {
-    _notesView.text = [_currCell getNotes];
+    _notesView.text = _currCell.notes;
   }
   
   UIButton *createButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -256,6 +256,8 @@
                                        notes:notes];
     
     [[DLDatabaseManager getSharedInstance] updateOldPoint: [_currCell dataPoint] newPoint: newObject];
+    
+    [_delegate didEditObject:_currCell withData:newObject];
     
     // Save changes to table
   }

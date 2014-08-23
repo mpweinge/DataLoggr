@@ -10,10 +10,6 @@
 #import "NSString+FontAwesome.h"
 
 @interface DLHomeTableViewCell ()
-{
-  NSString *_caption;
-  NSString *_type;
-}
 @end
 
 @implementation DLHomeTableViewCell
@@ -42,7 +38,7 @@
       advanceIcon.text = [NSString fontAwesomeIconStringForEnum:FAAngleRight];
       [self addSubview:advanceIcon];
       
-      _caption = caption;
+      _title = caption;
       _type = type;
     }
 
@@ -62,16 +58,6 @@
 - (void)awakeFromNib
 {
     // Initialization code
-}
-
-- (NSString *) getTitle
-{
-  return _caption;
-}
-
-- (NSString *)getType
-{
-  return _type;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

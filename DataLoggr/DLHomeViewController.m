@@ -112,7 +112,7 @@
 
 - (void) CellViewTouched :(DLDataViewCell *) cell
 {
-    DLDataViewController *newDataController = [[DLDataViewController alloc]initWithDataValue: [cell getTitle] dataType: [cell getType]];
+    DLDataViewController *newDataController = [[DLDataViewController alloc]initWithDataValue: cell.title dataType: cell.type];
   
   [self.navigationController pushViewController:newDataController animated:YES];
 }

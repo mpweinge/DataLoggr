@@ -193,6 +193,23 @@
   [dataValues addObject:newObject];
 }
 
+- (void) didEditObject:(DLDataViewCell *)_currCell withData:(DLDataPointRowObject *)newObject
+{
+  newData = YES;
+  
+  UITableView *tableView = (UITableView *)self.view; // Or however you get your table view
+  NSArray *paths = [tableView indexPathsForVisibleRows];
+  
+  for (NSIndexPath *path in paths) {
+    if ([tableView cellForRowAtIndexPath:path] == _currCell)
+    {
+      _currCell.title = newObject.DataValue;
+      _currCell.notes = newObject.DataNotes;
+      _currCell.time = newObject.DataTime;
+    }
+  }
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

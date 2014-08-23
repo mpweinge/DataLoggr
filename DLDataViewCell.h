@@ -20,13 +20,12 @@
 
 @interface DLDataViewCell : UITableViewCell
 
-@property id <DLDataViewCellDelegate> delegate;
+@property(nonatomic, readwrite) id <DLDataViewCellDelegate> delegate;
 
-- (NSString *)getTitle;
-
-- (NSString *)getType;
-
-- (NSString *)getNotes;
+@property(nonatomic, readwrite) NSString * title;
+@property(nonatomic, readwrite) NSString * type;
+@property(nonatomic, readwrite) NSString * notes;
+@property(nonatomic, readwrite) NSString * time;
 
 -(DLDataPointRowObject *) dataPoint;
 

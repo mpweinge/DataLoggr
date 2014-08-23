@@ -22,9 +22,10 @@
 
 @property id <DLHomeTableViewCellDelegate> delegate;
 
-- (NSString *)getTitle;
-
-- (NSString *)getType;
+@property(nonatomic, readwrite) NSString * title;
+@property(nonatomic, readwrite) NSString * type;
+@property(nonatomic, readwrite) NSString * notes;
+@property(nonatomic, readwrite) NSString * time;
 
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier

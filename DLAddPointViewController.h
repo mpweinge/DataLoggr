@@ -14,6 +14,7 @@
 @protocol DLAddPointViewControllerDelegate
 
 - (void) didCreateNewObject: (DLDataPointRowObject *) newObject;
+- (void) didEditObject:(DLDataViewCell *)_currCell withData:(DLDataPointRowObject *)newObject;
 
 @end
 

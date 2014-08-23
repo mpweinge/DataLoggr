@@ -10,11 +10,9 @@
 #import "NSString+FontAwesome.h"
 
 @interface DLDataViewCell() {
-  NSString *_title;
-  NSString *_type;
-  NSString *_notes;
-  NSString *_time;
   DLDataPointRowObject *_dataObject;
+  UILabel *_dataValue;
+  UILabel *_dateValue;
 }
 @end
 
@@ -31,15 +29,15 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-      UILabel * date = [[UILabel alloc] initWithFrame:CGRectMake(50, 13, 100, 22)];
-      date.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-      date.text = time;
-      [self addSubview:date];
+      _dateValue = [[UILabel alloc] initWithFrame:CGRectMake(50, 13, 100, 22)];
+      _dateValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+      _dateValue.text = time;
+      [self addSubview:_dateValue];
       
-      UILabel * dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
-      dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-      dataValue.text = value;
-      [self addSubview:dataValue];
+      _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
+      _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+      _dataValue.text = value;
+      [self addSubview:_dataValue];
       
       /*UILabel * chartName = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
       chartName.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
@@ -70,21 +68,6 @@
   [self.delegate CellViewTouched:self];
 }
 
--(NSString *)getTitle
-{
-  return _title;
-}
-
--(NSString *)getType
-{
-  return _type;
-}
-
-- (NSString *)getNotes
-{
-  return _notes;
-}
-
 -(DLDataPointRowObject *) dataPoint
 {
   return _dataObject;
@@ -93,6 +76,36 @@
 - (void)awakeFromNib
 {
     // Initialization code
+}
+
+- (void) updateCellText
+{
+  _dataValue.text = _title;
+  _dateValue.text = _time;
+}
+
+- (void) setTitle:(NSString *)title
+{
+  _title = title;
+  [self updateCellText];
+}
+
+- (void) setType:(NSString *)type
+{
+  _type = type;
+  [self updateCellText];
+}
+
+- (void) setNotes:(NSString *)notes
+{
+  _notes = notes;
+  [self updateCellText];
+}
+
+- (void) setTime:(NSString *)time
+{
+  _time = time;
+  [self updateCellText];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
