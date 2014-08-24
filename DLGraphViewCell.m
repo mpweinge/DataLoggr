@@ -16,7 +16,10 @@
     DLDatePlot *_datePlot;
 }
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
+- (id)initWithStyle:(UITableViewCellStyle)style
+    reuseIdentifier:(NSString *)reuseIdentifier
+         dataPoints:(NSMutableArray *)dataPoints
+             isTime:(BOOL) isTime
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
@@ -24,7 +27,7 @@
         CPTGraphHostingView *hostView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(5, 0, 300, 300)];
         _datePlot = [[DLDatePlot alloc] init];
         _datePlot.hostView = hostView;
-        [_datePlot generateData];
+        [_datePlot generateData: dataPoints isTime:isTime];
         [_datePlot renderInLayer:hostView withTheme:[CPTTheme themeNamed: kCPTDarkGradientTheme ] animated:YES];
         
         [self addSubview:hostView];

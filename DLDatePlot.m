@@ -7,8 +7,14 @@
 //
 
 #import "DLDatePlot.h"
+#import "DLDataPointRowObject.h"
 
 @implementation DLDatePlot
+{
+  NSDate *_minDate;
+  NSDate *_maxDate;
+  float _maxY;
+}
 
 -(id)init
 {
@@ -20,26 +26,100 @@
     return self;
 }
 
--(void)generateData
+-(void)generateData : (NSMutableArray *)dataPoints isTime: (BOOL)_isTimeData
 {
-    if ( !plotData ) {
-        const NSTimeInterval oneDay = 24 * 60 * 60;
-        
-        // Add some data
-        NSMutableArray *newData = [NSMutableArray array];
-        
-        for ( NSUInteger i = 0; i < 5; i++ ) {
-            NSTimeInterval x = oneDay * i;
-            NSNumber *y      = @(1.2 * rand() / (double)RAND_MAX + 1.2);
-            
-            [newData addObject:
-             @{ @(CPTScatterPlotFieldX): @(x),
-                @(CPTScatterPlotFieldY): y }
-             ];
-            
-            plotData = newData;
-        }
+  
+  //Find minimum (start) date
+  _minDate = nil;
+  
+  //Find maximum (end) date
+  _maxDate = nil;
+  
+  _maxY = 0;
+  
+  for (DLDataPointRowObject* currObj in dataPoints)
+  {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    // this is imporant - we set our input date format to match our input string
+    // if format doesn't match you'll get nil from your string, so be careful
+    [dateFormatter setDateFormat:@"MM/dd/yy"];
+    NSDate *dateFromString = [[NSDate alloc] init];
+    dateFromString = [dateFormatter dateFromString:currObj.DataTime];
+    
+    if(!_minDate) {
+      _minDate = dateFromString;
     }
+    
+    if (!_maxDate) {
+      _maxDate = dateFromString;
+    }
+    
+    if ([dateFromString earlierDate:_minDate] == dateFromString) {
+      _minDate = dateFromString;
+    }
+    
+    if ([dateFromString laterDate:_maxDate] == dateFromString) {
+      _maxDate = dateFromString;
+    }
+  }
+  
+  //Scale linearly
+        //const NSTimeInterval oneDay = 24 * 60 * 60;
+  
+  NSMutableArray *newData = [NSMutableArray array];
+  
+  int idx = 0;
+      
+  for (DLDataPointRowObject* currObj in dataPoints)
+  {
+    NSString * time = currObj.DataTime;
+    NSString * value = currObj.DataValue;
+    
+    idx++;
+  
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    // this is imporant - we set our input date format to match our input string
+    // if format doesn't match you'll get nil from your string, so be careful
+    [dateFormatter setDateFormat:@"dd/MM/yyyy"];
+    NSDate *dateFromString = [[NSDate alloc] init];
+    dateFromString = [dateFormatter dateFromString:time];
+    
+    NSNumber *y;
+    NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+    [f setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    if (_isTimeData)
+    {
+      NSString *minutes = [value substringWithRange:NSMakeRange(0, 2)];
+      NSString *seconds = [value substringWithRange:NSMakeRange(3, 2)];
+      NSString *milliSeconds = [value substringWithRange:NSMakeRange(6, 2)];
+      
+      NSNumber *iMinutes = [f numberFromString:minutes];
+      NSNumber *iSeconds = [f numberFromString:seconds];
+      NSNumber *iMilliSeconds = [f numberFromString:milliSeconds];
+      
+      y = @([iMinutes intValue] * 60 + [iSeconds intValue] + [iMilliSeconds floatValue] / 100);
+      
+      
+    } else {
+      y = [f numberFromString:value];
+    }
+    
+    if ([y floatValue] > _maxY) {
+      _maxY = [y floatValue];
+    }
+    
+    NSTimeInterval dateDiff = [dateFromString timeIntervalSinceDate:_minDate];
+    dateDiff += (24 * 60 * 60) * idx;
+    NSNumber *x = [NSNumber numberWithFloat:dateDiff];
+    
+    [newData addObject:
+     @{ @(CPTScatterPlotFieldX): x,
+        @(CPTScatterPlotFieldY): y }
+     ];
+  }
+  
+  plotData = newData;
 }
 
 -(void)renderInLayer:(CPTGraphHostingView *)layerHostingView withTheme:(CPTTheme *)theme animated:(BOOL)animated
@@ -47,15 +127,8 @@
     // If you make sure your dates are calculated at noon, you shouldn't have to
     // worry about daylight savings. If you use midnight, you will have to adjust
     // for daylight savings time.
-    NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
-    
-    [dateComponents setMonth:10];
-    [dateComponents setDay:29];
-    [dateComponents setYear:2009];
-    [dateComponents setHour:12];
-    [dateComponents setMinute:0];
-    [dateComponents setSecond:0];
-    
+    NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:_minDate ];
+  
 #ifdef NSCalendarIdentifierGregorian
     NSCalendar *gregorian = [[NSCalendar alloc]
                              initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
@@ -106,18 +179,26 @@
     
     [self setTitleDefaultsForGraph:graph withBounds:bounds];
     [self setPaddingDefaultsForGraph:graph withBounds:bounds];*/
-    
+  
+    NSTimeInterval dateDiff = [_maxDate timeIntervalSinceDate:_minDate];
+    int dayDiff = dateDiff / oneDay;
+    if (dayDiff < 1) {
+        dayDiff = 1;
+    }
+  
     // Setup scatter plot space
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)graph.defaultPlotSpace;
     NSTimeInterval xLow       = 0.0;
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(oneDay * 5.0)];
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(1.0) length:CPTDecimalFromDouble(3.0)];
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(dayDiff * oneDay * 5)];
+  
+  NSTimeInterval yLow = -1.0;
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(yLow) length:CPTDecimalFromFloat(5.0)];
     
     // Axes
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)graph.axisSet;
     CPTXYAxis *x          = axisSet.xAxis;
     x.majorIntervalLength         = CPTDecimalFromFloat(oneDay);
-    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(2.0);
+    x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(0.0);
     x.minorTicksPerInterval       = 0;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateStyle = kCFDateFormatterShortStyle;
