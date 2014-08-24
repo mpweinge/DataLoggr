@@ -11,7 +11,7 @@
 #import "DLDataViewCell.h"
 #import "DLDatabaseManager.h"
 
-@interface DLAddPointViewController () < UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate >
+@interface DLAddPointViewController () < UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UITextViewDelegate >
 {
   UITextField* _dataName;
   UIPickerView* _typeDataView;
@@ -20,14 +20,15 @@
   NSString* _setName;
   NSString *_typeName;
   NSArray * dataTypeOptions;
-  UILabel *_timerLabel;
   UIButton *_startButton;
+  UIButton *_resetButton;
   NSDate *_start;
   BOOL _isAdd;
   BOOL _didEdit;
   BOOL _timerStarted;
   NSTimer *_timer;
   DLDataViewCell *_currCell;
+  NSTimeInterval currPausedTime;
 }
 
 @end
@@ -51,6 +52,7 @@
     _timerStarted = FALSE;
     _currCell = currCell;
     _didEdit = NO;
+    currPausedTime = 0;
   }
   
   return self;
@@ -70,9 +72,9 @@
 - (void)viewDidLoad
 {
   [super viewDidLoad];
-  // Do any additional setup after loading the view.
-  //Need some text fields and an icon picker
   
+  // Do any additional setup after loading the view.
+  // Need some text fields and an icon picker
   _didEdit = NO;
   
   UILabel *dataNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 140, 300, 50)];
@@ -88,7 +90,14 @@
   
   if (!_isAdd) {
     _dataName.text = _currCell.title;
+  } else if ([_typeName isEqualToString:@"Time"]) {
+    _dataName.text = @"00:00.00";
   }
+  
+  if ([_typeName isEqualToString:@"Time"]) {
+    _dataName.enabled = NO;
+  }
+
   
   UILabel *typeDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 200, 300, 50)];
   typeDataLabel.text = @"Data Type: ";
@@ -122,6 +131,8 @@
   
   _notesView = [[UITextView alloc] initWithFrame:frameRect];
   _notesView.backgroundColor = [UIColor clearColor];
+  _notesView.delegate = self;
+  _notesView.returnKeyType = UIReturnKeyDone;
   [self.view addSubview:_notes];
   [self.view addSubview:_notesView];
   
@@ -157,11 +168,6 @@
 
 - (void) setupTimer
 {
-  _timerLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 60, 300, 50)];
-  _timerLabel.text = @"00:00.00";
-  _timerLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:28.0];
-  [self.view addSubview:_timerLabel];
-  
   //Add buttons for start, stop
   _startButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
   [_startButton setTitle:@"Start" forState:UIControlStateNormal];
@@ -169,13 +175,43 @@
   _startButton.center = CGPointMake(100, 400);
   [_startButton addTarget:self action:@selector(StartTimerClicked:) forControlEvents:UIControlEventTouchUpInside];
   
+  _resetButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  [_resetButton setTitle:@"Reset" forState:UIControlStateNormal];
+  [_resetButton sizeToFit];
+  _resetButton.center = CGPointMake(250, 400);
+  [_resetButton addTarget:self action:@selector(ResetTimerClicked:) forControlEvents:UIControlEventTouchUpInside];
+  
+  _start = nil;
+  
   [self.view addSubview:_startButton];
+  [self.view addSubview:_resetButton];
+}
+
+- (void) ResetTimerClicked: (UIButton *)resetButton
+{
+  //Invalidate the current timer
+  if (_timer)
+  {
+    [_timer invalidate];
+    _timer = nil;
+    [_startButton setTitle:@"Start" forState:UIControlStateNormal];
+    _timerStarted = false;
+    //Reset the clock
+    _start = nil;
+    _dataName.text = @"00:00.00";
+  }
+  currPausedTime = 0;
+  _dataName.text = @"00:00.00";
+  _didEdit = YES;
 }
 
 - (void) StartTimerClicked: (UIButton *)startButton
 {
   if (!_timerStarted) {
-      _start = [NSDate date];
+    _didEdit = YES;
+    if (!_start) {
+        _start = [NSDate date];
+    }
       _timer = [NSTimer scheduledTimerWithTimeInterval:0.01
                                              target:self
                                            selector:@selector(updateTime)
@@ -184,6 +220,8 @@
     
     [_startButton setTitle:@"Stop" forState:UIControlStateNormal];
   } else {
+    currPausedTime = [_start timeIntervalSinceNow] * -1 + currPausedTime;
+    _start = nil;
     [_timer invalidate];
     _timer = nil;
     [_startButton setTitle:@"Start" forState:UIControlStateNormal];
@@ -195,6 +233,7 @@
 {
   NSTimeInterval timeInterval = [_start timeIntervalSinceNow];
   timeInterval *= -1;
+  timeInterval += currPausedTime;;
   
   int numMinutes = timeInterval / 60;
   int numMinutesTen = numMinutes / 10;
@@ -209,7 +248,7 @@
   numMinutes -= numMinutesTen * 10;
   numSeconds -= numSecondsTen * 10;
   
-  _timerLabel.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+  _dataName.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
 }
 
 - (void) CreateClicked: (UIButton *)createButton
@@ -327,6 +366,31 @@
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField              // called when 'return' key pressed. return NO to ignore.
+{
+  return YES;
+}
+
+- (BOOL)textViewShouldEndEditing:(UITextView *)textView
+{
+  return YES;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+  
+  if([text isEqualToString:@"\n"]) {
+    [textView resignFirstResponder];
+    return NO;
+  }
+  
+  return YES;
+}
+
+- (void)textViewDidBeginEditing:(UITextField *)textField           // became first responder
+{
+  _didEdit = YES;
+}
+
+- (BOOL)textViewShouldReturn:(UITextView *)textView;
 {
   return YES;
 }
