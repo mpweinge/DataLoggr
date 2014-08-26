@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A67492A219AADE28003E7C14 /* DLCircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = A67492A119AADE28003E7C14 /* DLCircleView.m */; };
+		A67492A519AAF98B003E7C14 /* DLBasicButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A67492A419AAF98B003E7C14 /* DLBasicButton.m */; };
+		A67492A819AAFE59003E7C14 /* UIButton+Bootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = A67492A719AAFE59003E7C14 /* UIButton+Bootstrap.m */; };
 		A6D5BE3C19A591F60009FAF3 /* DLDataIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D5BE3B19A591F60009FAF3 /* DLDataIconView.m */; };
 		A6D5BE8619A6C7920009FAF3 /* DLDatePlot.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D5BE8519A6C7920009FAF3 /* DLDatePlot.m */; };
 		A6D5BE8819A6CE430009FAF3 /* libCorePlot-CocoaTouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6D5BE8719A6CE430009FAF3 /* libCorePlot-CocoaTouch.a */; };
@@ -54,6 +57,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A67492A019AADE28003E7C14 /* DLCircleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLCircleView.h; sourceTree = "<group>"; };
+		A67492A119AADE28003E7C14 /* DLCircleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLCircleView.m; sourceTree = "<group>"; };
+		A67492A319AAF98B003E7C14 /* DLBasicButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLBasicButton.h; sourceTree = "<group>"; };
+		A67492A419AAF98B003E7C14 /* DLBasicButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLBasicButton.m; sourceTree = "<group>"; };
+		A67492A619AAFE59003E7C14 /* UIButton+Bootstrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIButton+Bootstrap.h"; sourceTree = "<group>"; };
+		A67492A719AAFE59003E7C14 /* UIButton+Bootstrap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Bootstrap.m"; sourceTree = "<group>"; };
 		A6D5BE3A19A591F60009FAF3 /* DLDataIconView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDataIconView.h; sourceTree = "<group>"; };
 		A6D5BE3B19A591F60009FAF3 /* DLDataIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLDataIconView.m; sourceTree = "<group>"; };
 		A6D5BE8419A6C7920009FAF3 /* DLDatePlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDatePlot.h; sourceTree = "<group>"; };
@@ -156,6 +165,10 @@
 				A6D5BE3B19A591F60009FAF3 /* DLDataIconView.m */,
 				FF6209DA1973C39C0032348F /* DLNewDataView.h */,
 				FF6209DB1973C39C0032348F /* DLNewDataView.m */,
+				A67492A019AADE28003E7C14 /* DLCircleView.h */,
+				A67492A119AADE28003E7C14 /* DLCircleView.m */,
+				A67492A319AAF98B003E7C14 /* DLBasicButton.h */,
+				A67492A419AAF98B003E7C14 /* DLBasicButton.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -249,6 +262,8 @@
 		FFA6547B1971D03E002BA286 /* FontAwesome */ = {
 			isa = PBXGroup;
 			children = (
+				A67492A619AAFE59003E7C14 /* UIButton+Bootstrap.h */,
+				A67492A719AAFE59003E7C14 /* UIButton+Bootstrap.m */,
 				FFA654861971D1DE002BA286 /* FAImageView.h */,
 				FFA654871971D1DE002BA286 /* FAImageView.m */,
 				FFA654881971D1DE002BA286 /* NSString+FontAwesome.h */,
@@ -407,11 +422,14 @@
 				A6D5BE8D19A6D0BF0009FAF3 /* DLGraphViewCell.m in Sources */,
 				FFA6543A196E7D8D002BA286 /* DLAppDelegate.m in Sources */,
 				FFA6546E196F908F002BA286 /* DLDatabaseManager.m in Sources */,
+				A67492A219AADE28003E7C14 /* DLCircleView.m in Sources */,
+				A67492A519AAF98B003E7C14 /* DLBasicButton.m in Sources */,
 				FF6209D81973C24F0032348F /* DLNewDataViewController.m in Sources */,
 				FFA6548C1971D1DE002BA286 /* FAImageView.m in Sources */,
 				FFA65495197350FE002BA286 /* DLDataViewCell.m in Sources */,
 				FFA65436196E7D8D002BA286 /* main.m in Sources */,
 				FFBD989A197B9299005088D7 /* DLAddPointViewController.m in Sources */,
+				A67492A819AAFE59003E7C14 /* UIButton+Bootstrap.m in Sources */,
 				FFA6547A1970840C002BA286 /* DLNewDataButton.m in Sources */,
 				FF6209DC1973C39C0032348F /* DLNewDataView.m in Sources */,
 			);

@@ -19,6 +19,16 @@
   UINavigationController* navigationController = [[UINavigationController alloc]
                           initWithRootViewController:myViewController];
   
+  navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0.25 green:0.25 blue:1 alpha:0.8];
+  navigationController.navigationBar.translucent = NO;
+  
+  [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+  
+  [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
+                                                         [UIFont fontWithName:@"HelveticaNeue-CondensedBlack" size:21.0], NSFontAttributeName, [UIColor whiteColor], NSForegroundColorAttributeName, nil]];
+  
+  [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+  
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];

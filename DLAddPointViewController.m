@@ -148,6 +148,9 @@
     [createButton setTitle:@"OK" forState:UIControlStateNormal];
   }
   [createButton sizeToFit];
+  CGRect createFrame = createButton.frame;
+  createFrame.size.width += 30;
+  createButton.frame = createFrame;
   createButton.center = CGPointMake(160, 450);
   [createButton addTarget:self action:@selector(CreateClicked:) forControlEvents:UIControlEventTouchUpInside];
   

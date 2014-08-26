@@ -200,6 +200,15 @@
         case FATrophy:
             result = @"fa-trophy";
             break;
+        case FACutlery:
+          result = @"fa-cutlery";
+          break;
+        case FAHeadphones:
+          result = @"fa-headphones";
+          break;
+        default:
+          assert(0);
+          break;
     }
     return result;
 }
@@ -259,6 +268,9 @@
         tmp[@"fa-sun-o"] = @(FASunO);
         tmp[@"fa-umbrella"] = @(FAUmbrella);
         tmp[@"fa-trophy"] = @(FATrophy);
+        tmp[@"fa-cutlery"] = @(FACutlery);
+        tmp[@"fa-headphones"] = @(FAHeadphones);
+      
         
 		enumDictionary = tmp;
 	});
