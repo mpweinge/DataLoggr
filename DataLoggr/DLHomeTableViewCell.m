@@ -8,6 +8,7 @@
 
 #import "DLHomeTableViewCell.h"
 #import "NSString+FontAwesome.h"
+//#import "UIHomeGestureRecognizer.h"
 
 @interface DLHomeTableViewCell ()
 @end
@@ -23,18 +24,24 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-      UILabel* chartIcon=[[UILabel alloc] initWithFrame:CGRectMake(20, 13, 100, 22)];
-      chartIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
+      UILabel* chartIcon=[[UILabel alloc] initWithFrame:CGRectMake(20, 0, 100, 42)];
+      chartIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:28];
       chartIcon.text = [NSString fontAwesomeIconStringForEnum:icon];
       [self addSubview:chartIcon];
       
-      UILabel * chartName = [[UILabel alloc] initWithFrame:CGRectMake(50, 13, 100, 22)];
+      UILabel * chartName = [[UILabel alloc] initWithFrame:CGRectMake(60, 1, 300, 22)];
       chartName.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
       chartName.text = caption;
       [self addSubview:chartName];
       
+      UILabel * lastModifiedTime = [[UILabel alloc] initWithFrame:CGRectMake(70, 21, 300, 22)];
+      lastModifiedTime.font = [UIFont fontWithName:@"HelveticaNeue-Italic" size:10.0];
+      lastModifiedTime.text = @"Last modified: FakeDateHere";
+      [self addSubview:lastModifiedTime];
+      
       UILabel* advanceIcon=[[UILabel alloc] initWithFrame:CGRectMake(300, 13, 100, 22)];
       advanceIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
+      advanceIcon.textColor = [UIColor blueColor];
       advanceIcon.text = [NSString fontAwesomeIconStringForEnum:FAAngleRight];
       [self addSubview:advanceIcon];
       
@@ -47,7 +54,13 @@
   touchRecognizer.numberOfTapsRequired = 1;
   
   [self addGestureRecognizer:touchRecognizer];
+  
   return self;
+}
+
+-(void) holdOnCell : (UIGestureRecognizer *)gestureRecognizer
+{
+  self.backgroundColor = [UIColor lightGrayColor];
 }
 
 -(void) tappedCell : (UIGestureRecognizer *)gestureRecognizer

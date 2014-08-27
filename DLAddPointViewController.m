@@ -11,9 +11,14 @@
 #import "DLDataViewCell.h"
 #import "DLDatabaseManager.h"
 
+static const int kValueOffsetY = 25;
+static const int kNotesOffsetY = 200;
+static const int kButtonOffsetY = 350;
+
 @interface DLAddPointViewController () < UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UITextViewDelegate >
 {
-  UITextField* _dataName;
+  //UITextField* _dataName;
+  UIView* _dataName;
   UIPickerView* _typeDataView;
   UITextField* _notes;
   UITextView* _notesView;
@@ -53,6 +58,14 @@
     _currCell = currCell;
     _didEdit = NO;
     currPausedTime = 0;
+    
+    if (_isAdd) {
+      self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(CancelClicked)];
+      
+      self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(CreateClicked)];
+    } else {
+      self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(DoneClicked)];
+    }
   }
   
   return self;
@@ -77,48 +90,51 @@
   // Need some text fields and an icon picker
   _didEdit = NO;
   
-  UILabel *dataNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 140, 300, 50)];
-  dataNameLabel.text = @"Data Name: ";
-  dataNameLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+  //UILabel *dataNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, kValueOffsetY, 300, 50)];
+  //dataNameLabel.text = @"Data Name: ";
+  //dataNameLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
   
-  _dataName = [[UITextField alloc] initWithFrame:CGRectMake(100, 140, 200, 50)];
+  /*_dataName = [[UITextField alloc] initWithFrame:CGRectMake(100, kValueOffsetY, 200, 50)];
   _dataName.borderStyle = UITextBorderStyleRoundedRect;
   _dataName.returnKeyType = UIReturnKeyDone;
   _dataName.autocorrectionType = UITextAutocorrectionTypeNo;
   _dataName.delegate = self;
-  _dataName.keyboardType = UIKeyboardTypeDefault;
+  _dataName.keyboardType = UIKeyboardTypeDefault;*/
+  _dataName = [[UILabel alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 300, 50)];
+  ((UILabel *)_dataName).textColor = [UIColor blackColor];
+  ((UILabel *)_dataName).font = [UIFont fontWithName:@"HelveticaNeue-Light" size:60.0];
   
   if (!_isAdd) {
-    _dataName.text = _currCell.title;
+    ((UILabel *)_dataName).text = _currCell.title;
   } else if ([_typeName isEqualToString:@"Time"]) {
-    _dataName.text = @"00:00.00";
+    ((UILabel *)_dataName).text = @"00:00.00";
   }
   
-  if ([_typeName isEqualToString:@"Time"]) {
-    _dataName.enabled = NO;
-  }
+ /* if ([_typeName isEqualToString:@"Time"]) {
+    ((UILabel *)_dataName).enabled = NO;
+  }*/
 
   
-  UILabel *typeDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 200, 300, 50)];
+  /*UILabel *typeDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 250, 300, 50)];
   typeDataLabel.text = @"Data Type: ";
   typeDataLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
   
-  _typeDataView = [[UIPickerView alloc] initWithFrame:CGRectMake(60, 140, 300, 50)];
+  _typeDataView = [[UIPickerView alloc] initWithFrame:CGRectMake(60, 90, 300, 50)];
   _typeDataView.dataSource = self;
   _typeDataView.delegate = self;
-  _typeDataView.showsSelectionIndicator = YES;
+  _typeDataView.showsSelectionIndicator = YES;*/
   
   /*if (!_isAdd) {
     _typeDataView.text = [_currCell getTitle];
   }*/
   
-  [self.view addSubview:_typeDataView];
+  //[self.view addSubview:_typeDataView];
   
-  UILabel *iconDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 310, 300, 50)];
+  UILabel *iconDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, kNotesOffsetY, 300, 50)];
   iconDataLabel.text = @"Notes: ";
   iconDataLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
   
-  _notes = [[UITextField alloc] initWithFrame:CGRectMake(100, 310, 200, 50)];
+  _notes = [[UITextField alloc] initWithFrame:CGRectMake(100, kNotesOffsetY, 200, 50)];
   _notes.borderStyle = UITextBorderStyleRoundedRect;
   _notes.returnKeyType = UIReturnKeyDone;
   _notes.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -140,7 +156,7 @@
     _notesView.text = _currCell.notes;
   }
   
-  UIButton *createButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  /*UIButton *createButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
   
   if (_isAdd) {
     [createButton setTitle:@"Create" forState:UIControlStateNormal];
@@ -151,12 +167,12 @@
   CGRect createFrame = createButton.frame;
   createFrame.size.width += 30;
   createButton.frame = createFrame;
-  createButton.center = CGPointMake(160, 450);
+  createButton.center = CGPointMake(160, 400);
   [createButton addTarget:self action:@selector(CreateClicked:) forControlEvents:UIControlEventTouchUpInside];
   
-  [self.view addSubview:createButton];
-  [self.view addSubview:dataNameLabel];
-  [self.view addSubview:typeDataLabel];
+  [self.view addSubview:createButton];*/
+  //[self.view addSubview:dataNameLabel];
+ // [self.view addSubview:typeDataLabel];
   [self.view addSubview:iconDataLabel];
   [self.view addSubview:_dataName];
   
@@ -175,13 +191,13 @@
   _startButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
   [_startButton setTitle:@"Start" forState:UIControlStateNormal];
   [_startButton sizeToFit];
-  _startButton.center = CGPointMake(100, 400);
+  _startButton.center = CGPointMake(100, kButtonOffsetY);
   [_startButton addTarget:self action:@selector(StartTimerClicked:) forControlEvents:UIControlEventTouchUpInside];
   
   _resetButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
   [_resetButton setTitle:@"Reset" forState:UIControlStateNormal];
   [_resetButton sizeToFit];
-  _resetButton.center = CGPointMake(250, 400);
+  _resetButton.center = CGPointMake(250, kButtonOffsetY);
   [_resetButton addTarget:self action:@selector(ResetTimerClicked:) forControlEvents:UIControlEventTouchUpInside];
   
   _start = nil;
@@ -201,10 +217,10 @@
     _timerStarted = false;
     //Reset the clock
     _start = nil;
-    _dataName.text = @"00:00.00";
+    ((UILabel *)_dataName).text = @"00:00.00";
   }
   currPausedTime = 0;
-  _dataName.text = @"00:00.00";
+  ((UILabel *)_dataName).text = @"00:00.00";
   _didEdit = YES;
 }
 
@@ -251,17 +267,22 @@
   numMinutes -= numMinutesTen * 10;
   numSeconds -= numSecondsTen * 10;
   
-  _dataName.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+  ((UILabel *)_dataName).text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
 }
 
-- (void) CreateClicked: (UIButton *)createButton
+- (void) CancelClicked
+{
+  [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void) CreateClicked
 {
   if (_isAdd)
   {
     NSLog(@"Create Clicked");
     NSString* dataName = _setName;
     //NSInteger row = [_typeDataView selectedRowInComponent:0];
-    NSString* dataValue =  _dataName.text;
+    NSString* dataValue =  ((UILabel *)_dataName).text;
     NSString* notes = _notesView.text;
     
     NSDate *currentTime = [NSDate date];
@@ -282,7 +303,7 @@
     // Save changes to database
     NSString* dataName = _setName;
     //NSInteger row = [_typeDataView selectedRowInComponent:0];
-    NSString* dataValue =  _dataName.text;
+    NSString* dataValue =  ((UILabel *)_dataName).text;
     NSString* notes = _notesView.text;
     
     NSDate *currentTime = [NSDate date];

@@ -24,11 +24,11 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
-        CPTGraphHostingView *hostView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(5, 0, 300, 300)];
+        CPTGraphHostingView *hostView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, 0, 360, 310)];
         _datePlot = [[DLDatePlot alloc] init];
         _datePlot.hostView = hostView;
         [_datePlot generateData: dataPoints isTime:isTime];
-        [_datePlot renderInLayer:hostView withTheme:[CPTTheme themeNamed: kCPTDarkGradientTheme ] animated:YES];
+        [_datePlot renderInLayer:hostView withTheme:[CPTTheme themeNamed: kCPTPlainWhiteTheme ] animated:YES];
         
         [self addSubview:hostView];
     }

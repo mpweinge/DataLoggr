@@ -53,6 +53,8 @@
   
   invalidatedData = YES;
   newData = NO;
+  
+  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc ] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(CreateClicked:)];
   //NSLog(ret);
   
   return self;

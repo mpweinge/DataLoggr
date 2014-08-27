@@ -297,6 +297,7 @@ static const size_t kCPTNumberOfLayers = 6; // number of primary layers to arran
 
     CPTAxisSet *myAxisSet = self.axisSet;
     BOOL axisSetHasBorder = (myAxisSet.borderLineStyle != nil);
+    axisSetHasBorder = YES;
 
     CALayer *superlayer   = self.superlayer;
     CGRect sublayerBounds = [self convertRect:superlayer.bounds fromLayer:superlayer];

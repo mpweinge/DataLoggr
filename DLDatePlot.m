@@ -80,8 +80,9 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     // this is imporant - we set our input date format to match our input string
     // if format doesn't match you'll get nil from your string, so be careful
-    [dateFormatter setDateFormat:@"dd/MM/yyyy"];
+    [dateFormatter setDateFormat:@"MM/dd/yy"];
     NSDate *dateFromString = [[NSDate alloc] init];
+   // time = @"08/26/14";
     dateFromString = [dateFormatter dateFromString:time];
     
     NSNumber *y;
@@ -110,7 +111,8 @@
     }
     
     NSTimeInterval dateDiff = [dateFromString timeIntervalSinceDate:_minDate];
-    dateDiff += (24 * 60 * 60) * idx;
+    //dateDiff *= -1;
+    //dateDiff += (24 * 60 * 60) * idx;
     NSNumber *x = [NSNumber numberWithFloat:dateDiff];
     
     [newData addObject:
@@ -147,18 +149,20 @@
 #endif
     
     CPTGraph *graph = [[CPTXYGraph alloc] initWithFrame:bounds];
-    
+
     layerHostingView.hostedGraph = graph;
+  
     [graph applyTheme:theme];
+    graph.plotAreaFrame.borderLineStyle = nil;
     
-    graph.title = @"TEST";
+    //graph.title = @"TEST";
     CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
     textStyle.color                = [CPTColor grayColor];
     textStyle.fontName             = @"Helvetica-Bold";
     textStyle.fontSize             = round( bounds.size.height / CPTFloat(20.0) );
-    graph.titleTextStyle           = textStyle;
-    graph.titleDisplacement        = CPTPointMake( 0.0, textStyle.fontSize * CPTFloat(1.5) );
-    graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
+   // graph.titleTextStyle           = textStyle;
+   // graph.titleDisplacement        = CPTPointMake( 0.0, textStyle.fontSize * CPTFloat(1.5) );
+   // graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
     
     CGFloat boundsPadding = round( bounds.size.width / CPTFloat(20.0) ); // Ensure that padding falls on an integral pixel
     
@@ -188,11 +192,11 @@
   
     // Setup scatter plot space
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)graph.defaultPlotSpace;
-    NSTimeInterval xLow       = 0.0;
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble(dayDiff * oneDay * 5)];
+    NSTimeInterval xLow       = -oneDay;
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( (dayDiff + 2) * oneDay )];
   
-  NSTimeInterval yLow = -1.0;
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(yLow) length:CPTDecimalFromFloat(_maxY)];
+  NSTimeInterval yLow = -(_maxY / 10);
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(yLow) length:CPTDecimalFromFloat(_maxY + (_maxY / 10))];
     
     // Axes
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)graph.axisSet;
@@ -205,12 +209,12 @@
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
     timeFormatter.referenceDate = refDate;
     x.labelFormatter            = timeFormatter;
-    x.labelRotation             = M_PI_4;
+    //x.labelRotation             = M_PI_4;
     
     CPTXYAxis *y = axisSet.yAxis;
-    y.majorIntervalLength         = CPTDecimalFromDouble(0.5);
+    y.majorIntervalLength         = CPTDecimalFromDouble(2.0);
     y.minorTicksPerInterval       = 5;
-    y.orthogonalCoordinateDecimal = CPTDecimalFromFloat(oneDay);
+    y.orthogonalCoordinateDecimal = CPTDecimalFromFloat(0);
     
     // Create a plot that uses the data source method
     CPTScatterPlot *dataSourceLinePlot = [[CPTScatterPlot alloc] init];
@@ -218,7 +222,7 @@
     
     CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
     lineStyle.lineWidth              = 3.0;
-    lineStyle.lineColor              = [CPTColor greenColor];
+    lineStyle.lineColor              = [CPTColor redColor];
     dataSourceLinePlot.dataLineStyle = lineStyle;
     
     dataSourceLinePlot.dataSource = self;

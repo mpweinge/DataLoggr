@@ -279,7 +279,6 @@
         CGContextRef context = UIGraphicsGetCurrentContext();
         CGContextTranslateCTM(context, 0, self.bounds.size.height);
         CGContextScaleCTM(context, 1, -1);
-
         CPTGraph *theHostedGraph = self.hostedGraph;
         theHostedGraph.frame = self.bounds;
         [theHostedGraph layoutAndRenderInContext:context];
