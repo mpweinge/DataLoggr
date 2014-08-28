@@ -42,8 +42,10 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     // this is imporant - we set our input date format to match our input string
     // if format doesn't match you'll get nil from your string, so be careful
-    [dateFormatter setDateFormat:@"MM/dd/yy"];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
     NSDate *dateFromString = [[NSDate alloc] init];
+    // time = @"08/26/14";
     dateFromString = [dateFormatter dateFromString:currObj.DataTime];
     
     if(!_minDate) {
@@ -80,7 +82,8 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     // this is imporant - we set our input date format to match our input string
     // if format doesn't match you'll get nil from your string, so be careful
-    [dateFormatter setDateFormat:@"MM/dd/yy"];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
     NSDate *dateFromString = [[NSDate alloc] init];
    // time = @"08/26/14";
     dateFromString = [dateFormatter dateFromString:time];
@@ -186,8 +189,8 @@
     NSTimeInterval xLow       = -oneDay;
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( (dayDiff + 2) * oneDay )];
   
-  NSTimeInterval yLow = -(_maxY / 10);
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(yLow) length:CPTDecimalFromFloat(_maxY + 2 * (_maxY / 10))];
+  NSTimeInterval yLow = -(abs(_maxY) / 10.0);
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(yLow) length:CPTDecimalFromFloat(abs(_maxY) + 2 * (abs(_maxY) / 5.0))];
     
     // Axes
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)graph.axisSet;
@@ -203,7 +206,8 @@
     //x.labelRotation             = M_PI_4;
   
     CPTXYAxis *y = axisSet.yAxis;
-    y.majorIntervalLength         = CPTDecimalFromDouble(((int)abs(_maxY)) / 5);
+
+    y.majorIntervalLength         = CPTDecimalFromDouble((abs(_maxY)) / 5.0);
     y.minorTicksPerInterval       = 4;
     y.orthogonalCoordinateDecimal = CPTDecimalFromFloat(0);
     

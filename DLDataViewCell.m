@@ -13,7 +13,9 @@
 @interface DLDataViewCell() {
   DLDataPointRowObject *_dataObject;
   UILabel *_dataValue;
-  UILabel *_dateValue;
+  
+  UILabel *_dayValue;
+  UILabel *_timeValue;
   
   UILabel *_editIcon;
   UILabel *_trashIcon;
@@ -41,14 +43,23 @@
     if (self) {
       _deleteActive = NO;
       _deleteRecognizer = nil;
-        // Initialization code
-      _dateValue = [[UILabel alloc] initWithFrame:CGRectMake(50, 13, 100, 22)];
-      _dateValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-      _dateValue.text = time;
-      [self addSubview:_dateValue];
+      // Initialization code
+      _dayValue = [[UILabel alloc] initWithFrame:CGRectMake(50, 10, 100, 22)];
+      _dayValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+      
+      //Search for comma in string to separate date from time
+      int splitLocation = [time rangeOfString:@","].location;
+      _dayValue.text = [time substringToIndex:splitLocation];
+      
+      [self addSubview:_dayValue];
+      
+      _timeValue = [[UILabel alloc] initWithFrame:CGRectMake(55, 25, 100, 22)];
+      _timeValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:12.0];
+      _timeValue.text = [time substringFromIndex:splitLocation + 1];
+      [self addSubview:_timeValue];
       
       _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
-      _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+      _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
       _dataValue.text = value;
       [self addSubview:_dataValue];
       
@@ -153,7 +164,7 @@
 - (void) updateCellText
 {
   _dataValue.text = _title;
-  _dateValue.text = _time;
+  _dayValue.text = _time;
 }
 
 - (void) setTitle:(NSString *)title

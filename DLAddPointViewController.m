@@ -68,7 +68,7 @@ static const int kButtonOffsetY = 350;
       
       self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(CreateClicked)];
     } else {
-      self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(DoneClicked)];
+      self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(CreateClicked)];
     }
   }
   
@@ -270,6 +270,7 @@ static const int kButtonOffsetY = 350;
     NSDate *currentTime = [NSDate date];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
     NSString *resultString = [dateFormatter stringFromDate: currentTime];
     
     //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
@@ -290,7 +291,8 @@ static const int kButtonOffsetY = 350;
     
     NSDate *currentTime = [NSDate date];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
     NSString *resultString = [dateFormatter stringFromDate: currentTime];
     
     //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
@@ -303,8 +305,6 @@ static const int kButtonOffsetY = 350;
     [[DLDatabaseManager getSharedInstance] updateOldPoint: [_currCell dataPoint] newPoint: newObject];
     
     [_delegate didEditObject:_currCell withData:newObject];
-    
-    // Save changes to table
   }
   
   [self.navigationController popViewControllerAnimated:YES];
