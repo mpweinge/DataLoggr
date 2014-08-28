@@ -54,18 +54,19 @@
   NSMutableString * values = [NSMutableString string];
   
   [values appendString:ValuesArray[0]];
-  [values appendString:@"="];
+  [values appendString:@"= \""];
   [values appendString:_DataName];
-  [values appendString:@", "];
+  [values appendString:@"\", "];
   
   [values appendString:ValuesArray[1]];
-  [values appendString:@"="];
+  [values appendString:@"= \""];
   [values appendString:_DataType];
-  [values appendString:@", "];
+  [values appendString:@"\", "];
   
   [values appendString:ValuesArray[2]];
-  [values appendString:@"="];
+  [values appendString:@"= \""];
   [values appendString:_IconName];
+  [values appendString:@"\" "];
   
   return values;
 }

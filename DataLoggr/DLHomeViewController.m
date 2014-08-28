@@ -25,6 +25,7 @@
   BOOL invalidatedData;
   NSMutableArray* rowData;
   BOOL newData;
+  BOOL _isEditClicked;
 }
 @end
 
@@ -53,9 +54,10 @@
   
   invalidatedData = YES;
   newData = NO;
+  _isEditClicked = NO;
   
-  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc ] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(CreateClicked:)];
-  //NSLog(ret);
+  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc ] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(TitleCellTouched:)];
+  self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(EditClicked)];
   
   return self;
 }
@@ -95,16 +97,101 @@
                                       reuseIdentifier:myIdentifier
                                               caption: currItem.DataName
                                                  icon: [NSString fontAwesomeEnumForIconIdentifier:currItem.IconName ]
-                                                 type: currItem.DataType];
+                                                 type: currItem.DataType
+                                            rowObject: currItem];
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.delegate = self;
   }
   
-  //Configure the cell
-  //cell.textLabel.text = @"GYM";
-  
   return cell;
+}
+
+- (void) DoneClicked
+{
+  //Shift all of the rows to the left
+  
+  UITableView *tableView = (UITableView *)self.view; // Or however you get your table view
+  NSArray *paths = [tableView indexPathsForVisibleRows];
+  
+  //  For getting the cells themselves
+  NSMutableSet *visibleCells = [[NSMutableSet alloc] init];
+  
+  for (NSIndexPath *path in paths) {
+    if ([path row] == 0) {
+      continue;
+    }
+    
+    [visibleCells addObject:[tableView cellForRowAtIndexPath:path]];
+  }
+  
+  self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(EditClicked)];
+  
+  for (DLHomeTableViewCell * cell in visibleCells) {
+    [cell unAnimateForEdit];
+  }
+  
+  _isEditClicked = NO;
+}
+
+- (void) EditClicked
+{
+  //Shift all of the rows to the right
+  
+  UITableView *tableView = (UITableView *)self.view; // Or however you get your table view
+  NSArray *paths = [tableView indexPathsForVisibleRows];
+  
+  //  For getting the cells themselves
+  NSMutableSet *visibleCells = [[NSMutableSet alloc] init];
+  
+  for (NSIndexPath *path in paths) {
+    if ([path row] == 0) {
+      continue;
+    }
+    
+    [visibleCells addObject:[tableView cellForRowAtIndexPath:path]];
+  }
+  
+  self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(DoneClicked)];
+  
+  for (DLHomeTableViewCell * cell in visibleCells) {
+    [cell animateForEdit];
+  }
+  
+  _isEditClicked = YES;
+}
+
+- (void) didUpdateCell: (DLHomeTableViewCell *) updatedCell withData: (DLDataRowObject *)newObject
+{
+  UITableView *tableView = (UITableView *)self.view; // Or however you get your table view
+  NSArray *paths = [tableView indexPathsForVisibleRows];
+  
+  //  For getting the cells themselves
+  NSMutableSet *visibleCells = [[NSMutableSet alloc] init];
+  
+  for (NSIndexPath *path in paths) {
+    if ([path row] == 0) {
+      continue;
+    }
+    
+    DLHomeTableViewCell * currCell = [tableView cellForRowAtIndexPath:path];
+    if (currCell == updatedCell)
+    {
+      currCell.title = newObject.DataName;
+      currCell.icon = [NSString fontAwesomeEnumForIconIdentifier:newObject.IconName];
+      currCell.type = newObject.DataType;
+      
+      DLDataRowObject * currRowObj = (DLDataRowObject *)rowData[[path row] - 1];
+      
+      currRowObj.DataName = newObject.DataName;
+      currRowObj.IconName = newObject.IconName;
+      currRowObj.DataType = newObject.DataType;
+      
+      [currCell setNeedsDisplay];
+      
+      newData = YES;
+    }
+  }
 }
 
 - (NSInteger) tableView: (UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -114,14 +201,20 @@
 
 - (void) CellViewTouched :(DLDataViewCell *) cell
 {
+  if (_isEditClicked) {
+    DLNewDataViewController *editViewController = [[ DLNewDataViewController alloc] initWithDelegate:self isEdit:YES cell:cell];
+    
+    [self.navigationController pushViewController:editViewController animated:YES];
+  } else {
     DLDataViewController *newDataController = [[DLDataViewController alloc]initWithDataValue: cell.title dataType: cell.type];
-  
-  [self.navigationController pushViewController:newDataController animated:YES];
+    
+    [self.navigationController pushViewController:newDataController animated:YES];
+  }
 }
 
 -(void) TitleCellTouched:(NSInteger) number
 {
-  DLNewDataViewController *newDataController = [[ DLNewDataViewController alloc] initWithDelegate:self];
+  DLNewDataViewController *newDataController = [[ DLNewDataViewController alloc] initWithDelegate:self isEdit:NO cell:nil];
   
   [self.navigationController pushViewController:newDataController animated:YES];
 }
@@ -152,8 +245,6 @@
   {
     UITableView * tableView = (UITableView *)self.view;
     [tableView reloadData];
-   // [tableView reloadRowsAtIndexPaths:[tableView indexPathsForVisibleRows]
-    //                 withRowAnimation:UITableViewRowAnimationNone];
   }
 }
 

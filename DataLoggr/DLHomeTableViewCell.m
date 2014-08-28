@@ -9,8 +9,19 @@
 #import "DLHomeTableViewCell.h"
 #import "NSString+FontAwesome.h"
 //#import "UIHomeGestureRecognizer.h"
+#import "DLCircleView.h"
 
 @interface DLHomeTableViewCell ()
+{
+  UILabel *_chartIcon;
+  UILabel *_chartName;
+  UILabel *_advanceIcon;
+  UILabel *_lastModifiedTime;
+  
+  UILabel *_editIcon;
+  
+  DLCircleView *_circleDeleteIcon;
+}
 @end
 
 @implementation DLHomeTableViewCell
@@ -20,30 +31,48 @@
             caption:(NSString *)caption
                icon:(FAIcon)icon
                type:(NSString *)type
+          rowObject:(DLDataRowObject *)rowObject
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+      
+      _icon = icon;
+      
+      _rowObject = rowObject;
+      
         // Initialization code
-      UILabel* chartIcon=[[UILabel alloc] initWithFrame:CGRectMake(20, 0, 100, 42)];
-      chartIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:28];
-      chartIcon.text = [NSString fontAwesomeIconStringForEnum:icon];
-      [self addSubview:chartIcon];
+      _chartIcon=[[UILabel alloc] initWithFrame:CGRectMake(20, 0, 100, 42)];
+      _chartIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:28];
+      _chartIcon.text = [NSString fontAwesomeIconStringForEnum:icon];
+      [self addSubview:_chartIcon];
       
-      UILabel * chartName = [[UILabel alloc] initWithFrame:CGRectMake(60, 1, 300, 22)];
-      chartName.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-      chartName.text = caption;
-      [self addSubview:chartName];
+      _chartName = [[UILabel alloc] initWithFrame:CGRectMake(60, 1, 300, 22)];
+      _chartName.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+      _chartName.text = caption;
+      [self addSubview:_chartName];
       
-      UILabel * lastModifiedTime = [[UILabel alloc] initWithFrame:CGRectMake(70, 21, 300, 22)];
-      lastModifiedTime.font = [UIFont fontWithName:@"HelveticaNeue-Italic" size:10.0];
-      lastModifiedTime.text = @"Last modified: FakeDateHere";
-      [self addSubview:lastModifiedTime];
+      _lastModifiedTime = [[UILabel alloc] initWithFrame:CGRectMake(70, 21, 300, 22)];
+      _lastModifiedTime.font = [UIFont fontWithName:@"HelveticaNeue-Italic" size:10.0];
+      _lastModifiedTime.text = @"Last modified: FakeDateHere";
+      [self addSubview:_lastModifiedTime];
       
-      UILabel* advanceIcon=[[UILabel alloc] initWithFrame:CGRectMake(300, 13, 100, 22)];
-      advanceIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
-      advanceIcon.textColor = [UIColor blueColor];
-      advanceIcon.text = [NSString fontAwesomeIconStringForEnum:FAAngleRight];
-      [self addSubview:advanceIcon];
+      _advanceIcon=[[UILabel alloc] initWithFrame:CGRectMake(300, 13, 100, 22)];
+      _advanceIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
+      _advanceIcon.textColor = [UIColor blueColor];
+      _advanceIcon.text = [NSString fontAwesomeIconStringForEnum:FAAngleRight];
+      [self addSubview:_advanceIcon];
+      
+      _editIcon = [[UILabel alloc] initWithFrame:CGRectMake(290, 13, 100, 22)];
+      _editIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
+      _editIcon.textColor = [UIColor blackColor];
+      _editIcon.text = [NSString fontAwesomeIconStringForEnum:FAPencilSquareO];
+      _editIcon.alpha = 0;
+      [self addSubview:_editIcon];
+      
+      _circleDeleteIcon = [[DLCircleView alloc] initWithFrame:CGRectMake(20, 11, 20, 20) strokeWidth:2.0 selectFill:YES selectColor:[UIColor lightGrayColor]];
+      _circleDeleteIcon.alpha = 0;
+      _circleDeleteIcon.backgroundColor = [UIColor clearColor];
+      [self addSubview:_circleDeleteIcon];
       
       _title = caption;
       _type = type;
@@ -56,6 +85,66 @@
   [self addGestureRecognizer:touchRecognizer];
   
   return self;
+}
+
+-(void) setTitle:(NSString *)title
+{
+  _title = title;
+  _chartName.text = title;
+}
+
+- (void) setIcon:(FAIcon)icon
+{
+  _icon = icon;
+  _chartIcon.text = [NSString fontAwesomeIconStringForEnum:icon];
+}
+
+-(void) animateForEdit
+{
+  [UIView animateKeyframesWithDuration:0.5
+                                 delay:0.0
+                               options:UIViewKeyframeAnimationOptionLayoutSubviews
+                            animations:^{
+                              CGRect chartIconFrame = _chartIcon.frame;
+                              chartIconFrame.origin.x += 30;
+                              _chartIcon.frame = chartIconFrame;
+                              
+                              CGRect chartNameFrame = _chartName.frame;
+                              chartNameFrame.origin.x += 30;
+                              chartNameFrame.origin.y += 10;
+                              _chartName.frame = chartNameFrame;
+                              
+                              _lastModifiedTime.alpha = 0;
+                              _advanceIcon.alpha = 0;
+                              _circleDeleteIcon.alpha = 1.0;
+                              _editIcon.alpha = 1;
+                            }completion:^(BOOL success){
+                              
+                            }];
+}
+
+-(void) unAnimateForEdit
+{
+  [UIView animateKeyframesWithDuration:0.5
+                                 delay:0.0
+                               options:UIViewKeyframeAnimationOptionLayoutSubviews
+                            animations:^{
+                              CGRect chartIconFrame = _chartIcon.frame;
+                              chartIconFrame.origin.x -= 30;
+                              _chartIcon.frame = chartIconFrame;
+                              
+                              CGRect chartNameFrame = _chartName.frame;
+                              chartNameFrame.origin.x -= 30;
+                              chartNameFrame.origin.y -= 10;
+                              _chartName.frame = chartNameFrame;
+                              
+                              _lastModifiedTime.alpha = 1.0;
+                              _editIcon.alpha = 0;
+                              _circleDeleteIcon.alpha = 0;
+                              _advanceIcon.alpha = 1.0;
+                            }completion:^(BOOL success){
+    
+                            }];
 }
 
 -(void) holdOnCell : (UIGestureRecognizer *)gestureRecognizer

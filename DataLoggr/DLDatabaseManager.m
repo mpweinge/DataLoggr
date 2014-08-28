@@ -162,6 +162,77 @@ static NSString* kDataTypeName = @"DataTypes";
   return NO;
 }
 
+- (BOOL) updateOldRow: (id<DLSerializableProtocol>) oldRow withNewRow:(id<DLSerializableProtocol>) newRow
+{
+  //Check to make sure the serialized object has the same number of properties
+  const char *dbpath = [databasePath UTF8String];
+  
+  if (sqlite3_open(dbpath, &database) == SQLITE_OK)
+  {
+    //Serialize the object
+    //NSString *objData = [dataPoint serializeData];
+    
+    NSMutableString *insertSQL = [NSMutableString string];
+    [insertSQL appendString:@"UPDATE "];
+    [insertSQL appendString: kDataTypeName];
+    [insertSQL appendString: @" SET "];
+    [insertSQL appendString:[newRow updateValuesString: _dataTypeFieldNames ]];
+    
+    [insertSQL appendString: @"WHERE "];
+    [insertSQL appendString: _dataTypeFieldNames[0]];
+    [insertSQL appendString: @"= \""];
+    [insertSQL appendString: [oldRow valueAtIndex:0]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataTypeFieldNames[1]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldRow valueAtIndex:1]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataTypeFieldNames[2]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldRow valueAtIndex:2]];
+    [insertSQL appendString: @"\""];
+    
+    const char *insert_stmt = [insertSQL UTF8String];
+    sqlite3_prepare_v2(database, insert_stmt,-1, &statement, NULL);
+    if (sqlite3_step(statement) == SQLITE_DONE)
+    {
+      //Need another sql statement here to change all of the points to have a different name associated iwth them
+      
+      NSMutableString *insertSQL = [NSMutableString string];
+      [insertSQL appendString:@"UPDATE "];
+      [insertSQL appendString: kDataPointDatabaseName];
+      [insertSQL appendString: @" SET DataName = \""];
+      [insertSQL appendString: [newRow valueAtIndex:0]];
+      
+      [insertSQL appendString: @"\" WHERE "];
+      [insertSQL appendString: _dataTypeFieldNames[0]];
+      [insertSQL appendString: @"= \""];
+      [insertSQL appendString: [oldRow valueAtIndex:0]];
+      [insertSQL appendString: @"\""];
+      
+      const char *insert_stmt = [insertSQL UTF8String];
+      sqlite3_prepare_v2(database, insert_stmt,-1, &statement, NULL);
+       
+       if (sqlite3_step(statement) == SQLITE_DONE)
+       {
+         return YES;
+       } else {
+         return NO;
+       }
+    }
+    else {
+      return NO;
+    }
+    sqlite3_reset(statement);
+  }
+  //INSERT INTO DATABASENAME(x, x, x) VALUES(x, x, x)
+  return NO;
+}
+
 - (BOOL) updateOldPoint: (id<DLSerializableProtocol>) oldDataPoint newPoint: (id<DLSerializableProtocol>) newPoint
 {
   //Check to make sure the serialized object has the same number of properties

@@ -9,10 +9,12 @@
 #import <UIKit/UIKit.h>
 
 @class DLDataRowObject;
+@class DLHomeTableViewCell;
 
 @protocol DLNewDataViewControllerDelegate
 
 - (void) didCreateNewObject: (DLDataRowObject *) newObject;
+- (void) didUpdateCell: (DLHomeTableViewCell *) updatedData withData: (DLDataRowObject *)newObject;
 
 @end
 
@@ -20,6 +22,6 @@
 
 @property (nonatomic) id<DLNewDataViewControllerDelegate> delegate;
 
--(instancetype) initWithDelegate : (id<DLNewDataViewControllerDelegate>) delegate;
+-(instancetype) initWithDelegate : (id<DLNewDataViewControllerDelegate>) delegate isEdit: (BOOL) isEdit cell:(DLHomeTableViewCell *)cell;
 
 @end

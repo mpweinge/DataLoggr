@@ -160,9 +160,6 @@
     textStyle.color                = [CPTColor grayColor];
     textStyle.fontName             = @"Helvetica-Bold";
     textStyle.fontSize             = round( bounds.size.height / CPTFloat(20.0) );
-   // graph.titleTextStyle           = textStyle;
-   // graph.titleDisplacement        = CPTPointMake( 0.0, textStyle.fontSize * CPTFloat(1.5) );
-   // graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
     
     CGFloat boundsPadding = round( bounds.size.width / CPTFloat(20.0) ); // Ensure that padding falls on an integral pixel
     
@@ -177,12 +174,6 @@
     
     graph.paddingRight  = boundsPadding;
     graph.paddingBottom = boundsPadding;
-    
-    /*[self addGraph:graph toHostingView:layerHostingView];
-    [self applyTheme:theme toGraph:graph withDefault:[CPTTheme themeNamed:kCPTDarkGradientTheme]];
-    
-    [self setTitleDefaultsForGraph:graph withBounds:bounds];
-    [self setPaddingDefaultsForGraph:graph withBounds:bounds];*/
   
     NSTimeInterval dateDiff = [_maxDate timeIntervalSinceDate:_minDate];
     int dayDiff = dateDiff / oneDay;
@@ -196,7 +187,7 @@
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( (dayDiff + 2) * oneDay )];
   
   NSTimeInterval yLow = -(_maxY / 10);
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(yLow) length:CPTDecimalFromFloat(_maxY + (_maxY / 10))];
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(yLow) length:CPTDecimalFromFloat(_maxY + 2 * (_maxY / 10))];
     
     // Axes
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)graph.axisSet;
@@ -210,10 +201,10 @@
     timeFormatter.referenceDate = refDate;
     x.labelFormatter            = timeFormatter;
     //x.labelRotation             = M_PI_4;
-    
+  
     CPTXYAxis *y = axisSet.yAxis;
-    y.majorIntervalLength         = CPTDecimalFromDouble(2.0);
-    y.minorTicksPerInterval       = 5;
+    y.majorIntervalLength         = CPTDecimalFromDouble(((int)abs(_maxY)) / 5);
+    y.minorTicksPerInterval       = 4;
     y.orthogonalCoordinateDecimal = CPTDecimalFromFloat(0);
     
     // Create a plot that uses the data source method

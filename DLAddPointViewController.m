@@ -12,13 +12,14 @@
 #import "DLDatabaseManager.h"
 
 static const int kValueOffsetY = 25;
-static const int kNotesOffsetY = 200;
+static const int kNotesOffsetY = 150;
 static const int kButtonOffsetY = 350;
 
 @interface DLAddPointViewController () < UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UITextViewDelegate >
 {
   //UITextField* _dataName;
   UIView* _dataName;
+  UILabel* _backgroundText;
   UIPickerView* _typeDataView;
   UITextField* _notes;
   UITextView* _notesView;
@@ -34,6 +35,8 @@ static const int kButtonOffsetY = 350;
   NSTimer *_timer;
   DLDataViewCell *_currCell;
   NSTimeInterval currPausedTime;
+  
+  BOOL _textFieldEmpty;
 }
 
 @end
@@ -58,6 +61,7 @@ static const int kButtonOffsetY = 350;
     _currCell = currCell;
     _didEdit = NO;
     currPausedTime = 0;
+    _textFieldEmpty = YES;
     
     if (_isAdd) {
       self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(CancelClicked)];
@@ -90,19 +94,30 @@ static const int kButtonOffsetY = 350;
   // Need some text fields and an icon picker
   _didEdit = NO;
   
-  //UILabel *dataNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, kValueOffsetY, 300, 50)];
-  //dataNameLabel.text = @"Data Name: ";
-  //dataNameLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-  
-  /*_dataName = [[UITextField alloc] initWithFrame:CGRectMake(100, kValueOffsetY, 200, 50)];
-  _dataName.borderStyle = UITextBorderStyleRoundedRect;
-  _dataName.returnKeyType = UIReturnKeyDone;
-  _dataName.autocorrectionType = UITextAutocorrectionTypeNo;
-  _dataName.delegate = self;
-  _dataName.keyboardType = UIKeyboardTypeDefault;*/
+  if ([_typeName isEqualToString:@"Time"] ) {
   _dataName = [[UILabel alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 300, 50)];
   ((UILabel *)_dataName).textColor = [UIColor blackColor];
   ((UILabel *)_dataName).font = [UIFont fontWithName:@"HelveticaNeue-Light" size:60.0];
+  } else if ([_typeName isEqualToString:@"GPS"] ) {
+    
+  } else {
+    _dataName = [[UITextField alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 300, 50)];
+    
+    ((UITextField *)_dataName).font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0];
+    
+    ((UITextField *)_dataName).borderStyle = UITextBorderStyleNone;
+    ((UITextField *)_dataName).returnKeyType = UIReturnKeyDone;
+    ((UITextField *)_dataName).autocorrectionType = UITextAutocorrectionTypeNo;
+    ((UITextField *)_dataName).delegate = self;
+    ((UITextField *)_dataName).keyboardType = UIKeyboardTypeDecimalPad;
+    
+    
+    _backgroundText = [[UILabel alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 300, 50)];
+    _backgroundText.text = @"Data Value";
+    _backgroundText.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0];
+    _backgroundText.textColor = [UIColor lightGrayColor];
+    [self.view addSubview:_backgroundText];
+  }
   
   if (!_isAdd) {
     ((UILabel *)_dataName).text = _currCell.title;
@@ -110,25 +125,9 @@ static const int kButtonOffsetY = 350;
     ((UILabel *)_dataName).text = @"00:00.00";
   }
   
- /* if ([_typeName isEqualToString:@"Time"]) {
-    ((UILabel *)_dataName).enabled = NO;
-  }*/
-
-  
-  /*UILabel *typeDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 250, 300, 50)];
-  typeDataLabel.text = @"Data Type: ";
-  typeDataLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-  
-  _typeDataView = [[UIPickerView alloc] initWithFrame:CGRectMake(60, 90, 300, 50)];
-  _typeDataView.dataSource = self;
-  _typeDataView.delegate = self;
-  _typeDataView.showsSelectionIndicator = YES;*/
-  
-  /*if (!_isAdd) {
-    _typeDataView.text = [_currCell getTitle];
-  }*/
-  
-  //[self.view addSubview:_typeDataView];
+  UIView *dataDivider = [[UIView alloc] initWithFrame:CGRectMake(5, kValueOffsetY + 90, 310, 1)];
+  dataDivider.backgroundColor = [UIColor lightGrayColor];
+  [self.view addSubview:dataDivider];
   
   UILabel *iconDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, kNotesOffsetY, 300, 50)];
   iconDataLabel.text = @"Notes: ";
@@ -156,23 +155,6 @@ static const int kButtonOffsetY = 350;
     _notesView.text = _currCell.notes;
   }
   
-  /*UIButton *createButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
-  
-  if (_isAdd) {
-    [createButton setTitle:@"Create" forState:UIControlStateNormal];
-  } else {
-    [createButton setTitle:@"OK" forState:UIControlStateNormal];
-  }
-  [createButton sizeToFit];
-  CGRect createFrame = createButton.frame;
-  createFrame.size.width += 30;
-  createButton.frame = createFrame;
-  createButton.center = CGPointMake(160, 400);
-  [createButton addTarget:self action:@selector(CreateClicked:) forControlEvents:UIControlEventTouchUpInside];
-  
-  [self.view addSubview:createButton];*/
-  //[self.view addSubview:dataNameLabel];
- // [self.view addSubview:typeDataLabel];
   [self.view addSubview:iconDataLabel];
   [self.view addSubview:_dataName];
   
@@ -334,59 +316,16 @@ static const int kButtonOffsetY = 350;
   // Dispose of any resources that can be recreated.
 }
 
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow: (NSInteger)row inComponent:(NSInteger)component
-{
-  // Handle the selection
-}
-
-// tell the picker how many rows are available for a given component
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-  NSUInteger numRows = 3;
-  
-  return numRows;
-}
-
-// tell the picker how many components it will have
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
-  return 1;
-}
-
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
   [self.view endEditing:YES];
-}
-
-// tell the picker the title for a given component
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-  if (pickerView == _typeDataView)
-  {
-    if (row == 1)
-      return @"ManualData";
-    else if (row == 2)
-      return @"GPS";
-    else
-      return @"Time";
-  }
-  else
-  {
-    if (row == 1)
-      return @"FAGithub";
-    else if (row == 2)
-      return @"FAFacebook";
-    else
-      return @"FACloud";
-  }
-}
-
-// tell the picker the width of each row for a given component
-- (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component {
-  int sectionWidth = 300;
-  
-  return sectionWidth;
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField           // became first responder
 {
   _didEdit = YES;
+  UITextPosition *beginning = [textField beginningOfDocument];
+  [textField setSelectedTextRange:[textField textRangeFromPosition:beginning
+                                                        toPosition:beginning]];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField              // called when 'return' key pressed. return NO to ignore.
@@ -409,13 +348,33 @@ static const int kButtonOffsetY = 350;
   return YES;
 }
 
-- (void)textViewDidBeginEditing:(UITextField *)textField           // became first responder
+- (void)textViewDidBeginEditing:(UITextView *)textView           // became first responder
 {
   _didEdit = YES;
 }
 
 - (BOOL)textViewShouldReturn:(UITextView *)textView;
 {
+  return YES;
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+  NSLog(@"Replacement string: %@", string);
+  if ((range.location == 0) && ([string isEqualToString:@""]) && (textField.text.length == 1))
+  {
+    _backgroundText.hidden = NO;
+    
+    UITextPosition *beginning = [textField beginningOfDocument];
+    [textField setSelectedTextRange:[textField textRangeFromPosition:beginning
+                                                          toPosition:beginning]];
+    _textFieldEmpty = true;
+    textField.text = @"";
+  } else if (_textFieldEmpty) {
+    _backgroundText.hidden = YES;
+    _textFieldEmpty = false;
+  }
+  
   return YES;
 }
 

@@ -10,6 +10,7 @@
 #import "NSString+FontAwesome.h"
 
 @class DLDataViewCell;
+@class DLDataRowObject;
 
 @protocol DLHomeTableViewCellDelegate
 
@@ -26,11 +27,17 @@
 @property(nonatomic, readwrite) NSString * type;
 @property(nonatomic, readwrite) NSString * notes;
 @property(nonatomic, readwrite) NSString * time;
+@property(nonatomic, readwrite) FAIcon icon;
+@property(nonatomic, readonly) DLDataRowObject * rowObject;
 
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
             caption:(NSString *)caption
                icon:(FAIcon)icon
-               type:(NSString *)type;
+               type:(NSString *)type
+          rowObject:(DLDataRowObject *) rowObject;
+
+- (void) animateForEdit;
+- (void) unAnimateForEdit;
 
 @end
