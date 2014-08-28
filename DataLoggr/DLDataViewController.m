@@ -59,10 +59,9 @@
   
   invalidateData = YES;
     
-    
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Lolz" style:UIBarButtonItemStylePlain target:nil action:nil];
     
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"+" style:UIBarButtonItemStylePlain target:self action:@selector(AddClicked)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(AddClicked)];
     
     _typeName = dataType;
   
@@ -150,6 +149,25 @@
   DLAddPointViewController *editPointController = [[DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: NO currCell: cell typeName:_typeName];
     
     [self.navigationController pushViewController:editPointController animated:YES];
+}
+
+- (void) DeleteRowClicked:(DLDataViewCell *) cell
+{
+  UITableView *tableView = (UITableView *)self.view; // Or however you get your table view
+  NSArray *paths = [tableView indexPathsForVisibleRows];
+  
+  for (NSIndexPath *path in paths) {
+    if ([path row] == 0) {
+      continue;
+    }
+    
+    if ([tableView cellForRowAtIndexPath:path] == cell) {
+      [dataValues removeObjectAtIndex:([path row] -1)];
+      [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
+    }
+  }
+  
+  [[DLDatabaseManager getSharedInstance] deleteDataPoint:cell.dataPoint];
 }
 
 - (NSInteger) tableView: (UITableView *)tableView numberOfRowsInSection:(NSInteger)section

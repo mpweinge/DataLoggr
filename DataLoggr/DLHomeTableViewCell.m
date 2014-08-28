@@ -25,6 +25,8 @@
   UILabel *_trashIcon;
   
   BOOL _deleteActive;
+  
+  UITapGestureRecognizer *_deleteRecognizer;
 }
 @end
 
@@ -158,6 +160,8 @@
       _circleDeleteIcon.textColor = [UIColor lightGrayColor];
     }];
     
+    [_trashIcon removeGestureRecognizer:_deleteRecognizer];
+    
   } else {
     _deleteActive = YES;
     
@@ -167,12 +171,14 @@
       _circleDeleteIcon.textColor = [UIColor redColor];
     }];
     
-    UITapGestureRecognizer * deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteRow:)];
-    deleteRecognizer.delegate = self;
-    deleteRecognizer.numberOfTapsRequired = 1;
-
+    if (!_deleteRecognizer) {
+      _deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteRow:)];
+      _deleteRecognizer.delegate = self;
+      _deleteRecognizer.numberOfTapsRequired = 1;
+    }
+    
     _trashIcon.userInteractionEnabled = YES;
-    [_trashIcon addGestureRecognizer:deleteRecognizer];
+    [_trashIcon addGestureRecognizer:_deleteRecognizer];
 
   }
 }

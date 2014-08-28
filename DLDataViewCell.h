@@ -15,6 +15,7 @@
 
 @required
 - (void) CellViewTouched :(DLDataViewCell *) cell;
+- (void) DeleteRowClicked:(DLDataViewCell *) cell;
 
 @end
 

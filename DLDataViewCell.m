@@ -8,11 +8,22 @@
 
 #import "DLDataViewCell.h"
 #import "NSString+FontAwesome.h"
+#import "DLCircleView.h"
 
 @interface DLDataViewCell() {
   DLDataPointRowObject *_dataObject;
   UILabel *_dataValue;
   UILabel *_dateValue;
+  
+  UILabel *_editIcon;
+  UILabel *_trashIcon;
+  UILabel *_circleDeleteIcon;
+  
+  DLCircleView *_circleDeleteBorder;
+  
+  BOOL _deleteActive;
+  
+  UITapGestureRecognizer *_deleteRecognizer;
 }
 @end
 
@@ -28,6 +39,8 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+      _deleteActive = NO;
+      _deleteRecognizer = nil;
         // Initialization code
       _dateValue = [[UILabel alloc] initWithFrame:CGRectMake(50, 13, 100, 22)];
       _dateValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
@@ -39,15 +52,29 @@
       _dataValue.text = value;
       [self addSubview:_dataValue];
       
-      /*UILabel * chartName = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
-      chartName.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-      chartName.text = @"Units";
-      [self addSubview:chartName];*/
+      _editIcon=[[UILabel alloc] initWithFrame:CGRectMake(290, 13, 100, 22)];
+      _editIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
+      _editIcon.text = [NSString fontAwesomeIconStringForEnum:FAPencilSquareO];
+      [self addSubview:_editIcon];
       
-      UILabel* advanceIcon=[[UILabel alloc] initWithFrame:CGRectMake(300, 13, 100, 22)];
-      advanceIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
-      advanceIcon.text = [NSString fontAwesomeIconStringForEnum:FAPencil];
-      [self addSubview:advanceIcon];
+      _circleDeleteBorder = [[DLCircleView alloc] initWithFrame:CGRectMake(20, 14, 20, 20) strokeWidth:1.0 selectFill:YES selectColor:[UIColor lightGrayColor]];
+      _circleDeleteBorder.alpha = 1.0;
+      _circleDeleteBorder.backgroundColor = [UIColor clearColor];
+      [self addSubview:_circleDeleteBorder];
+      
+      _circleDeleteIcon = [[UILabel alloc] initWithFrame:CGRectMake(23, 14, 20, 20)];
+      _circleDeleteIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:16];
+      _circleDeleteIcon.textColor = [UIColor lightGrayColor];
+      _circleDeleteIcon.text = [NSString fontAwesomeIconStringForEnum:FABan];
+      _circleDeleteIcon.alpha = 1.0;
+      [self addSubview:_circleDeleteIcon];
+      
+      _trashIcon = [[UILabel alloc] initWithFrame:CGRectMake(290, 13, 100, 22)];
+      _trashIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
+      _trashIcon.textColor = [UIColor redColor];
+      _trashIcon.text = [NSString fontAwesomeIconStringForEnum:FATrashO];
+      _trashIcon.alpha = 0;
+      [self addSubview:_trashIcon];
       
       UITapGestureRecognizer *touchRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedCell:)];
       
@@ -55,12 +82,57 @@
       
       [self addGestureRecognizer:touchRecognizer];
       
+      UITapGestureRecognizer *deleteTouchRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteClicked:)];
+      
+      deleteTouchRecognizer.numberOfTapsRequired = 1;
+      
+      [_circleDeleteBorder addGestureRecognizer:deleteTouchRecognizer];
+      
       _notes = notes;
       _title = value;
       _time = time;
       _dataObject = dataObject;
     }
     return self;
+}
+
+-(void) DeleteClicked : (UITapGestureRecognizer *)tapClicked
+{
+  if (_deleteActive ){
+    _deleteActive = NO;
+    
+    [UIView animateWithDuration:0.5 animations:^{
+      _trashIcon.alpha = 0;
+      _editIcon.alpha = 1;
+      _circleDeleteIcon.textColor = [UIColor lightGrayColor];
+    }];
+    
+    [_trashIcon removeGestureRecognizer:_deleteRecognizer];
+    
+  } else {
+    _deleteActive = YES;
+    
+    [UIView animateWithDuration:0.5 animations:^{
+      _trashIcon.alpha = 1;
+      _editIcon.alpha = 0;
+      _circleDeleteIcon.textColor = [UIColor redColor];
+    }];
+    
+    if (!_deleteRecognizer) {
+      _deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteRow:)];
+      _deleteRecognizer.delegate = self;
+      _deleteRecognizer.numberOfTapsRequired = 1;
+    }
+    
+    _trashIcon.userInteractionEnabled = YES;
+    [_trashIcon addGestureRecognizer:_deleteRecognizer];
+    
+  }
+}
+
+-(void) DeleteRow : (UIGestureRecognizer *)gestureRecognizer
+{
+  [self.delegate DeleteRowClicked:self];
 }
 
 -(void) tappedCell : (UIGestureRecognizer *)gestureRecognizer

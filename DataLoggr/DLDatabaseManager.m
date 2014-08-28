@@ -412,4 +412,32 @@ static NSString* kDataTypeName = @"DataTypes";
   
 }
 
+- (BOOL) deleteDataPoint: (id<DLSerializableProtocol>) point
+{
+  const char *dbpath = [databasePath UTF8String];
+  
+  if (sqlite3_open(dbpath, &database) == SQLITE_OK)
+  {
+    NSMutableString *insertSQL = [NSMutableString string];
+    [insertSQL appendString:@"DELETE FROM "];
+    [insertSQL appendString: kDataPointDatabaseName];
+    [insertSQL appendString: @" WHERE "];
+    [insertSQL appendString:[point  deleteString: _dataPointFieldNames ]];
+    
+    const char *insert_stmt = [insertSQL UTF8String];
+    sqlite3_prepare_v2(database, insert_stmt,-1, &statement, NULL);
+    if (sqlite3_step(statement) == SQLITE_DONE)
+    {
+      return YES;
+    }
+    else {
+      return NO;
+    }
+    sqlite3_reset(statement);
+  }
+  //INSERT INTO DATABASENAME(x, x, x) VALUES(x, x, x)
+  return NO;
+  
+}
+
 @end

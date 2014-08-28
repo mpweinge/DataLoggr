@@ -47,4 +47,6 @@
 
 - (BOOL) deleteDataType: (id<DLSerializableProtocol>) row;
 
+- (BOOL) deleteDataPoint: (id<DLSerializableProtocol>) point;
+
 @end
