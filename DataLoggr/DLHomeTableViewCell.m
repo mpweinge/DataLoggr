@@ -19,8 +19,12 @@
   UILabel *_lastModifiedTime;
   
   UILabel *_editIcon;
+  UILabel *_circleDeleteIcon;
   
-  DLCircleView *_circleDeleteIcon;
+  DLCircleView *_circleDeleteBorder;
+  UILabel *_trashIcon;
+  
+  BOOL _deleteActive;
 }
 @end
 
@@ -69,10 +73,25 @@
       _editIcon.alpha = 0;
       [self addSubview:_editIcon];
       
-      _circleDeleteIcon = [[DLCircleView alloc] initWithFrame:CGRectMake(20, 11, 20, 20) strokeWidth:2.0 selectFill:YES selectColor:[UIColor lightGrayColor]];
+      _circleDeleteBorder = [[DLCircleView alloc] initWithFrame:CGRectMake(20, 11, 20, 20) strokeWidth:1.0 selectFill:YES selectColor:[UIColor lightGrayColor]];
+      _circleDeleteBorder.alpha = 0;
+      _circleDeleteBorder.backgroundColor = [UIColor clearColor];
+      [self addSubview:_circleDeleteBorder];
+      
+      _circleDeleteIcon = [[UILabel alloc] initWithFrame:CGRectMake(23, 11, 20, 20)];
+      _circleDeleteIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:16];
+      _circleDeleteIcon.textColor = [UIColor lightGrayColor];
+      _circleDeleteIcon.text = [NSString fontAwesomeIconStringForEnum:FABan];
       _circleDeleteIcon.alpha = 0;
-      _circleDeleteIcon.backgroundColor = [UIColor clearColor];
       [self addSubview:_circleDeleteIcon];
+      
+      _trashIcon = [[UILabel alloc] initWithFrame:CGRectMake(290, 13, 100, 22)];
+      _trashIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
+      _trashIcon.textColor = [UIColor redColor];
+      _trashIcon.text = [NSString fontAwesomeIconStringForEnum:FATrashO];
+      _trashIcon.alpha = 0;
+      [self addSubview:_trashIcon];
+      
       
       _title = caption;
       _type = type;
@@ -117,10 +136,45 @@
                               _lastModifiedTime.alpha = 0;
                               _advanceIcon.alpha = 0;
                               _circleDeleteIcon.alpha = 1.0;
+                              _circleDeleteBorder.alpha = 1.0;
                               _editIcon.alpha = 1;
                             }completion:^(BOOL success){
+                              UITapGestureRecognizer * deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteClicked:)];
+                              deleteRecognizer.delegate = self;
+                              deleteRecognizer.numberOfTapsRequired = 1;
                               
+                              [_circleDeleteBorder addGestureRecognizer:deleteRecognizer];
                             }];
+}
+
+-(void) DeleteClicked: (UITapGestureRecognizer *)tapClicked
+{
+  if (_deleteActive ){
+    _deleteActive = NO;
+    
+    [UIView animateWithDuration:0.5 animations:^{
+      _trashIcon.alpha = 0;
+      _editIcon.alpha = 1;
+      _circleDeleteIcon.textColor = [UIColor lightGrayColor];
+    }];
+    
+  } else {
+    _deleteActive = YES;
+    
+    [UIView animateWithDuration:0.5 animations:^{
+      _trashIcon.alpha = 1;
+      _editIcon.alpha = 0;
+      _circleDeleteIcon.textColor = [UIColor redColor];
+    }];
+    
+    UITapGestureRecognizer * deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteRow:)];
+    deleteRecognizer.delegate = self;
+    deleteRecognizer.numberOfTapsRequired = 1;
+
+    _trashIcon.userInteractionEnabled = YES;
+    [_trashIcon addGestureRecognizer:deleteRecognizer];
+
+  }
 }
 
 -(void) unAnimateForEdit
@@ -142,9 +196,16 @@
                               _editIcon.alpha = 0;
                               _circleDeleteIcon.alpha = 0;
                               _advanceIcon.alpha = 1.0;
+                              _trashIcon.alpha = 0;
+                              _circleDeleteBorder.alpha = 0;
                             }completion:^(BOOL success){
     
                             }];
+}
+
+-(void) DeleteRow:(UITapGestureRecognizer *)gestureRecognizer
+{
+  [self.delegate DeleteRowClicked:self];
 }
 
 -(void) holdOnCell : (UIGestureRecognizer *)gestureRecognizer

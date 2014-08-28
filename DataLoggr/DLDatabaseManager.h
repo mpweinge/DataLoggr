@@ -17,6 +17,7 @@
 //INSERT INTO DATABASE(x, x, x) VALUES (x, x, x)
 - (NSString* ) serializeData;
 - (NSString* ) updateValuesString: (NSArray *)ValuesString;
+- (NSString* ) deleteString: (NSArray *)ValuesString;
 - (NSString* ) valueAtIndex: (NSUInteger) index;
 
 @end
@@ -43,5 +44,7 @@
 - (BOOL) updateOldPoint: (id<DLSerializableProtocol>) oldDataPoint newPoint: (id<DLSerializableProtocol>) newPoint;
 
 - (BOOL) updateOldRow: (id<DLSerializableProtocol>) oldRow withNewRow:(id<DLSerializableProtocol>) newRow;
+
+- (BOOL) deleteDataType: (id<DLSerializableProtocol>) row;
 
 @end

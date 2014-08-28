@@ -11,11 +11,13 @@
 
 @class DLDataViewCell;
 @class DLDataRowObject;
+@class DLHomeTableViewCell;
 
 @protocol DLHomeTableViewCellDelegate
 
 @required
 - (void) CellViewTouched :(DLDataViewCell *) cell;
+- (void) DeleteRowClicked:(DLHomeTableViewCell *)cell;
 
 @end
 

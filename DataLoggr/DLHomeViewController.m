@@ -88,11 +88,12 @@
   if (cell == nil) {
     DLDataRowObject *currItem;
     
-    if ([indexPath row] <= [rowData count])
+    if ([indexPath row] <= [rowData count]) {
       currItem = rowData[[indexPath row] - 1];
-    else
+    } else {
       currItem = [[DLDataRowObject alloc] initWithName:@"SampleData" type:@"NotImportant" iconName:@"FAGithub"];
-      
+    }
+    
     cell = [[DLHomeTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                       reuseIdentifier:myIdentifier
                                               caption: currItem.DataName
@@ -132,6 +133,25 @@
   }
   
   _isEditClicked = NO;
+}
+
+- (void) DeleteRowClicked:(DLHomeTableViewCell *)cell
+{
+  UITableView *tableView = (UITableView *)self.view; // Or however you get your table view
+  NSArray *paths = [tableView indexPathsForVisibleRows];
+  
+  for (NSIndexPath *path in paths) {
+    if ([path row] == 0) {
+      continue;
+    }
+    
+    if ([tableView cellForRowAtIndexPath:path] == cell) {
+      [rowData removeObjectAtIndex:([path row] -1)];
+      [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
+    }
+  }
+  
+  [[DLDatabaseManager getSharedInstance] deleteDataType:cell.rowObject];
 }
 
 - (void) EditClicked

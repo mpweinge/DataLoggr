@@ -81,6 +81,33 @@
   return values;
 }
 
+- (NSString* ) deleteString: (NSArray *)ValuesString
+{
+  NSMutableString * values = [NSMutableString string];
+  
+  [values appendString:ValuesString[0]];
+  [values appendString:@"= \""];
+  [values appendString:_DataName];
+  [values appendString:@"\" AND "];
+  
+  [values appendString:ValuesString[1]];
+  [values appendString:@"= \""];
+  [values appendString:_DataValue];
+  [values appendString:@"\" AND "];
+  
+  [values appendString:ValuesString[2]];
+  [values appendString:@"= \""];
+  [values appendString:_DataTime];
+  [values appendString:@"\" AND "];
+  
+  [values appendString:ValuesString[3]];
+  [values appendString:@"= \""];
+  [values appendString:_DataNotes];
+  [values appendString:@"\""];
+  
+  return values;
+}
+
 - (NSString* ) valueAtIndex: (NSUInteger) index
 {
   switch (index) {
