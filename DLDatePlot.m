@@ -173,10 +173,16 @@
     //dateDiff += (24 * 60 * 60) * idx;
     NSNumber *x = [NSNumber numberWithFloat:dateDiff];
     
-    [newData addObject:
-     @{ @(CPTScatterPlotFieldX): x,
-        @(CPTScatterPlotFieldY): y }
-     ];
+    if (_minDate == _maxDate) {
+      NSNumber *x = [NSNumber numberWithFloat:(dateDiff + (idx-1))];
+      [newData addObject:@{ @(CPTScatterPlotFieldX): x,
+                            @(CPTScatterPlotFieldY): y }];
+    } else {
+      [newData addObject:
+       @{ @(CPTScatterPlotFieldX): x,
+          @(CPTScatterPlotFieldY): y }
+       ];
+    }
     
     if ([dataPoints count] == 1) {
       NSNumber *x = [NSNumber numberWithFloat:(dateDiff + 1)];
@@ -185,9 +191,8 @@
     }
   }
   
-  
-  
   plotData = newData;
+  
 }
 
 -(void)renderInLayer:(CPTGraphHostingView *)layerHostingView withTheme:(CPTTheme *)theme animated:(BOOL)animated
@@ -249,7 +254,7 @@
     NSTimeInterval xLow       = -dayDiff * oneDay / 5.0;
   
     if (dateDiff == 0) {
-      dateDiff = 1;
+      dateDiff = [plotData count] - 1;
     }
   
   if (dayDiff < 4 ) {
@@ -297,7 +302,7 @@
       [yAxisFormatter setMinimumFractionDigits:digitNum];
       [yAxisFormatter setMaximumFractionDigits:digitNum];
       
-      plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow + xLow / 5 * digitNum) length:CPTDecimalFromDouble( fabs(dayDiff * oneDay) + 2 * (fabs(dayDiff * oneDay) / 5.0) )];
+     // plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow + xLow / 5 * digitNum) length:CPTDecimalFromDouble( fabs(dayDiff * oneDay) + 2 * (fabs(dayDiff * oneDay) / 5.0) )];
     } else {
       [yAxisFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
       [yAxisFormatter setRoundingMode:NSNumberFormatterRoundHalfUp];
