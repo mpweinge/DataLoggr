@@ -59,7 +59,7 @@
   
   invalidateData = YES;
     
-    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Lolz" style:UIBarButtonItemStylePlain target:nil action:nil];
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Back" style:UIBarButtonItemStylePlain target:nil action:nil];
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(AddClicked)];
     
@@ -220,6 +220,8 @@
       _currCell.title = newObject.DataValue;
       _currCell.notes = newObject.DataNotes;
       _currCell.time = newObject.DataTime;
+      
+      dataValues[[path row] - 1] = newObject;
     }
   }
 }

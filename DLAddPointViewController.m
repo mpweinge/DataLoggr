@@ -66,7 +66,7 @@ static const int kButtonOffsetY = 350;
     if (_isAdd) {
       self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(CancelClicked)];
       
-      self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(CreateClicked)];
+      self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(CreateClicked)];
     } else {
       self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(CreateClicked)];
     }
@@ -111,12 +111,13 @@ static const int kButtonOffsetY = 350;
     ((UITextField *)_dataName).delegate = self;
     ((UITextField *)_dataName).keyboardType = UIKeyboardTypeDecimalPad;
     
-    
-    _backgroundText = [[UILabel alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 300, 50)];
-    _backgroundText.text = @"Data Value";
-    _backgroundText.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0];
-    _backgroundText.textColor = [UIColor lightGrayColor];
-    [self.view addSubview:_backgroundText];
+    if ((_isAdd) || ([_currCell.title length]== 0)) {
+      _backgroundText = [[UILabel alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 300, 50)];
+      _backgroundText.text = @"Data Value";
+      _backgroundText.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0];
+      _backgroundText.textColor = [UIColor lightGrayColor];
+      [self.view addSubview:_backgroundText];
+    }
   }
   
   if (!_isAdd) {
@@ -139,6 +140,7 @@ static const int kButtonOffsetY = 350;
   _notes.autocorrectionType = UITextAutocorrectionTypeNo;
   _notes.delegate = self;
   _notes.keyboardType = UIKeyboardTypeDefault;
+  _notes.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
   
   CGRect frameRect = _notes.frame;
   frameRect.size.height = 90;
@@ -148,6 +150,7 @@ static const int kButtonOffsetY = 350;
   _notesView.backgroundColor = [UIColor clearColor];
   _notesView.delegate = self;
   _notesView.returnKeyType = UIReturnKeyDone;
+  _notesView.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
   [self.view addSubview:_notes];
   [self.view addSubview:_notesView];
   
@@ -162,9 +165,31 @@ static const int kButtonOffsetY = 350;
   if ([_typeName isEqualToString:@"Time"]) {
     //For time add a giant label for a timer
     [self setupTimer];
-  }else if ([_typeName isEqualToString:@"GPS"]) {
+  } else if ([_typeName isEqualToString:@"GPS"]) {
     
   }
+}
+
+-(void)scrollToY:(float)y
+{
+  [UIView beginAnimations:@"registerScroll" context:NULL];
+  [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+  [UIView setAnimationDuration:0.4];
+  self.view.transform = CGAffineTransformMakeTranslation(0, y);
+  [UIView commitAnimations];
+}
+
+-(void)scrollToView:(UIView *)view
+{
+  CGRect theFrame = view.frame;
+  float y = theFrame.origin.y - 15;
+  y -= (y/1.7);
+  [self scrollToY:-y];
+}
+
+-(void)keyboardDidHide:(NSNotification *)notification
+{
+  [self.view setFrame:CGRectMake(0,0,320,460)];
 }
 
 - (void) setupTimer
@@ -326,6 +351,7 @@ static const int kButtonOffsetY = 350;
   UITextPosition *beginning = [textField beginningOfDocument];
   [textField setSelectedTextRange:[textField textRangeFromPosition:beginning
                                                         toPosition:beginning]];
+  
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField              // called when 'return' key pressed. return NO to ignore.
@@ -338,8 +364,8 @@ static const int kButtonOffsetY = 350;
   return YES;
 }
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-  
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
   if([text isEqualToString:@"\n"]) {
     [textView resignFirstResponder];
     return NO;
@@ -351,6 +377,14 @@ static const int kButtonOffsetY = 350;
 - (void)textViewDidBeginEditing:(UITextView *)textView           // became first responder
 {
   _didEdit = YES;
+  
+  [self scrollToView:textView];
+}
+
+-(void) textViewDidEndEditing:(UITextView *)textView
+{
+  [self scrollToY:0];
+  [textView resignFirstResponder];
 }
 
 - (BOOL)textViewShouldReturn:(UITextView *)textView;
