@@ -37,6 +37,28 @@
   
   _maxY = 0;
   
+  NSMutableArray *newDataPoints = [NSMutableArray array];
+  
+  for (int i = 0; i < 9; i++)
+  {
+    NSString *value;
+    if ( i < 10 ) {
+        value = [NSString stringWithFormat:@"00:00:0%i", i];
+    } else {
+      value = [NSString stringWithFormat:@"00:00:%i", i];
+    }
+    NSString *time;
+    if (i < 30) {
+      time = [NSString stringWithFormat:@"8/%i/14, 1:00 am", (i+1)];
+    } else {
+      time = [NSString stringWithFormat:@"9/%i/14, 1:00 am", (i - 29)];
+    }
+    DLDataPointRowObject *newObj = [[DLDataPointRowObject alloc] initWithName:@"TEST" value:value time:time notes:@""];
+    [newDataPoints addObject:newObj];
+  }
+  
+  dataPoints = newDataPoints;
+  
   for (DLDataPointRowObject* currObj in dataPoints)
   {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -186,16 +208,16 @@
   
     // Setup scatter plot space
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)graph.defaultPlotSpace;
-    NSTimeInterval xLow       = -oneDay;
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( (dayDiff + 2) * oneDay )];
+    NSTimeInterval xLow       = -dayDiff * oneDay / 7.0;
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(dayDiff * oneDay) + 2 * (fabs(dayDiff * oneDay) / 5.0) )];
   
-  NSTimeInterval yLow = -(abs(_maxY) / 10.0);
-    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(yLow) length:CPTDecimalFromFloat(abs(_maxY) + 2 * (abs(_maxY) / 5.0))];
+  NSTimeInterval yLow = -(fabs(_maxY) / 7.0);
+    plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(yLow) length:CPTDecimalFromFloat(fabs(_maxY) + 2 * (fabs(_maxY) / 5.0))];
     
     // Axes
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)graph.axisSet;
     CPTXYAxis *x          = axisSet.xAxis;
-    x.majorIntervalLength         = CPTDecimalFromFloat(oneDay);
+    x.majorIntervalLength         = CPTDecimalFromFloat( (dayDiff * oneDay) / 4.0);
     x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(0.0);
     x.minorTicksPerInterval       = 0;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -207,7 +229,7 @@
   
     CPTXYAxis *y = axisSet.yAxis;
 
-    y.majorIntervalLength         = CPTDecimalFromDouble((abs(_maxY)) / 5.0);
+    y.majorIntervalLength         = CPTDecimalFromDouble((fabs(_maxY)) / 5.0);
     y.minorTicksPerInterval       = 4;
     y.orthogonalCoordinateDecimal = CPTDecimalFromFloat(0);
     
