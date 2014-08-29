@@ -246,7 +246,7 @@
   
     // Setup scatter plot space
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)graph.defaultPlotSpace;
-    NSTimeInterval xLow       = -dayDiff * oneDay / 7.0;
+    NSTimeInterval xLow       = -dayDiff * oneDay / 5.0;
   
     if (dateDiff == 0) {
       dateDiff = 1;
@@ -254,8 +254,8 @@
   
   if (dayDiff < 4 ) {
     dayDiff = dateDiff / oneDay;
-    xLow = -dayDiff * oneDay / 5.0;
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(dayDiff * oneDay) + 2 * (fabs(dayDiff * oneDay) / 5.0) )];
+    xLow = -dayDiff * oneDay / 3.0;
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay) * 1.5 )];
   }
   
   NSTimeInterval yLow = -(fabs(_maxY) / 7.0);
@@ -265,7 +265,7 @@
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)graph.axisSet;
     CPTXYAxis *x          = axisSet.xAxis;
   if ( dayDiff < 4 ) {
-    x.majorIntervalLength         = CPTDecimalFromFloat( (dayDiff * oneDay) * 0.75);
+    x.majorIntervalLength         = CPTDecimalFromFloat( (dayDiff * oneDay) * 1);
   } else {
     x.majorIntervalLength         = CPTDecimalFromFloat( (dayDiff * oneDay) / 4.0);
   }
