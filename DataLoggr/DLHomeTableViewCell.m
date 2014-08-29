@@ -120,8 +120,9 @@
   _chartIcon.text = [NSString fontAwesomeIconStringForEnum:icon];
 }
 
--(void) animateForEdit
+- (void) animateForEdit : (BOOL) animate
 {
+  if (animate) {
   [UIView animateKeyframesWithDuration:0.5
                                  delay:0.0
                                options:UIViewKeyframeAnimationOptionLayoutSubviews
@@ -147,6 +148,28 @@
                               
                               [_circleDeleteBorder addGestureRecognizer:deleteRecognizer];
                             }];
+  } else {
+    CGRect chartIconFrame = _chartIcon.frame;
+    chartIconFrame.origin.x += 30;
+    _chartIcon.frame = chartIconFrame;
+    
+    CGRect chartNameFrame = _chartName.frame;
+    chartNameFrame.origin.x += 30;
+    chartNameFrame.origin.y += 10;
+    _chartName.frame = chartNameFrame;
+    
+    _lastModifiedTime.alpha = 0;
+    _advanceIcon.alpha = 0;
+    _circleDeleteIcon.alpha = 1.0;
+    _circleDeleteBorder.alpha = 1.0;
+    _editIcon.alpha = 1;
+    
+    UITapGestureRecognizer * deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteClicked:)];
+    deleteRecognizer.delegate = self;
+    deleteRecognizer.numberOfTapsRequired = 1;
+    
+    [_circleDeleteBorder addGestureRecognizer:deleteRecognizer];
+  }
 }
 
 -(void) DeleteClicked: (UITapGestureRecognizer *)tapClicked

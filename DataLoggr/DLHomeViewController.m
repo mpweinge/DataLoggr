@@ -67,7 +67,7 @@
   
   static NSString *myIdentifier = @"HomeCells";
   
-  if ([indexPath row] == 0)
+  /*if ([indexPath row] == 0)
   {
     
     DLTitleTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:myIdentifier];
@@ -81,7 +81,7 @@
     }
     
     return cell;
-  }
+  }*/
   
   DLHomeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:myIdentifier];
   
@@ -89,7 +89,7 @@
     DLDataRowObject *currItem;
     
     if ([indexPath row] <= [rowData count]) {
-      currItem = rowData[[indexPath row] - 1];
+      currItem = rowData[[indexPath row] ];
     } else {
       currItem = [[DLDataRowObject alloc] initWithName:@"SampleData" type:@"NotImportant" iconName:@"FAGithub"];
     }
@@ -103,6 +103,10 @@
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.delegate = self;
+    
+    if (_isEditClicked) {
+      [cell animateForEdit:NO];
+    }
   }
   
   return cell;
@@ -119,9 +123,9 @@
   NSMutableSet *visibleCells = [[NSMutableSet alloc] init];
   
   for (NSIndexPath *path in paths) {
-    if ([path row] == 0) {
+    /*if ([path row] == 0) {
       continue;
-    }
+    }*/
     
     [visibleCells addObject:[tableView cellForRowAtIndexPath:path]];
   }
@@ -141,12 +145,12 @@
   NSArray *paths = [tableView indexPathsForVisibleRows];
   
   for (NSIndexPath *path in paths) {
-    if ([path row] == 0) {
+    /*if ([path row] == 0) {
       continue;
-    }
+    }*/
     
     if ([tableView cellForRowAtIndexPath:path] == cell) {
-      [rowData removeObjectAtIndex:([path row] -1)];
+      [rowData removeObjectAtIndex:([path row] )];
       [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:path] withRowAnimation:UITableViewRowAnimationFade];
     }
   }
@@ -165,9 +169,9 @@
   NSMutableSet *visibleCells = [[NSMutableSet alloc] init];
   
   for (NSIndexPath *path in paths) {
-    if ([path row] == 0) {
+    /*if ([path row] == 0) {
       continue;
-    }
+    }*/
     
     [visibleCells addObject:[tableView cellForRowAtIndexPath:path]];
   }
@@ -175,7 +179,7 @@
   self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(DoneClicked)];
   
   for (DLHomeTableViewCell * cell in visibleCells) {
-    [cell animateForEdit];
+    [cell animateForEdit:YES];
   }
   
   _isEditClicked = YES;
@@ -190,9 +194,9 @@
   NSMutableSet *visibleCells = [[NSMutableSet alloc] init];
   
   for (NSIndexPath *path in paths) {
-    if ([path row] == 0) {
+    /*if ([path row] == 0) {
       continue;
-    }
+    }*/
     
     DLHomeTableViewCell * currCell = [tableView cellForRowAtIndexPath:path];
     if (currCell == updatedCell)
@@ -201,7 +205,7 @@
       currCell.icon = [NSString fontAwesomeEnumForIconIdentifier:newObject.IconName];
       currCell.type = newObject.DataType;
       
-      DLDataRowObject * currRowObj = (DLDataRowObject *)rowData[[path row] - 1];
+      DLDataRowObject * currRowObj = (DLDataRowObject *)rowData[[path row] ];
       
       currRowObj.DataName = newObject.DataName;
       currRowObj.IconName = newObject.IconName;
@@ -216,7 +220,7 @@
 
 - (NSInteger) tableView: (UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-  return ([rowData count] + 1);
+  return ([rowData count] );
 }
 
 - (void) CellViewTouched :(DLDataViewCell *) cell

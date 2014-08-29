@@ -39,7 +39,7 @@
   
   NSMutableArray *newDataPoints = [NSMutableArray array];
   
-  for (int i = 0; i < 9; i++)
+  /*for (int i = 0; i < 20; i++)
   {
     NSString *value;
     if ( i < 10 ) {
@@ -48,11 +48,47 @@
       value = [NSString stringWithFormat:@"00:00:%i", i];
     }
     NSString *time;
-    if (i < 30) {
-      time = [NSString stringWithFormat:@"8/%i/14, 1:00 am", (i+1)];
+    if (i < 9) {
+      time = [NSString stringWithFormat:@"8/25/14, 1:0%i am", (i+1)];
     } else {
-      time = [NSString stringWithFormat:@"9/%i/14, 1:00 am", (i - 29)];
+      time = [NSString stringWithFormat:@"8/25/14, 1:%i am", i+1 ];
     }
+    DLDataPointRowObject *newObj = [[DLDataPointRowObject alloc] initWithName:@"TEST" value:value time:time notes:@""];
+    [newDataPoints addObject:newObj];
+  }*/
+  
+  /*for (int i = 0; i < 20; i++)
+  {
+    NSString *value;
+    if ( i < 10 ) {
+      value = [NSString stringWithFormat:@"00:00:0%i", i];
+    } else {
+      value = [NSString stringWithFormat:@"00:00:%i", i];
+    }
+    NSString *time;
+    if (i < 9) {
+      time = [NSString stringWithFormat:@"8/25/14, %i:00 am", (i+1)];
+    } else {
+      time = [NSString stringWithFormat:@"8/26/14, %i:00 am", i - 9 ];
+    }
+    DLDataPointRowObject *newObj = [[DLDataPointRowObject alloc] initWithName:@"TEST" value:value time:time notes:@""];
+    [newDataPoints addObject:newObj];
+  }*/
+  
+  for (int i = 0; i < 20; i++)
+  {
+    NSString *value;
+    if ( i < 10 ) {
+      value = [NSString stringWithFormat:@"00:00:0%i", i];
+    } else {
+      value = [NSString stringWithFormat:@"00:00:%i", i];
+    }
+    NSString *time;
+    //if (i < 9) {
+      time = [NSString stringWithFormat:@"8/%i/14, 1:00 am", (i+1)];
+    /*} else {
+      time = [NSString stringWithFormat:@"8/26/14, %i:00 am", i - 9 ];
+    }*/
     DLDataPointRowObject *newObj = [[DLDataPointRowObject alloc] initWithName:@"TEST" value:value time:time notes:@""];
     [newDataPoints addObject:newObj];
   }
@@ -201,15 +237,17 @@
     graph.paddingBottom = boundsPadding;
   
     NSTimeInterval dateDiff = [_maxDate timeIntervalSinceDate:_minDate];
-    int dayDiff = dateDiff / oneDay;
-    if (dayDiff < 1) {
-        dayDiff = 1;
-    }
+    float dayDiff = (int)(dateDiff / oneDay);
   
     // Setup scatter plot space
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)graph.defaultPlotSpace;
     NSTimeInterval xLow       = -dayDiff * oneDay / 7.0;
+  
+  if (dayDiff < 4 ) {
+    dayDiff = dateDiff / oneDay;
+    xLow = -dayDiff * oneDay / 5.0;
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(dayDiff * oneDay) + 2 * (fabs(dayDiff * oneDay) / 5.0) )];
+  }
   
   NSTimeInterval yLow = -(fabs(_maxY) / 7.0);
     plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(yLow) length:CPTDecimalFromFloat(fabs(_maxY) + 2 * (fabs(_maxY) / 5.0))];
@@ -217,11 +255,20 @@
     // Axes
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)graph.axisSet;
     CPTXYAxis *x          = axisSet.xAxis;
+  if ( dayDiff < 4 ) {
+    x.majorIntervalLength         = CPTDecimalFromFloat( (dayDiff * oneDay) * 0.75);
+  } else {
     x.majorIntervalLength         = CPTDecimalFromFloat( (dayDiff * oneDay) / 4.0);
+  }
     x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(0.0);
     x.minorTicksPerInterval       = 0;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateStyle = kCFDateFormatterShortStyle;
+  
+  if (dayDiff < 4) {
+    dateFormatter.timeStyle = kCFDateFormatterShortStyle;
+  }
+  
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
     timeFormatter.referenceDate = refDate;
     x.labelFormatter            = timeFormatter;
@@ -232,7 +279,24 @@
     y.majorIntervalLength         = CPTDecimalFromDouble((fabs(_maxY)) / 5.0);
     y.minorTicksPerInterval       = 4;
     y.orthogonalCoordinateDecimal = CPTDecimalFromFloat(0);
-    
+    NSNumberFormatter *yAxisFormatter = [[NSNumberFormatter alloc] init];
+
+    if ( fabs(_maxY) < 5.0) {
+      [yAxisFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+      [yAxisFormatter setRoundingMode:NSNumberFormatterRoundHalfUp];
+      int digitNum = -1 * log10f(_maxY / 5) + 1;
+      [yAxisFormatter setMinimumFractionDigits:digitNum];
+      [yAxisFormatter setMaximumFractionDigits:digitNum];
+      
+      plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow + xLow / 5 * digitNum) length:CPTDecimalFromDouble( fabs(dayDiff * oneDay) + 2 * (fabs(dayDiff * oneDay) / 5.0) )];
+    } else {
+      [yAxisFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+      [yAxisFormatter setRoundingMode:NSNumberFormatterRoundHalfUp];
+      [yAxisFormatter setMinimumFractionDigits:0];
+      [yAxisFormatter setMaximumFractionDigits:0];
+    }
+    y.labelFormatter = yAxisFormatter;
+  
     // Create a plot that uses the data source method
     CPTScatterPlot *dataSourceLinePlot = [[CPTScatterPlot alloc] init];
     dataSourceLinePlot.identifier = @"Date Plot";

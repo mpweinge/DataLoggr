@@ -39,7 +39,7 @@
                type:(NSString *)type
           rowObject:(DLDataRowObject *) rowObject;
 
-- (void) animateForEdit;
+- (void) animateForEdit : (BOOL) animate;
 - (void) unAnimateForEdit;
 
 @end
