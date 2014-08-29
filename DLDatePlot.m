@@ -37,7 +37,7 @@
   
   _maxY = 0;
   
-  NSMutableArray *newDataPoints = [NSMutableArray array];
+  //NSMutableArray *newDataPoints = [NSMutableArray array];
   
   /*for (int i = 0; i < 20; i++)
   {
@@ -75,7 +75,7 @@
     [newDataPoints addObject:newObj];
   }*/
   
-  for (int i = 0; i < 20; i++)
+  /*for (int i = 0; i < 20; i++)
   {
     NSString *value;
     if ( i < 10 ) {
@@ -86,14 +86,11 @@
     NSString *time;
     //if (i < 9) {
       time = [NSString stringWithFormat:@"8/%i/14, 1:00 am", (i+1)];
-    /*} else {
-      time = [NSString stringWithFormat:@"8/26/14, %i:00 am", i - 9 ];
-    }*/
     DLDataPointRowObject *newObj = [[DLDataPointRowObject alloc] initWithName:@"TEST" value:value time:time notes:@""];
     [newDataPoints addObject:newObj];
-  }
+  }*/
   
-  dataPoints = newDataPoints;
+  //dataPoints = newDataPoints;
   
   for (DLDataPointRowObject* currObj in dataPoints)
   {
@@ -180,7 +177,15 @@
      @{ @(CPTScatterPlotFieldX): x,
         @(CPTScatterPlotFieldY): y }
      ];
+    
+    if ([dataPoints count] == 1) {
+      NSNumber *x = [NSNumber numberWithFloat:(dateDiff + 1)];
+      [newData addObject:@{ @(CPTScatterPlotFieldX): x,
+                            @(CPTScatterPlotFieldY): y }];
+    }
   }
+  
+  
   
   plotData = newData;
 }
@@ -190,7 +195,7 @@
     // If you make sure your dates are calculated at noon, you shouldn't have to
     // worry about daylight savings. If you use midnight, you will have to adjust
     // for daylight savings time.
-    NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:_minDate ];
+    NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitSecond | NSCalendarUnitMinute | NSCalendarUnitHour | NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:_minDate ];
   
 #ifdef NSCalendarIdentifierGregorian
     NSCalendar *gregorian = [[NSCalendar alloc]
@@ -242,6 +247,10 @@
     // Setup scatter plot space
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)graph.defaultPlotSpace;
     NSTimeInterval xLow       = -dayDiff * oneDay / 7.0;
+  
+    if (dateDiff == 0) {
+      dateDiff = 1;
+    }
   
   if (dayDiff < 4 ) {
     dayDiff = dateDiff / oneDay;

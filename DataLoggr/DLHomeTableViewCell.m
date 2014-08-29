@@ -10,6 +10,7 @@
 #import "NSString+FontAwesome.h"
 //#import "UIHomeGestureRecognizer.h"
 #import "DLCircleView.h"
+#import "DLDatabaseManager.h"
 
 @interface DLHomeTableViewCell ()
 {
@@ -57,9 +58,12 @@
       _chartName.text = caption;
       [self addSubview:_chartName];
       
+      //Fetch the most recent data value for the cell
+      NSString * lastModifiedTime = [[DLDatabaseManager getSharedInstance] fetchLastUpdatedTime:caption];
+      
       _lastModifiedTime = [[UILabel alloc] initWithFrame:CGRectMake(70, 21, 300, 22)];
       _lastModifiedTime.font = [UIFont fontWithName:@"HelveticaNeue-Italic" size:10.0];
-      _lastModifiedTime.text = @"Last modified: FakeDateHere";
+      _lastModifiedTime.text = [NSString stringWithFormat:@"Last modified: %@", lastModifiedTime ];
       [self addSubview:_lastModifiedTime];
       
       _advanceIcon=[[UILabel alloc] initWithFrame:CGRectMake(300, 13, 100, 22)];

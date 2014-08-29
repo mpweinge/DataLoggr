@@ -84,8 +84,11 @@
   }*/
   
   DLHomeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:myIdentifier];
+
+  //Reuse the components
+  cell = nil;
   
-  if (cell == nil) {
+  //if (cell == nil) {
     DLDataRowObject *currItem;
     
     if ([indexPath row] <= [rowData count]) {
@@ -107,7 +110,7 @@
     if (_isEditClicked) {
       [cell animateForEdit:NO];
     }
-  }
+ // }
   
   return cell;
 }

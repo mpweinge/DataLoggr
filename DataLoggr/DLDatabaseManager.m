@@ -440,4 +440,43 @@ static NSString* kDataTypeName = @"DataTypes";
   
 }
 
+- (NSString *) fetchLastUpdatedTime: (NSString *) setName
+{
+  
+  const char *dbpath = [databasePath UTF8String];
+  
+  if (sqlite3_open(dbpath, &database) == SQLITE_OK)
+  {
+    NSMutableString *insertSQL = [NSMutableString string];
+    [insertSQL appendString:@"SELECT AddTime FROM "];
+    [insertSQL appendString:kDataPointDatabaseName];
+    [insertSQL appendString:@" WHERE DataName = \""];
+    [insertSQL appendString:setName];
+    [insertSQL appendString:@"\"" ];
+    //[insertSQL appendString:@" DESC LIMIT 1"];
+ 
+    const char *query_stmt = [insertSQL UTF8String];
+    if (sqlite3_prepare_v2(database,
+                           query_stmt, -1, &statement, NULL) == SQLITE_OK)
+    {
+      NSString *lastTime = @"Never";
+      while (sqlite3_step(statement) == SQLITE_ROW)
+      {
+      
+      lastTime = [[NSString alloc] initWithUTF8String:
+                            (const char *) sqlite3_column_text(statement, 0)];
+      
+        
+      }
+      return lastTime;
+    }
+    else {
+      return @"Never";
+    }
+    sqlite3_reset(statement);
+  }
+  //INSERT INTO DATABASENAME(x, x, x) VALUES(x, x, x)
+  return @"Never";
+}
+
 @end

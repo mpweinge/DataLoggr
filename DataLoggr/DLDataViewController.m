@@ -75,13 +75,13 @@
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:myIdentifier];
   
   if ( [indexPath row] == 0 ) {
-    if (cell == nil) {
+    //if (cell == nil) {
       DLGraphViewCell *graphCell = [[DLGraphViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier dataPoints:dataValues isTime:[_typeName isEqualToString:@"Time"]];
       
       cell = graphCell;
-    }
+    //}
   }
-  else if (cell == nil) {
+  else /*if (cell == nil)*/ {
     
     DLDataPointRowObject *currItem = nil;
     if ([indexPath row] <= [dataValues count])

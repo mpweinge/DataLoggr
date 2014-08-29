@@ -49,4 +49,6 @@
 
 - (BOOL) deleteDataPoint: (id<DLSerializableProtocol>) point;
 
+- (NSString *) fetchLastUpdatedTime: (NSString *) setName;
+
 @end
