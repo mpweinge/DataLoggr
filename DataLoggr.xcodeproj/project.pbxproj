@@ -11,6 +11,9 @@
 		A67492A519AAF98B003E7C14 /* DLBasicButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A67492A419AAF98B003E7C14 /* DLBasicButton.m */; };
 		A67492A819AAFE59003E7C14 /* UIButton+Bootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = A67492A719AAFE59003E7C14 /* UIButton+Bootstrap.m */; };
 		A67492AB19AC2E23003E7C14 /* DLHomeGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = A67492AA19AC2E23003E7C14 /* DLHomeGestureRecognizer.m */; };
+		A6A2940519B1659100E7942B /* BackgroundTaskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A2940219B1659100E7942B /* BackgroundTaskManager.m */; };
+		A6A2940619B1659100E7942B /* LocationTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A2940419B1659100E7942B /* LocationTracker.m */; };
+		A6A2940919B1669900E7942B /* LocationShareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A6A2940819B1669900E7942B /* LocationShareModel.m */; };
 		A6D5BE3C19A591F60009FAF3 /* DLDataIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D5BE3B19A591F60009FAF3 /* DLDataIconView.m */; };
 		A6D5BE8619A6C7920009FAF3 /* DLDatePlot.m in Sources */ = {isa = PBXBuildFile; fileRef = A6D5BE8519A6C7920009FAF3 /* DLDatePlot.m */; };
 		A6D5BE8819A6CE430009FAF3 /* libCorePlot-CocoaTouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6D5BE8719A6CE430009FAF3 /* libCorePlot-CocoaTouch.a */; };
@@ -66,6 +69,12 @@
 		A67492A719AAFE59003E7C14 /* UIButton+Bootstrap.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIButton+Bootstrap.m"; sourceTree = "<group>"; };
 		A67492A919AC2E23003E7C14 /* DLHomeGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLHomeGestureRecognizer.h; sourceTree = "<group>"; };
 		A67492AA19AC2E23003E7C14 /* DLHomeGestureRecognizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLHomeGestureRecognizer.m; sourceTree = "<group>"; };
+		A6A2940119B1659100E7942B /* BackgroundTaskManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundTaskManager.h; sourceTree = "<group>"; };
+		A6A2940219B1659100E7942B /* BackgroundTaskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundTaskManager.m; sourceTree = "<group>"; };
+		A6A2940319B1659100E7942B /* LocationTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationTracker.h; sourceTree = "<group>"; };
+		A6A2940419B1659100E7942B /* LocationTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationTracker.m; sourceTree = "<group>"; };
+		A6A2940719B1669900E7942B /* LocationShareModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationShareModel.h; sourceTree = "<group>"; };
+		A6A2940819B1669900E7942B /* LocationShareModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationShareModel.m; sourceTree = "<group>"; };
 		A6D5BE3A19A591F60009FAF3 /* DLDataIconView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDataIconView.h; sourceTree = "<group>"; };
 		A6D5BE3B19A591F60009FAF3 /* DLDataIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLDataIconView.m; sourceTree = "<group>"; };
 		A6D5BE8419A6C7920009FAF3 /* DLDatePlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDatePlot.h; sourceTree = "<group>"; };
@@ -223,6 +232,12 @@
 		FFA6542F196E7D8D002BA286 /* DataLoggr */ = {
 			isa = PBXGroup;
 			children = (
+				A6A2940719B1669900E7942B /* LocationShareModel.h */,
+				A6A2940819B1669900E7942B /* LocationShareModel.m */,
+				A6A2940119B1659100E7942B /* BackgroundTaskManager.h */,
+				A6A2940219B1659100E7942B /* BackgroundTaskManager.m */,
+				A6A2940319B1659100E7942B /* LocationTracker.h */,
+				A6A2940419B1659100E7942B /* LocationTracker.m */,
 				FFA65438196E7D8D002BA286 /* DLAppDelegate.h */,
 				FFA65439196E7D8D002BA286 /* DLAppDelegate.m */,
 				FFA6543B196E7D8D002BA286 /* Images.xcassets */,
@@ -419,11 +434,13 @@
 				FFA65460196F5376002BA286 /* DLDataViewController.m in Sources */,
 				FF6209D51973B59E0032348F /* DLTitleTableViewCell.m in Sources */,
 				FFA6548D1971D1DE002BA286 /* NSString+FontAwesome.m in Sources */,
+				A6A2940919B1669900E7942B /* LocationShareModel.m in Sources */,
 				FFBD9897197B8014005088D7 /* DLDataPointRowObject.m in Sources */,
 				FFA6548E1971D1DE002BA286 /* UIFont+FontAwesome.m in Sources */,
 				A6D5BE3C19A591F60009FAF3 /* DLDataIconView.m in Sources */,
 				FF664C791977B4EE00CFE1A0 /* DLDataRowObject.m in Sources */,
 				FFA6545A196E7ED1002BA286 /* DLHomeViewController.m in Sources */,
+				A6A2940519B1659100E7942B /* BackgroundTaskManager.m in Sources */,
 				A6D5BE8D19A6D0BF0009FAF3 /* DLGraphViewCell.m in Sources */,
 				FFA6543A196E7D8D002BA286 /* DLAppDelegate.m in Sources */,
 				FFA6546E196F908F002BA286 /* DLDatabaseManager.m in Sources */,
@@ -438,6 +455,7 @@
 				A67492A819AAFE59003E7C14 /* UIButton+Bootstrap.m in Sources */,
 				FFA6547A1970840C002BA286 /* DLNewDataButton.m in Sources */,
 				FF6209DC1973C39C0032348F /* DLNewDataView.m in Sources */,
+				A6A2940619B1659100E7942B /* LocationTracker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -562,6 +580,7 @@
 					"\"${PROJECT_DIR}/core-plot/framework/\"/**",
 				);
 				INFOPLIST_FILE = "DataLoggr/DataLoggr-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/core-plot/build/Debug-iphoneos",
@@ -585,6 +604,7 @@
 					"\"${PROJECT_DIR}/core-plot/framework/\"/**",
 				);
 				INFOPLIST_FILE = "DataLoggr/DataLoggr-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/core-plot/build/Debug-iphoneos",

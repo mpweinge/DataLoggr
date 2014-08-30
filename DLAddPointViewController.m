@@ -10,9 +10,11 @@
 #import "DLDataPointRowObject.h"
 #import "DLDataViewCell.h"
 #import "DLDatabaseManager.h"
+#import "LocationTracker.h"
+#import <MapKit/MapKit.h>
 
 static const int kValueOffsetY = 25;
-static const int kNotesOffsetY = 150;
+static int kNotesOffsetY = 150;
 static const int kButtonOffsetY = 350;
 
 @interface DLAddPointViewController () < UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UITextViewDelegate >
@@ -37,6 +39,12 @@ static const int kButtonOffsetY = 350;
   NSTimeInterval currPausedTime;
   
   BOOL _textFieldEmpty;
+  
+  MKMapView *_addMap;
+  CLLocationManager *_locationManager;
+  
+  LocationTracker * locationTracker;
+  NSTimer* locationUpdateTimer;
 }
 
 @end
@@ -99,7 +107,11 @@ static const int kButtonOffsetY = 350;
   ((UILabel *)_dataName).textColor = [UIColor blackColor];
   ((UILabel *)_dataName).font = [UIFont fontWithName:@"HelveticaNeue-Light" size:60.0];
   } else if ([_typeName isEqualToString:@"GPS"] ) {
-    
+    _addMap = [[MKMapView alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 250, 200)];
+    _addMap.showsUserLocation = YES;
+    _addMap.delegate = self;
+    kNotesOffsetY = 300;
+    [self.view addSubview:_addMap];
   } else {
     _dataName = [[UITextField alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 300, 50)];
     
@@ -126,7 +138,7 @@ static const int kButtonOffsetY = 350;
     ((UILabel *)_dataName).text = @"00:00.00";
   }
   
-  UIView *dataDivider = [[UIView alloc] initWithFrame:CGRectMake(5, kValueOffsetY + 90, 310, 1)];
+  UIView *dataDivider = [[UIView alloc] initWithFrame:CGRectMake(5, kNotesOffsetY - 35, 310, 1)];
   dataDivider.backgroundColor = [UIColor lightGrayColor];
   [self.view addSubview:dataDivider];
   
@@ -166,8 +178,49 @@ static const int kButtonOffsetY = 350;
     //For time add a giant label for a timer
     [self setupTimer];
   } else if ([_typeName isEqualToString:@"GPS"]) {
-    
+    [self startTrackingLocation];
   }
+}
+
+- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
+{
+  CLLocationCoordinate2D userLocationCoord = userLocation.coordinate;
+  MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(userLocationCoord, 500, 500);
+  MKCoordinateRegion adjustedRegion = [_addMap regionThatFits:viewRegion];
+  [_addMap setRegion:adjustedRegion animated:YES];
+  [_addMap setZoomEnabled:YES];
+}
+
+- (void)startTrackingLocation
+{
+  locationTracker = [[LocationTracker alloc]init];
+  locationTracker.delegate = self;
+  [locationTracker startLocationTracking];
+  
+  //Send the best location to server every 5 seconds
+  //You may adjust the time interval depends on the need of your app.
+  NSTimeInterval time = 5.0;
+	locationUpdateTimer =
+  [NSTimer scheduledTimerWithTimeInterval:time
+                                   target:self
+                                 selector:@selector(updateLocation)
+                                 userInfo:nil
+                                  repeats:YES];
+}
+
+-(void)updateLocation {
+  NSLog(@"updateLocation");
+  
+  [locationTracker updateLocationToServer];
+}
+
+-(void) DidGetLocation:(CLLocationCoordinate2D) location
+{
+  // If in background, store other way
+  MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(location, 500, 500);
+  MKCoordinateRegion adjustedRegion = [_addMap regionThatFits:viewRegion];
+  [_addMap setRegion:adjustedRegion animated:YES];
+  [_addMap setZoomEnabled:YES];
 }
 
 -(void)scrollToY:(float)y
