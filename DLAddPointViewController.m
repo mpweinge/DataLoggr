@@ -57,6 +57,13 @@ static const int kStartingNumPoints = 2000;
   CLLocationDegrees maxLat;
   CLLocationDegrees maxLong;
   
+  double _existingCentroidLatitude;
+  double _existingCentroidLongitude;
+  
+  CLLocation *_previousLocation;
+  CLLocationDistance _elapsedDistance;
+  NSTimeInterval _elapsedTime;
+  
   int currZoom;
 }
 
@@ -86,12 +93,14 @@ static const int kStartingNumPoints = 2000;
     
     mapPoints = malloc(sizeof(CLLocationCoordinate2D) * kStartingNumPoints );
     mapPointCount = 0;
-    minLat = 0;
-    minLong = 0;
-    maxLat = 0;
-    maxLong = 0;
+    minLat = 1000;
+    minLong = 1000;
+    maxLat = -1000;
+    maxLong = -1000;
+    _existingCentroidLatitude = 0;
+    _existingCentroidLongitude = 0;
     
-    currZoom = 500;
+    currZoom = 400;
     
     if (_isAdd) {
       self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(CancelClicked)];
@@ -206,17 +215,19 @@ static const int kStartingNumPoints = 2000;
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
 {
-  CLLocationCoordinate2D userLocationCoord = userLocation.coordinate;
-  MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(userLocationCoord, 500, 500);
+  /*CLLocationCoordinate2D userLocationCoord = userLocation.coordinate;
+  MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(userLocationCoord, currZoom, currZoom);
   MKCoordinateRegion adjustedRegion = [_addMap regionThatFits:viewRegion];
   [_addMap setRegion:adjustedRegion animated:YES];
-  [_addMap setZoomEnabled:YES];
+  [_addMap setZoomEnabled:YES];*/
+  [self DidGetLocation:userLocation.coordinate];
 }
 
 - (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay {
   if ([overlay isKindOfClass:MKPolyline.class]) {
     MKPolylineRenderer *lineView = [[MKPolylineRenderer alloc] initWithOverlay:overlay];
-    lineView.strokeColor = [UIColor greenColor];
+    lineView.strokeColor = [UIColor redColor];
+    lineView.lineWidth = 2.0;
     
     return lineView;
   }
@@ -236,16 +247,20 @@ static const int kStartingNumPoints = 2000;
 	locationUpdateTimer =
   [NSTimer scheduledTimerWithTimeInterval:time
                                    target:self
-                                 //selector:@selector(updateLocation)
-                                 selector:@selector(testMapUpdate)
+                                 selector:@selector(updateLocation)
+  //                               selector:@selector(testMapUpdate)
                                  userInfo:nil
                                   repeats:YES];
+  
+  _start = [NSDate date];
 }
 
-- (void) stopTrackingLocation {
+- (void) stopTrackingLocation
+{
   [locationUpdateTimer invalidate];
   locationUpdateTimer = nil;
   [locationTracker stopLocationTracking];
+  _start = nil;
 }
 
 -(void) testMapUpdate
@@ -262,11 +277,76 @@ static const int kStartingNumPoints = 2000;
   [locationTracker updateLocationToServer];
 }
 
+-(CLLocationCoordinate2D) CalculateCentroidwithNewLocation:(CLLocationCoordinate2D) newLocation
+{
+  double newCentroidLatitude;
+  double newCentroidLongitude;
+  
+  if (_existingCentroidLatitude) {
+    newCentroidLatitude = ((_existingCentroidLatitude * mapPointCount) + newLocation.latitude) / (mapPointCount + 1);
+    newCentroidLongitude = ((_existingCentroidLongitude * mapPointCount) + newLocation.longitude) / (mapPointCount + 1);
+  } else {
+    newCentroidLatitude = 0;
+    newCentroidLongitude = 0;
+    for (int i = 0; i < mapPointCount; i++)
+    {
+      newCentroidLatitude += mapPoints[i].latitude;
+      newCentroidLongitude += mapPoints[i].longitude;
+    }
+    
+    newCentroidLatitude += newLocation.latitude;
+    newCentroidLongitude += newLocation.longitude;
+    
+    newCentroidLatitude /= (mapPointCount +1);
+    newCentroidLongitude /= (mapPointCount +1);
+  }
+  
+  CLLocationCoordinate2D newCentroid;
+  newCentroid.latitude = newCentroidLatitude;
+  newCentroid.longitude = newCentroidLongitude;
+  
+  _existingCentroidLatitude = newCentroidLatitude;
+  _existingCentroidLongitude = newCentroidLongitude;
+  
+  return newCentroid;
+
+}
+
 -(void) DidGetLocation:(CLLocationCoordinate2D) location
 {
+#if TARGET_IPHONE_SIMULATOR
+#else
+  if ((location.latitude == 0) && (location.longitude == 0))
+  {
+    //In the middle of the ocean, so just return
+    return;
+  }
+#endif
+  
+  NSLog(@"Added New Point To Log");
+  
+  if (!_start || !_timerStarted) {
+    //Don't track location until we hit start
+    return;
+  }
+  
+  //Calculate distance elapsed
+  CLLocation* newLocation = [[CLLocation alloc] initWithLatitude:location.latitude longitude:location.longitude];
+  
+  if (mapPointCount > 0) {
+    CLLocationDistance elapsedDist = [newLocation distanceFromLocation:_previousLocation];
+    _elapsedDistance += elapsedDist;
+  } else {
+    _elapsedDistance = 0;
+  }
+  
+  _previousLocation = newLocation;
+  
+  //Calculate centroid of location
+  CLLocationCoordinate2D centroid = [self CalculateCentroidwithNewLocation:location];
   
   // If in background, store other way
-  MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(location, currZoom, currZoom);
+  MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(centroid, currZoom, currZoom);
   MKCoordinateRegion adjustedRegion = [_addMap regionThatFits:viewRegion];
   [_addMap setRegion:adjustedRegion animated:YES];
   [_addMap setZoomEnabled:YES];
@@ -276,13 +356,14 @@ static const int kStartingNumPoints = 2000;
     mapPointCount++;
   } else if ((location.latitude != mapPoints[mapPointCount].latitude) ||
              (location.longitude != mapPoints[mapPointCount].longitude) ) {
-    mapPointCount++;
     mapPoints[mapPointCount] = location;
+    mapPointCount++;
   }
   
-  //if (!myPolyline) {
-  myPolyline = [MKPolyline polylineWithCoordinates:mapPoints count:mapPointCount];
-  //}
+  if (mapPointCount > 1) {
+    myPolyline = [MKPolyline polylineWithCoordinates:mapPoints count:mapPointCount];
+    [_addMap addOverlay:myPolyline];
+  }
   
   if (location.latitude < minLat) {
     minLat = location.latitude;
@@ -300,10 +381,10 @@ static const int kStartingNumPoints = 2000;
   }
   
   //Test four corners to make sure all is in frame
-  CLLocationCoordinate2D topLeft = CLLocationCoordinate2DMake(minLong, maxLat);
-  CLLocationCoordinate2D topRight = CLLocationCoordinate2DMake(maxLong, maxLat);
-  CLLocationCoordinate2D bottomLeft = CLLocationCoordinate2DMake(minLong, minLat);
-  CLLocationCoordinate2D bottomRight = CLLocationCoordinate2DMake(maxLong, minLat);
+  CLLocationCoordinate2D topLeft = CLLocationCoordinate2DMake(minLat, maxLong);
+  CLLocationCoordinate2D topRight = CLLocationCoordinate2DMake(maxLat, maxLong);
+  CLLocationCoordinate2D bottomLeft = CLLocationCoordinate2DMake(minLat, minLong);
+  CLLocationCoordinate2D bottomRight = CLLocationCoordinate2DMake(maxLat, minLong);
   
   if(MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(topLeft)) &&
      MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(topRight)) &&
@@ -314,11 +395,8 @@ static const int kStartingNumPoints = 2000;
     //Do stuff
   } else {
     //Resize map
-    //200 km/h (won't be moving faster than this)
-    currZoom += 250;
+    currZoom += 200;
   }
-  
-  [_addMap addOverlay:myPolyline];
 }
 
 -(void)scrollToY:(float)y
@@ -376,11 +454,15 @@ static const int kStartingNumPoints = 2000;
 
 - (void) StartGPSClicked: (UIButton *)gpsButton
 {
-  if (_timerStarted) {
+  if (!_timerStarted) {
+    _timerStarted = YES;
     [self startTrackingLocation];
     [_startButton setTitle:@"Stop" forState:UIControlStateNormal];
   } else {
+    _elapsedTime = [_start timeIntervalSinceNow];
+    _timerStarted = NO;
     [self stopTrackingLocation];
+    [_startButton setTitle:@"Start" forState:UIControlStateNormal];
   }
 }
 
@@ -457,27 +539,60 @@ static const int kStartingNumPoints = 2000;
 {
   if (_isAdd)
   {
-    NSLog(@"Create Clicked");
-    NSString* dataName = _setName;
-    //NSInteger row = [_typeDataView selectedRowInComponent:0];
-    NSString* dataValue =  ((UILabel *)_dataName).text;
-    NSString* notes = _notesView.text;
-    
-    NSDate *currentTime = [NSDate date];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-    NSString *resultString = [dateFormatter stringFromDate: currentTime];
-    
-    //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
-    DLDataPointRowObject *newObject = [[DLDataPointRowObject alloc]
-                                        initWithName:dataName
-                                               value:dataValue
-                                                time:resultString
-                                               notes:notes];
-    
-    [newObject save];
-    [_delegate didCreateNewObject:newObject];
+    if ([_typeName isEqualToString:@"GPS"]) {
+      NSString* dataName = _setName;
+      
+      NSMutableString* dataValue = [NSMutableString string];
+      
+      //Store total distance, time elapsed
+      [dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f,\n", -1 * _elapsedTime, _elapsedDistance]];
+      
+      for (int i = 0; i < mapPointCount; i++)
+      {
+        [dataValue appendString:[NSString stringWithFormat:@"%.7f, %.7f\n,", mapPoints[i].latitude, mapPoints[i].longitude]];
+      }
+      
+      NSString* notes = _notesView.text;
+      
+      NSDate *currentTime = [NSDate date];
+      NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+      [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+      [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+      NSString *resultString = [dateFormatter stringFromDate: currentTime];
+      
+      //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
+      DLDataPointRowObject *newObject = [[DLDataPointRowObject alloc]
+                                         initWithName:dataName
+                                         value:dataValue
+                                         time:resultString
+                                         notes:notes];
+      
+      [newObject save];
+      [_delegate didCreateNewObject:newObject];
+      
+    } else {
+      NSLog(@"Create Clicked");
+      NSString* dataName = _setName;
+      //NSInteger row = [_typeDataView selectedRowInComponent:0];
+      NSString* dataValue =  ((UILabel *)_dataName).text;
+      NSString* notes = _notesView.text;
+      
+      NSDate *currentTime = [NSDate date];
+      NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+      [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+      [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+      NSString *resultString = [dateFormatter stringFromDate: currentTime];
+      
+      //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
+      DLDataPointRowObject *newObject = [[DLDataPointRowObject alloc]
+                                          initWithName:dataName
+                                                 value:dataValue
+                                                  time:resultString
+                                                 notes:notes];
+      
+      [newObject save];
+      [_delegate didCreateNewObject:newObject];
+    }
   } else if (_didEdit) {
     // Save changes to database
     NSString* dataName = _setName;

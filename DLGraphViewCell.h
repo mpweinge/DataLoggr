@@ -13,6 +13,6 @@
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
          dataPoints:(NSMutableArray *)dataPoints
-             isTime:(BOOL) isTime;
+               type:(NSString *) type;
 
 @end

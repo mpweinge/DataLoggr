@@ -26,7 +26,7 @@
     return self;
 }
 
--(void)generateData : (NSMutableArray *)dataPoints isTime: (BOOL)_isTimeData
+-(void)generateData : (NSMutableArray *)dataPoints type: (NSString *)type
 {
   
   //Find minimum (start) date
@@ -147,7 +147,7 @@
     NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
     [f setNumberStyle:NSNumberFormatterDecimalStyle];
     
-    if (_isTimeData)
+    if ([type isEqualToString:@"Time"])
     {
       NSString *minutes = [value substringWithRange:NSMakeRange(0, 2)];
       NSString *seconds = [value substringWithRange:NSMakeRange(3, 2)];
@@ -159,6 +159,42 @@
       
       y = @([iMinutes intValue] * 60 + [iSeconds intValue] + [iMilliSeconds floatValue] / 100);
       
+      
+    } else if ([type isEqualToString:@"GPS"]){
+      //Read until colon for time:
+      int colonIdx = 0;
+      int commaIdx = 0;
+      int i = 0;
+      for (i = 0; i < [value length]; i++ )
+      {
+        if ([value characterAtIndex:i] == ':') {
+          colonIdx = i;
+        } else if ([value characterAtIndex:i] == ',') {
+          commaIdx = i;
+          break;
+        }
+      }
+      
+      NSString *floatSubstr= [value substringWithRange:NSMakeRange(colonIdx + 2, commaIdx - colonIdx - 2)];
+      
+      float timeValue = [ floatSubstr floatValue];
+      
+      if (timeValue < 0)
+        timeValue *= -1;
+      
+      /*for (i; i < [value length]; i++ )
+      {
+        if ([value characterAtIndex:i] == ':') {
+          colonIdx = i;
+        } else if ([value characterAtIndex:i] == ',') {
+          commaIdx = i;
+          break;
+        }
+      }
+      
+      float distValue = [value substringWithRange:[NSRange NSMakeRange(colonIdx, commaIdx - colonIdx)]];*/
+      
+      y = @(timeValue);
       
     } else {
       y = [f numberFromString:value];

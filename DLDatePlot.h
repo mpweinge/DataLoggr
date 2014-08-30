@@ -17,7 +17,7 @@ CPTScatterPlotDelegate>
     NSArray *plotData;
 }
 
--(void)generateData : (NSMutableArray *)dataPoints isTime: (BOOL)_isTimeData;
+-(void)generateData : (NSMutableArray *)dataPoints type: (NSString *)type;
 -(void)renderInLayer:(CPTGraphHostingView *)layerHostingView withTheme:(CPTTheme *)theme animated:(BOOL)animated;
 
 @property (nonatomic, readwrite, assign) CPTGraphHostingView *hostView;

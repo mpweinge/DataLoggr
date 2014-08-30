@@ -76,7 +76,7 @@
   
   if ( [indexPath row] == 0 ) {
     //if (cell == nil) {
-      DLGraphViewCell *graphCell = [[DLGraphViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier dataPoints:dataValues isTime:[_typeName isEqualToString:@"Time"]];
+      DLGraphViewCell *graphCell = [[DLGraphViewCell alloc]  initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier dataPoints:dataValues type:_typeName];
       
       cell = graphCell;
     //}
