@@ -16,6 +16,7 @@
 static const int kValueOffsetY = 25;
 static int kNotesOffsetY = 150;
 static const int kButtonOffsetY = 350;
+static const int kStartingNumPoints = 2000;
 
 @interface DLAddPointViewController () < UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UITextViewDelegate >
 {
@@ -45,6 +46,18 @@ static const int kButtonOffsetY = 350;
   
   LocationTracker * locationTracker;
   NSTimer* locationUpdateTimer;
+  
+  MKPolyline *myPolyline;
+  
+  CLLocationCoordinate2D *mapPoints;
+  int mapPointCount;
+  
+  CLLocationDegrees minLat;
+  CLLocationDegrees minLong;
+  CLLocationDegrees maxLat;
+  CLLocationDegrees maxLong;
+  
+  int currZoom;
 }
 
 @end
@@ -70,6 +83,15 @@ static const int kButtonOffsetY = 350;
     _didEdit = NO;
     currPausedTime = 0;
     _textFieldEmpty = YES;
+    
+    mapPoints = malloc(sizeof(CLLocationCoordinate2D) * kStartingNumPoints );
+    mapPointCount = 0;
+    minLat = 0;
+    minLong = 0;
+    maxLat = 0;
+    maxLong = 0;
+    
+    currZoom = 500;
     
     if (_isAdd) {
       self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(CancelClicked)];
@@ -178,7 +200,7 @@ static const int kButtonOffsetY = 350;
     //For time add a giant label for a timer
     [self setupTimer];
   } else if ([_typeName isEqualToString:@"GPS"]) {
-    [self startTrackingLocation];
+    [self setupGPS];
   }
 }
 
@@ -189,6 +211,17 @@ static const int kButtonOffsetY = 350;
   MKCoordinateRegion adjustedRegion = [_addMap regionThatFits:viewRegion];
   [_addMap setRegion:adjustedRegion animated:YES];
   [_addMap setZoomEnabled:YES];
+}
+
+- (MKOverlayRenderer *)mapView:(MKMapView *)mapView rendererForOverlay:(id<MKOverlay>)overlay {
+  if ([overlay isKindOfClass:MKPolyline.class]) {
+    MKPolylineRenderer *lineView = [[MKPolylineRenderer alloc] initWithOverlay:overlay];
+    lineView.strokeColor = [UIColor greenColor];
+    
+    return lineView;
+  }
+  
+  return nil;
 }
 
 - (void)startTrackingLocation
@@ -203,9 +236,24 @@ static const int kButtonOffsetY = 350;
 	locationUpdateTimer =
   [NSTimer scheduledTimerWithTimeInterval:time
                                    target:self
-                                 selector:@selector(updateLocation)
+                                 //selector:@selector(updateLocation)
+                                 selector:@selector(testMapUpdate)
                                  userInfo:nil
                                   repeats:YES];
+}
+
+- (void) stopTrackingLocation {
+  [locationUpdateTimer invalidate];
+  locationUpdateTimer = nil;
+  [locationTracker stopLocationTracking];
+}
+
+-(void) testMapUpdate
+{
+  CLLocationCoordinate2D location;
+  location.latitude = mapPointCount / (double)5000.0;
+  location.longitude = mapPointCount / (double)5000.0;
+  [self DidGetLocation:location];
 }
 
 -(void)updateLocation {
@@ -216,11 +264,61 @@ static const int kButtonOffsetY = 350;
 
 -(void) DidGetLocation:(CLLocationCoordinate2D) location
 {
+  
   // If in background, store other way
-  MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(location, 500, 500);
+  MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(location, currZoom, currZoom);
   MKCoordinateRegion adjustedRegion = [_addMap regionThatFits:viewRegion];
   [_addMap setRegion:adjustedRegion animated:YES];
   [_addMap setZoomEnabled:YES];
+  
+  if (mapPointCount == 0) {
+    mapPoints[mapPointCount] = location;
+    mapPointCount++;
+  } else if ((location.latitude != mapPoints[mapPointCount].latitude) ||
+             (location.longitude != mapPoints[mapPointCount].longitude) ) {
+    mapPointCount++;
+    mapPoints[mapPointCount] = location;
+  }
+  
+  //if (!myPolyline) {
+  myPolyline = [MKPolyline polylineWithCoordinates:mapPoints count:mapPointCount];
+  //}
+  
+  if (location.latitude < minLat) {
+    minLat = location.latitude;
+  }
+  if (location.latitude > maxLat) {
+    maxLat = location.latitude;
+  }
+  
+  if (location.longitude > maxLong) {
+    maxLong = location.longitude;
+  }
+  
+  if (location.longitude < minLong) {
+    minLong = location.longitude;
+  }
+  
+  //Test four corners to make sure all is in frame
+  CLLocationCoordinate2D topLeft = CLLocationCoordinate2DMake(minLong, maxLat);
+  CLLocationCoordinate2D topRight = CLLocationCoordinate2DMake(maxLong, maxLat);
+  CLLocationCoordinate2D bottomLeft = CLLocationCoordinate2DMake(minLong, minLat);
+  CLLocationCoordinate2D bottomRight = CLLocationCoordinate2DMake(maxLong, minLat);
+  
+  if(MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(topLeft)) &&
+     MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(topRight)) &&
+     MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(bottomLeft)) &&
+     MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(bottomRight))
+     )
+  {
+    //Do stuff
+  } else {
+    //Resize map
+    //200 km/h (won't be moving faster than this)
+    currZoom += 250;
+  }
+  
+  [_addMap addOverlay:myPolyline];
 }
 
 -(void)scrollToY:(float)y
@@ -264,6 +362,26 @@ static const int kButtonOffsetY = 350;
   
   [self.view addSubview:_startButton];
   [self.view addSubview:_resetButton];
+}
+
+- (void) setupGPS
+{
+  _startButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  [_startButton setTitle:@"Start" forState:UIControlStateNormal];
+  [_startButton sizeToFit];
+  _startButton.center = CGPointMake(100, kButtonOffsetY);
+  [_startButton addTarget:self action:@selector(StartGPSClicked:) forControlEvents:UIControlEventTouchUpInside];
+  [self.view addSubview:_startButton];
+}
+
+- (void) StartGPSClicked: (UIButton *)gpsButton
+{
+  if (_timerStarted) {
+    [self startTrackingLocation];
+    [_startButton setTitle:@"Stop" forState:UIControlStateNormal];
+  } else {
+    [self stopTrackingLocation];
+  }
 }
 
 - (void) ResetTimerClicked: (UIButton *)resetButton
