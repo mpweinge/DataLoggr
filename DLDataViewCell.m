@@ -9,6 +9,7 @@
 #import "DLDataViewCell.h"
 #import "NSString+FontAwesome.h"
 #import "DLCircleView.h"
+#import "DLDataPointRowObject.h"
 
 @interface DLDataViewCell() {
   DLDataPointRowObject *_dataObject;
@@ -36,6 +37,7 @@
                name:(NSString *)name
               value:(NSString *)value
                time:(NSString *)time
+               type:(NSString *)type
               notes:(NSString *)notes
          dataObject:(DLDataPointRowObject *)dataObject;
 {
@@ -58,10 +60,81 @@
       _timeValue.text = [time substringFromIndex:splitLocation + 1];
       [self addSubview:_timeValue];
       
-      _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
-      _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
-      _dataValue.text = value;
-      [self addSubview:_dataValue];
+      
+      if ([type isEqualToString:@"GPS"]) {
+        // Grab the first value
+        
+        int timeColonIdx = 0;
+        int timeCommaIdx = 0;
+        int distanceColonIdx = 0;
+        int distanceCommaIdx = 0;
+        int i = 0;
+        
+        //Read in the time
+        for (i = 0; i < value.length; i++)
+        {
+          // Find the colon first
+          if ([value characterAtIndex:i] == ':') {
+            timeColonIdx = i;
+          } else if ( [value characterAtIndex:i] == ',') {
+            timeCommaIdx = i;
+            break;
+          }
+        }
+        
+        i++;
+        
+        //Read in the distance
+        for ( i; i < value.length; i++)
+        {
+          // Find the colon first
+          if ([value characterAtIndex:i] == ':') {
+            distanceColonIdx = i;
+          } else if ( [value characterAtIndex:i] == ',') {
+            distanceCommaIdx = i;
+            break;
+          }
+        }
+        
+        i++;
+        
+        NSString *time = [value substringWithRange:NSMakeRange(timeColonIdx + 2, (timeCommaIdx - timeColonIdx - 2))];
+        NSString *distance = [value substringWithRange:NSMakeRange(distanceColonIdx + 2, (distanceCommaIdx - distanceColonIdx - 2))];
+        
+        double timeNum = [time doubleValue];
+        double distanceNum = [distance doubleValue];
+        
+        int numMinutes = timeNum / 60;
+        int numMinutesTen = numMinutes / 10;
+        
+        int numSeconds = (timeNum - numMinutes * 60);
+        int numSecondsTen = numSeconds / 10;
+        
+        int numMilli = (timeNum - numSeconds) * 100;
+        int numMilliTen = numMilli / 10;
+        numMilli -= numMilliTen * 10;
+        
+        numMinutes -= numMinutesTen * 10;
+        numSeconds -= numSecondsTen * 10;
+        
+        _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(130, 8, 150, 22)];
+        _dataValue.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0];
+        _dataValue.text = [NSString stringWithFormat:@"Distance: %.01f m", distanceNum];
+        
+        UILabel * distLabel = [[UILabel alloc] initWithFrame:CGRectMake(130, 25, 150, 22)];
+        distLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0];
+        distLabel.text = [NSString stringWithFormat:@"Time: %i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+        
+        [self addSubview:distLabel];
+        
+        [self addSubview:_dataValue];
+        
+      } else {
+        _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
+        _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
+        _dataValue.text = value;
+        [self addSubview:_dataValue];
+      }
       
       _editIcon=[[UILabel alloc] initWithFrame:CGRectMake(290, 13, 100, 22)];
       _editIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];

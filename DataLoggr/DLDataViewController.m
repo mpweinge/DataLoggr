@@ -97,18 +97,20 @@
                                                 name:currItem.DataName
                                            value:currItem.DataValue
                                             time:currItem.DataTime
+                                            type:_typeName
                                            notes:currItem.DataNotes
                                            dataObject:currItem];
     }
     else {
       newCell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
-                                   reuseIdentifier:myIdentifier
+                                      reuseIdentifier:myIdentifier
                                                  name:@"No Name Yet"
-                                             value:@"Insert values!"
-                                              time:@"No time yet"
-                                             notes:@"No notes yet"
+                                                value:@"Insert values!"
+                                                 time:@"No time yet"
+                                                 type:nil
+                                                notes:@"No notes yet"
                                            dataObject:nil];
-    }
+    } 
     
     newCell.selectionStyle = UITableViewCellSelectionStyleNone;
     newCell.delegate = self;

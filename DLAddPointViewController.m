@@ -63,6 +63,8 @@ static const int kStartingNumPoints = 2000;
   CLLocation *_previousLocation;
   CLLocationDistance _elapsedDistance;
   NSTimeInterval _elapsedTime;
+  UILabel *_timeText;
+  UILabel *_distanceText;
   
   int currZoom;
 }
@@ -138,11 +140,45 @@ static const int kStartingNumPoints = 2000;
   ((UILabel *)_dataName).textColor = [UIColor blackColor];
   ((UILabel *)_dataName).font = [UIFont fontWithName:@"HelveticaNeue-Light" size:60.0];
   } else if ([_typeName isEqualToString:@"GPS"] ) {
-    _addMap = [[MKMapView alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 250, 200)];
+    _addMap = [[MKMapView alloc] initWithFrame:CGRectMake(40, kValueOffsetY - 13, 250, 200)];
     _addMap.showsUserLocation = YES;
     _addMap.delegate = self;
-    kNotesOffsetY = 300;
+    
+    kNotesOffsetY = 150;
+    
+    // Create divider and Time, Data column
+    UIView *dataDivider = [[UIView alloc] initWithFrame:CGRectMake(5, kNotesOffsetY + 70, 310, 1)];
+    dataDivider.backgroundColor = [UIColor lightGrayColor];
+    [self.view addSubview:dataDivider];
+    
+    UILabel *iconDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, kNotesOffsetY +65, 300, 50)];
+    iconDataLabel.text = @"Time: ";
+    iconDataLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+    [self.view addSubview:iconDataLabel];
+    
+    _timeText = [[UITextField alloc] initWithFrame:CGRectMake(60, kNotesOffsetY + 66, 200, 50)];
+    _timeText.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+    _timeText.text = @"00:00.00";
+    [self.view addSubview:_timeText];
+    
+    UILabel *iconDataLabel2 = [[UILabel alloc] initWithFrame:CGRectMake(180, kNotesOffsetY + 65, 300, 50)];
+    iconDataLabel2.text = @"Distance: ";
+    iconDataLabel2.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+    [self.view addSubview:iconDataLabel2];
+    
+    _distanceText = [[UITextField alloc] initWithFrame:CGRectMake(250, kNotesOffsetY + 66, 200, 50)];
+    _distanceText.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+    _distanceText.text = @"0.0 m";
+    [self.view addSubview:_distanceText];
+    
+    kNotesOffsetY = 295;
     [self.view addSubview:_addMap];
+    
+    if(!_isAdd) {
+      // Add a polyline for all of the points that are in the set
+      [self addPolylineForStoredPoints:_currCell.dataPoint.DataValue];
+    }
+    
   } else {
     _dataName = [[UITextField alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 300, 50)];
     
@@ -173,11 +209,20 @@ static const int kStartingNumPoints = 2000;
   dataDivider.backgroundColor = [UIColor lightGrayColor];
   [self.view addSubview:dataDivider];
   
-  UILabel *iconDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, kNotesOffsetY, 300, 50)];
+  UILabel *iconDataLabel;
+  if ([_typeName isEqualToString:@"GPS"]) {
+    iconDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, kNotesOffsetY - 15, 300, 50)];
+  } else {
+    iconDataLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, kNotesOffsetY, 300, 50)];
+  }
   iconDataLabel.text = @"Notes: ";
   iconDataLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
   
-  _notes = [[UITextField alloc] initWithFrame:CGRectMake(100, kNotesOffsetY, 200, 50)];
+  if ([_typeName isEqualToString:@"GPS"]) {
+    _notes = [[UITextField alloc] initWithFrame:CGRectMake(100, kNotesOffsetY - 15, 200, 40)];
+  } else {
+    _notes = [[UITextField alloc] initWithFrame:CGRectMake(100, kNotesOffsetY, 200, 50)];
+  }
   _notes.borderStyle = UITextBorderStyleRoundedRect;
   _notes.returnKeyType = UIReturnKeyDone;
   _notes.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -186,7 +231,12 @@ static const int kStartingNumPoints = 2000;
   _notes.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
   
   CGRect frameRect = _notes.frame;
-  frameRect.size.height = 90;
+  
+  if ([_typeName isEqualToString:@"GPS"]) {
+    frameRect.size.height = 60;
+  } else {
+    frameRect.size.height = 90;
+  }
   _notes.frame = frameRect;
   
   _notesView = [[UITextView alloc] initWithFrame:frameRect];
@@ -211,6 +261,105 @@ static const int kStartingNumPoints = 2000;
   } else if ([_typeName isEqualToString:@"GPS"]) {
     [self setupGPS];
   }
+}
+
+- (void) addPolylineForStoredPoints: (NSString *) value
+{
+  // The first line in the string is time and distance
+  // Time: ... , Distance: ... , \n
+  // Proceeding values are (latitude)float ... , (longitude)float ... , \n
+  
+  int timeColonIdx = 0;
+  int timeCommaIdx = 0;
+  int distanceColonIdx = 0;
+  int distanceCommaIdx = 0;
+  int i = 0;
+  
+  //Read in the time
+  for (i = 0; i < value.length; i++)
+  {
+      // Find the colon first
+    if ([value characterAtIndex:i] == ':') {
+      timeColonIdx = i;
+    } else if ( [value characterAtIndex:i] == ',') {
+      timeCommaIdx = i;
+      break;
+    }
+  }
+  
+  i++;
+  
+  //Read in the distance
+  for ( i; i < value.length; i++)
+  {
+    // Find the colon first
+    if ([value characterAtIndex:i] == ':') {
+      distanceColonIdx = i;
+    } else if ( [value characterAtIndex:i] == ',') {
+      distanceCommaIdx = i;
+      break;
+    }
+  }
+  
+  i++;
+  
+  int latitudeStartIdx = 0;
+  int latitudeEndIdx = 0;
+  
+  int longitudeStartIdx = 0;
+  int longitudeEndIdx = 0;
+  
+  //Read in all of the stored points
+  for (i; i < value.length; i++)
+  {
+    if ( [value characterAtIndex:i] == '\n') {
+      latitudeStartIdx = i+1;
+    } else if ( [value characterAtIndex:i] == ',') {
+      if (latitudeEndIdx == 0) {
+        latitudeEndIdx = i;
+        longitudeStartIdx = (i+1);
+      } else {
+        longitudeEndIdx = i;
+        
+        //Read in the values here
+        NSString *latitude = [value substringWithRange:NSMakeRange(latitudeStartIdx, (latitudeEndIdx - latitudeStartIdx))];
+        NSString *longitude = [value substringWithRange:NSMakeRange(longitudeStartIdx, (longitudeEndIdx - longitudeStartIdx))];
+        
+        mapPoints[mapPointCount] = CLLocationCoordinate2DMake([latitude doubleValue], [longitude doubleValue]);
+        mapPointCount++;
+        
+        latitudeEndIdx = 0;
+      }
+    }
+  }
+  
+  myPolyline = [MKPolyline polylineWithCoordinates:mapPoints count:mapPointCount];
+  [_addMap addOverlay:myPolyline];
+  
+  [_addMap setVisibleMapRect:[myPolyline boundingMapRect] edgePadding:UIEdgeInsetsMake(10.0, 10.0, 10.0, 10.0) animated:NO];
+  
+  NSString *time = [value substringWithRange:NSMakeRange(timeColonIdx + 2, (timeCommaIdx - timeColonIdx - 2))];
+  NSString *distance = [value substringWithRange:NSMakeRange(distanceColonIdx + 2, (distanceCommaIdx - distanceColonIdx - 2))];
+  
+  double timeNum = [time doubleValue];
+  double distanceNum = [distance doubleValue];
+  
+  _distanceText.text = [NSString stringWithFormat:@"%.01f m", distanceNum];
+  
+  int numMinutes = timeNum / 60;
+  int numMinutesTen = numMinutes / 10;
+  
+  int numSeconds = (timeNum - numMinutes * 60);
+  int numSecondsTen = numSeconds / 10;
+  
+  int numMilli = (timeNum - numSeconds) * 100;
+  int numMilliTen = numMilli / 10;
+  numMilli -= numMilliTen * 10;
+  
+  numMinutes -= numMinutesTen * 10;
+  numSeconds -= numSecondsTen * 10;
+  
+  _timeText.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
 }
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
@@ -247,8 +396,8 @@ static const int kStartingNumPoints = 2000;
 	locationUpdateTimer =
   [NSTimer scheduledTimerWithTimeInterval:time
                                    target:self
-                                 selector:@selector(updateLocation)
-  //                               selector:@selector(testMapUpdate)
+  //                               selector:@selector(updateLocation)
+                                 selector:@selector(testMapUpdate)
                                  userInfo:nil
                                   repeats:YES];
   
@@ -336,6 +485,8 @@ static const int kStartingNumPoints = 2000;
   if (mapPointCount > 0) {
     CLLocationDistance elapsedDist = [newLocation distanceFromLocation:_previousLocation];
     _elapsedDistance += elapsedDist;
+    
+    _distanceText.text = [NSString stringWithFormat:@"%.01f m", _elapsedDistance];
   } else {
     _elapsedDistance = 0;
   }
@@ -447,7 +598,7 @@ static const int kStartingNumPoints = 2000;
   _startButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
   [_startButton setTitle:@"Start" forState:UIControlStateNormal];
   [_startButton sizeToFit];
-  _startButton.center = CGPointMake(100, kButtonOffsetY);
+  _startButton.center = CGPointMake(100, kNotesOffsetY + 80);
   [_startButton addTarget:self action:@selector(StartGPSClicked:) forControlEvents:UIControlEventTouchUpInside];
   [self.view addSubview:_startButton];
 }
@@ -458,9 +609,26 @@ static const int kStartingNumPoints = 2000;
     _timerStarted = YES;
     [self startTrackingLocation];
     [_startButton setTitle:@"Stop" forState:UIControlStateNormal];
+    
+    if (!_start) {
+      _start = [NSDate date];
+    }
+    
+    _timer = [NSTimer scheduledTimerWithTimeInterval:0.01
+                                              target:self
+                                            selector:@selector(updateTime)
+                                            userInfo:nil
+                                             repeats:YES];
   } else {
     _elapsedTime = [_start timeIntervalSinceNow];
+    currPausedTime = [_start timeIntervalSinceNow] * -1 + currPausedTime;
+    
     _timerStarted = NO;
+    
+    _start = nil;
+    [_timer invalidate];
+    _timer = nil;
+    
     [self stopTrackingLocation];
     [_startButton setTitle:@"Start" forState:UIControlStateNormal];
   }
@@ -527,7 +695,11 @@ static const int kStartingNumPoints = 2000;
   numMinutes -= numMinutesTen * 10;
   numSeconds -= numSecondsTen * 10;
   
+  if ([_typeName isEqualToString:@"GPS"]) {
+    _timeText.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+  } else {
   ((UILabel *)_dataName).text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+  }
 }
 
 - (void) CancelClicked
@@ -545,11 +717,11 @@ static const int kStartingNumPoints = 2000;
       NSMutableString* dataValue = [NSMutableString string];
       
       //Store total distance, time elapsed
-      [dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f,\n", -1 * _elapsedTime, _elapsedDistance]];
+      [dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f, \n", -1 * _elapsedTime, _elapsedDistance]];
       
       for (int i = 0; i < mapPointCount; i++)
       {
-        [dataValue appendString:[NSString stringWithFormat:@"%.7f, %.7f\n,", mapPoints[i].latitude, mapPoints[i].longitude]];
+        [dataValue appendString:[NSString stringWithFormat:@"%.7f, %.7f, \n", mapPoints[i].latitude, mapPoints[i].longitude]];
       }
       
       NSString* notes = _notesView.text;
@@ -627,7 +799,8 @@ static const int kStartingNumPoints = 2000;
   // Dispose of any resources that can be recreated.
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
   [self.view endEditing:YES];
 }
 

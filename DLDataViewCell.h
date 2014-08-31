@@ -35,6 +35,7 @@
                name:(NSString *)name
               value:(NSString *)value
                time:(NSString *)time
+               type:(NSString *)type
               notes:(NSString *)notes
          dataObject:(DLDataPointRowObject *)dataObject;
 
