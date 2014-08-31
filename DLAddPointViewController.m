@@ -12,13 +12,14 @@
 #import "DLDatabaseManager.h"
 #import "LocationTracker.h"
 #import <MapKit/MapKit.h>
+#import "DLDataIconView.h"
 
 static const int kValueOffsetY = 25;
 static int kNotesOffsetY = 150;
 static const int kButtonOffsetY = 350;
 static const int kStartingNumPoints = 2000;
 
-@interface DLAddPointViewController () < UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UITextViewDelegate >
+@interface DLAddPointViewController () < UIPickerViewDataSource, UITextFieldDelegate, UITextViewDelegate, DLDataIconViewDelegate >
 {
   //UITextField* _dataName;
   UIView* _dataName;
@@ -66,7 +67,14 @@ static const int kStartingNumPoints = 2000;
   UILabel *_timeText;
   UILabel *_distanceText;
   
+  BOOL _userPanning;
+  
+  MKCoordinateRegion _lastSetRegion;
+  
   int currZoom;
+  
+  DLDataIconView *_ZoomPanIcon;
+  BOOL _changeMapZoomOnce;
 }
 
 @end
@@ -92,6 +100,7 @@ static const int kStartingNumPoints = 2000;
     _didEdit = NO;
     currPausedTime = 0;
     _textFieldEmpty = YES;
+    _userPanning = false;
     
     mapPoints = malloc(sizeof(CLLocationCoordinate2D) * kStartingNumPoints );
     mapPointCount = 0;
@@ -135,6 +144,8 @@ static const int kStartingNumPoints = 2000;
   // Need some text fields and an icon picker
   _didEdit = NO;
   
+  kNotesOffsetY = 150;
+  
   if ([_typeName isEqualToString:@"Time"] ) {
   _dataName = [[UILabel alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 300, 50)];
   ((UILabel *)_dataName).textColor = [UIColor blackColor];
@@ -142,9 +153,8 @@ static const int kStartingNumPoints = 2000;
   } else if ([_typeName isEqualToString:@"GPS"] ) {
     _addMap = [[MKMapView alloc] initWithFrame:CGRectMake(40, kValueOffsetY - 13, 250, 200)];
     _addMap.showsUserLocation = YES;
+    _addMap.userTrackingMode = MKUserTrackingModeFollow;
     _addMap.delegate = self;
-    
-    kNotesOffsetY = 150;
     
     // Create divider and Time, Data column
     UIView *dataDivider = [[UIView alloc] initWithFrame:CGRectMake(5, kNotesOffsetY + 70, 310, 1)];
@@ -173,6 +183,13 @@ static const int kStartingNumPoints = 2000;
     
     kNotesOffsetY = 295;
     [self.view addSubview:_addMap];
+    
+    // Create a button with icon
+    _ZoomPanIcon = [[DLDataIconView alloc]initWithFrame:CGRectMake(240, kValueOffsetY + 150, 50, 50) icon:FALocationArrow title:nil];
+    [self.view addSubview:_ZoomPanIcon];
+    _ZoomPanIcon.delegate = self;
+    _ZoomPanIcon.selected = YES;
+    _addMap.userTrackingMode = MKUserTrackingModeFollow;
     
     if(!_isAdd) {
       // Add a polyline for all of the points that are in the set
@@ -261,6 +278,34 @@ static const int kStartingNumPoints = 2000;
   } else if ([_typeName isEqualToString:@"GPS"]) {
     [self setupGPS];
   }
+}
+
+- (void)mapView:(MKMapView *)mapView regionWillChangeAnimated:(BOOL)animated
+{
+  // Check to see if user panned it. If so stop updating
+  
+  UIView* view = mapView.subviews.firstObject;
+  
+  for(UIGestureRecognizer* recognizer in view.gestureRecognizers)
+	{
+		//	The user caused of this...
+		if(recognizer.state == UIGestureRecognizerStateBegan
+		   || recognizer.state == UIGestureRecognizerStateEnded)
+		{
+			_userPanning = YES;
+      _ZoomPanIcon.selected = NO;
+      _addMap.userTrackingMode = MKUserTrackingModeNone;
+			break;
+		}
+	}
+}
+
+- (void) iconClicked:(DLDataIconView *)icon
+{
+  _ZoomPanIcon.selected = YES;
+  _addMap.userTrackingMode = MKUserTrackingModeFollow;
+  _userPanning = NO;
+  [_addMap setRegion:_lastSetRegion animated:YES];
 }
 
 - (void) addPolylineForStoredPoints: (NSString *) value
@@ -364,11 +409,23 @@ static const int kStartingNumPoints = 2000;
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
 {
-  /*CLLocationCoordinate2D userLocationCoord = userLocation.coordinate;
-  MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(userLocationCoord, currZoom, currZoom);
-  MKCoordinateRegion adjustedRegion = [_addMap regionThatFits:viewRegion];
-  [_addMap setRegion:adjustedRegion animated:YES];
-  [_addMap setZoomEnabled:YES];*/
+  if (!_start) {
+    CLLocationCoordinate2D userLocationCoord = userLocation.coordinate;
+    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(userLocationCoord, currZoom, currZoom);
+    MKCoordinateRegion adjustedRegion = [_addMap regionThatFits:viewRegion];
+    _lastSetRegion = adjustedRegion;
+    _existingCentroidLatitude = userLocationCoord.latitude;
+    _existingCentroidLongitude = userLocationCoord.longitude;
+    
+    if (!_userPanning) {
+      if (!_changeMapZoomOnce) {
+        _changeMapZoomOnce = YES;
+        [_addMap setRegion:adjustedRegion animated:NO];
+      } else {
+         [_addMap setCenterCoordinate:userLocationCoord animated:YES];
+      }
+    }
+  }
   [self DidGetLocation:userLocation.coordinate];
 }
 
@@ -396,8 +453,8 @@ static const int kStartingNumPoints = 2000;
 	locationUpdateTimer =
   [NSTimer scheduledTimerWithTimeInterval:time
                                    target:self
-  //                               selector:@selector(updateLocation)
-                                 selector:@selector(testMapUpdate)
+                                 selector:@selector(updateLocation)
+  //                               selector:@selector(testMapUpdate)
                                  userInfo:nil
                                   repeats:YES];
   
@@ -499,8 +556,12 @@ static const int kStartingNumPoints = 2000;
   // If in background, store other way
   MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(centroid, currZoom, currZoom);
   MKCoordinateRegion adjustedRegion = [_addMap regionThatFits:viewRegion];
-  [_addMap setRegion:adjustedRegion animated:YES];
-  [_addMap setZoomEnabled:YES];
+  
+  _lastSetRegion = adjustedRegion;
+  
+  if (!_userPanning ) {
+    [_addMap setCenterCoordinate:centroid animated:YES];
+  }
   
   if (mapPointCount == 0) {
     mapPoints[mapPointCount] = location;
@@ -531,22 +592,24 @@ static const int kStartingNumPoints = 2000;
     minLong = location.longitude;
   }
   
-  //Test four corners to make sure all is in frame
-  CLLocationCoordinate2D topLeft = CLLocationCoordinate2DMake(minLat, maxLong);
-  CLLocationCoordinate2D topRight = CLLocationCoordinate2DMake(maxLat, maxLong);
-  CLLocationCoordinate2D bottomLeft = CLLocationCoordinate2DMake(minLat, minLong);
-  CLLocationCoordinate2D bottomRight = CLLocationCoordinate2DMake(maxLat, minLong);
-  
-  if(MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(topLeft)) &&
-     MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(topRight)) &&
-     MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(bottomLeft)) &&
-     MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(bottomRight))
-     )
-  {
-    //Do stuff
-  } else {
-    //Resize map
-    currZoom += 200;
+  if (!_userPanning) {
+    //Test four corners to make sure all is in frame
+    CLLocationCoordinate2D topLeft = CLLocationCoordinate2DMake(minLat, maxLong);
+    CLLocationCoordinate2D topRight = CLLocationCoordinate2DMake(maxLat, maxLong);
+    CLLocationCoordinate2D bottomLeft = CLLocationCoordinate2DMake(minLat, minLong);
+    CLLocationCoordinate2D bottomRight = CLLocationCoordinate2DMake(maxLat, minLong);
+    
+    if(MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(topLeft)) &&
+       MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(topRight)) &&
+       MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(bottomLeft)) &&
+       MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(bottomRight))
+       )
+    {
+      //Do stuff
+    } else {
+      //Resize map
+      currZoom += 200;
+    }
   }
 }
 
@@ -680,7 +743,7 @@ static const int kStartingNumPoints = 2000;
 {
   NSTimeInterval timeInterval = [_start timeIntervalSinceNow];
   timeInterval *= -1;
-  timeInterval += currPausedTime;;
+  timeInterval += currPausedTime;
   
   int numMinutes = timeInterval / 60;
   int numMinutesTen = numMinutes / 10;
