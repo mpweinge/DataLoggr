@@ -8,6 +8,7 @@
 
 #import "DLDatePlot.h"
 #import "DLDataPointRowObject.h"
+#import "CPTTextLayer.h"
 
 @implementation DLDatePlot
 {
@@ -156,11 +157,11 @@
        ];
     }
     
-    if ([dataPoints count] == 1) {
+    /*if ([dataPoints count] == 1) {
       NSNumber *x = [NSNumber numberWithFloat:(dateDiff + 1)];
       [newData addObject:@{ @(CPTScatterPlotFieldX): x,
                             @(CPTScatterPlotFieldY): y }];
-    }
+    }*/
   }
   
   plotData = newData;
@@ -360,11 +361,11 @@
        ];
     }
     
-    if ([dataPoints count] == 1) {
+    /*if ([dataPoints count] == 1) {
       NSNumber *x = [NSNumber numberWithFloat:(dateDiff + 1)];
       [newData addObject:@{ @(CPTScatterPlotFieldX): x,
                             @(CPTScatterPlotFieldY): y }];
-    }
+    }*/
   }
   
   plotData = newData;
@@ -446,12 +447,23 @@
   if (dayDiff < 4 ) {
     dayDiff = dateDiff / oneDay;
     xLow = -dayDiff * oneDay / 3.0;
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay) * 1.5 )];
+    xLow = 0;
+    
+    if ([plotData count] == 1) {
+      plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(-0.5) length:CPTDecimalFromDouble(1)];
+    } else {
+      plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay)  )];
+    }
   } else {
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay))];
   }
   
-  NSTimeInterval yLow = -(fabs(_maxY) / 7.0);
+  graph.plotAreaFrame.paddingTop = 2.0f;
+  graph.plotAreaFrame.paddingRight = 55.0f;
+  graph.plotAreaFrame.paddingBottom = 30.0f;
+  graph.plotAreaFrame.paddingLeft = 44.0f;
+  
+  NSTimeInterval yLow = 0;
   
   if (_maxY == 0) {
     _maxY = 1.0;
@@ -462,18 +474,26 @@
     // Axes
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)graph.axisSet;
     CPTXYAxis *x          = axisSet.xAxis;
+  
   if ( dayDiff < 4 ) {
-    x.majorIntervalLength         = CPTDecimalFromFloat( (dayDiff * oneDay) * 1);
+    if ([plotData count] == 1) {
+      x.majorIntervalLength = CPTDecimalFromInt(1);
+    } else {
+      x.majorIntervalLength         = CPTDecimalFromFloat( (dayDiff * oneDay) * 1);
+    }
   } else {
     x.majorIntervalLength         = CPTDecimalFromFloat( (dayDiff * oneDay) / 4.0);
   }
     x.orthogonalCoordinateDecimal = CPTDecimalFromDouble(0.0);
     x.minorTicksPerInterval       = 0;
+  
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateStyle = kCFDateFormatterShortStyle;
   
   if (dayDiff < 4) {
     dateFormatter.timeStyle = kCFDateFormatterShortStyle;
+    dateFormatter.dateFormat = @" MM/dd/yy\nhh:mm a";
+    graph.plotAreaFrame.paddingBottom = 50.0f;
   }
   
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
@@ -485,7 +505,13 @@
 
     y.majorIntervalLength         = CPTDecimalFromDouble((fabs(_maxY)) / 5.0);
     y.minorTicksPerInterval       = 4;
+  
+  if ([plotData count] == 1) {
+    y.orthogonalCoordinateDecimal = CPTDecimalFromFloat(-0.5);
+    graph.plotAreaFrame.paddingLeft = 30.0f;
+  } else {
     y.orthogonalCoordinateDecimal = CPTDecimalFromFloat(0);
+  }
     NSNumberFormatter *yAxisFormatter = [[NSNumberFormatter alloc] init];
 
     if ( fabs(_maxY) < 5.0) {
@@ -505,6 +531,21 @@
     // Create a plot that uses the data source method
     CPTScatterPlot *dataSourceLinePlot = [[CPTScatterPlot alloc] init];
     dataSourceLinePlot.identifier = @"Date Plot";
+  
+  if ([plotData count] == 1) {
+    CPTPlotSymbol *plotSymbol = [CPTPlotSymbol ellipsePlotSymbol]; // Ellipse is used for circles
+    plotSymbol.fill = [CPTFill fillWithColor:[CPTColor redColor]];
+    plotSymbol.size = CGSizeMake(10.0, 10.0);
+    
+    // Set the line style of the edges of your symbol. (Around your symbol)
+    CPTMutableLineStyle *plotSymbolLineStyle = [[CPTMutableLineStyle alloc] init];
+    plotSymbolLineStyle.lineColor = [CPTColor blackColor];
+    plotSymbolLineStyle.lineWidth = 1.0f;
+    plotSymbol.lineStyle = plotSymbolLineStyle;
+    
+    dataSourceLinePlot.plotSymbol = plotSymbol;
+    
+  }
     
     CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
     lineStyle.lineWidth              = 3.0;
@@ -520,6 +561,17 @@
     [plotData release];
     [super dealloc];
 }*/
+
++(CPTAxisLabel *) buildAxisLabelAtLocation:(CGFloat)location withText:(NSString *)text
+{
+  CPTTextLayer *textLayer = [[CPTTextLayer alloc] initWithText:@"TEST"];
+  CPTTextLayer *textLayer2 = [[CPTTextLayer alloc] initWithText:@"NULL"];
+  [textLayer addSublayer:textLayer2];
+  CPTAxisLabel *axisLabel = [[CPTAxisLabel alloc] initWithContentLayer:textLayer];
+  axisLabel.offset = 8;
+  axisLabel.tickLocation = CPTDecimalFromCGFloat(location);
+  return axisLabel;
+}
 
 #pragma mark -
 #pragma mark Plot Data Source Methods
