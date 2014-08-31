@@ -24,6 +24,7 @@
   NSString *_typeName;
   BOOL newData;
   BOOL invalidateData;
+  DLGraphViewCell *_graphCell;
 }
 
 @end
@@ -76,9 +77,9 @@
   
   if ( [indexPath row] == 0 ) {
     //if (cell == nil) {
-      DLGraphViewCell *graphCell = [[DLGraphViewCell alloc]  initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier dataPoints:dataValues type:_typeName];
+      _graphCell = [[DLGraphViewCell alloc]  initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier dataPoints:dataValues type:_typeName];
       
-      cell = graphCell;
+      cell = _graphCell;
     //}
   }
   else /*if (cell == nil)*/ {
@@ -170,6 +171,9 @@
   }
   
   [[DLDatabaseManager getSharedInstance] deleteDataPoint:cell.dataPoint];
+  
+  // Refresh the graph
+  [tableView reloadData];
 }
 
 - (NSInteger) tableView: (UITableView *)tableView numberOfRowsInSection:(NSInteger)section

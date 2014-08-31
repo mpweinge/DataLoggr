@@ -18,6 +18,7 @@ CPTScatterPlotDelegate>
 }
 
 -(void)generateData : (NSMutableArray *)dataPoints type: (NSString *)type;
+-(void)generateData : (NSMutableArray *)dataPoints type: (NSString *)type valueNum:(int) val;
 -(void)renderInLayer:(CPTGraphHostingView *)layerHostingView withTheme:(CPTTheme *)theme animated:(BOOL)animated;
 
 @property (nonatomic, readwrite, assign) CPTGraphHostingView *hostView;

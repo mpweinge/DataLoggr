@@ -14,6 +14,7 @@
   NSDate *_minDate;
   NSDate *_maxDate;
   float _maxY;
+  int _val;
 }
 
 -(id)init
@@ -21,14 +22,153 @@
     if ( (self = [super init]) ) {
         //self.title   = @"Date Plot";
         //self.section = kLinePlots;
+      _val = -1;
     }
     
     return self;
 }
 
+-(void)generateData : (NSMutableArray *)dataPoints type: (NSString *)type valueNum:(int) val
+{
+  assert([type isEqualToString:@"GPS"]);
+  
+  _val = val;
+  
+  for (DLDataPointRowObject* currObj in dataPoints)
+  {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    // this is imporant - we set our input date format to match our input string
+    // if format doesn't match you'll get nil from your string, so be careful
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+    NSDate *dateFromString = [[NSDate alloc] init];
+    // time = @"08/26/14";
+    dateFromString = [dateFormatter dateFromString:currObj.DataTime];
+    
+    if(!_minDate) {
+      _minDate = dateFromString;
+    }
+    
+    if (!_maxDate) {
+      _maxDate = dateFromString;
+    }
+    
+    if ([dateFromString earlierDate:_minDate] == dateFromString) {
+      _minDate = dateFromString;
+    }
+    
+    if ([dateFromString laterDate:_maxDate] == dateFromString) {
+      _maxDate = dateFromString;
+    }
+  }
+  
+  //Scale linearly
+  //const NSTimeInterval oneDay = 24 * 60 * 60;
+  
+  NSMutableArray *newData = [NSMutableArray array];
+  
+  int idx = 0;
+  
+  for (DLDataPointRowObject* currObj in dataPoints)
+  {
+    NSString * time = currObj.DataTime;
+    NSString * value = currObj.DataValue;
+    
+    idx++;
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    // this is imporant - we set our input date format to match our input string
+    // if format doesn't match you'll get nil from your string, so be careful
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+    NSDate *dateFromString = [[NSDate alloc] init];
+    // time = @"08/26/14";
+    dateFromString = [dateFormatter dateFromString:time];
+    
+    NSNumber *y;
+    NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+    [f setNumberStyle:NSNumberFormatterDecimalStyle];
+
+    //Read until colon for time:
+    int colonIdx = 0;
+    int commaIdx = 0;
+    int i = 0;
+    for (i = 0; i < [value length]; i++ )
+    {
+      if ([value characterAtIndex:i] == ':') {
+        colonIdx = i;
+      } else if ([value characterAtIndex:i] == ',') {
+        commaIdx = i;
+        break;
+      }
+    }
+
+    NSString *floatSubstr= [value substringWithRange:NSMakeRange(colonIdx + 2, commaIdx - colonIdx - 2)];
+    
+    float timeValue = [ floatSubstr floatValue];
+    
+    i +=2;
+    
+    for (i; i < [value length]; i++ )
+    {
+      if ([value characterAtIndex:i] == ':') {
+        colonIdx = i;
+      } else if ([value characterAtIndex:i] == ',') {
+        commaIdx = i;
+        break;
+      }
+    }
+    
+    NSString *distSubstr= [value substringWithRange:NSMakeRange(colonIdx + 2, commaIdx - colonIdx - 2)];
+    
+    float distValue = [ distSubstr floatValue];
+    
+    if (timeValue < 0)
+      timeValue *= -1;
+    
+    if (val == 0) {
+      y = @(distValue / timeValue);
+    } else if (val == 1) {
+      y = @(distValue);
+    } else if (val == 2) {
+      y = @(timeValue);
+    } else {
+      assert(0);
+    }
+    
+    if ([y floatValue] > _maxY) {
+      _maxY = [y floatValue];
+    }
+    
+    NSTimeInterval dateDiff = [dateFromString timeIntervalSinceDate:_minDate];
+    //dateDiff *= -1;
+    //dateDiff += (24 * 60 * 60) * idx;
+    NSNumber *x = [NSNumber numberWithFloat:dateDiff];
+    
+    if (_minDate == _maxDate) {
+      NSNumber *x = [NSNumber numberWithFloat:(dateDiff + (idx-1))];
+      [newData addObject:@{ @(CPTScatterPlotFieldX): x,
+                            @(CPTScatterPlotFieldY): y }];
+    } else {
+      [newData addObject:
+       @{ @(CPTScatterPlotFieldX): x,
+          @(CPTScatterPlotFieldY): y }
+       ];
+    }
+    
+    if ([dataPoints count] == 1) {
+      NSNumber *x = [NSNumber numberWithFloat:(dateDiff + 1)];
+      [newData addObject:@{ @(CPTScatterPlotFieldX): x,
+                            @(CPTScatterPlotFieldY): y }];
+    }
+  }
+  
+  plotData = newData;
+}
+
 -(void)generateData : (NSMutableArray *)dataPoints type: (NSString *)type
 {
-  
+  _val = -1;
   //Find minimum (start) date
   _minDate = nil;
   
@@ -261,8 +401,18 @@
   
     [graph applyTheme:theme];
     graph.plotAreaFrame.borderLineStyle = nil;
-    
-    //graph.title = @"TEST";
+  
+    if (_val >= 0) {
+      if (_val == 0) {
+        graph.title = @"Distance vs Time";
+      } else if (_val == 1) {
+        graph.title = @"Distance";
+      } else if (_val == 2) {
+        graph.title = @"Time";
+      } else {
+        assert(0);
+      }
+    }
     CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
     textStyle.color                = [CPTColor grayColor];
     textStyle.fontName             = @"Helvetica-Bold";
@@ -297,9 +447,16 @@
     dayDiff = dateDiff / oneDay;
     xLow = -dayDiff * oneDay / 3.0;
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay) * 1.5 )];
+  } else {
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay))];
   }
   
   NSTimeInterval yLow = -(fabs(_maxY) / 7.0);
+  
+  if (_maxY == 0) {
+    _maxY = 1.0;
+  }
+  
     plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(yLow) length:CPTDecimalFromFloat(fabs(_maxY) + 2 * (fabs(_maxY) / 5.0))];
     
     // Axes
@@ -337,8 +494,6 @@
       int digitNum = -1 * log10f(_maxY / 5) + 1;
       [yAxisFormatter setMinimumFractionDigits:digitNum];
       [yAxisFormatter setMaximumFractionDigits:digitNum];
-      
-     // plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow + xLow / 5 * digitNum) length:CPTDecimalFromDouble( fabs(dayDiff * oneDay) + 2 * (fabs(dayDiff * oneDay) / 5.0) )];
     } else {
       [yAxisFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
       [yAxisFormatter setRoundingMode:NSNumberFormatterRoundHalfUp];

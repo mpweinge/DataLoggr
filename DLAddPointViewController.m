@@ -453,8 +453,11 @@ static const int kStartingNumPoints = 2000;
 	locationUpdateTimer =
   [NSTimer scheduledTimerWithTimeInterval:time
                                    target:self
+#if TARGET_IPHONE_SIMULATOR
+                                 selector:@selector(testMapUpdate)
+#else
                                  selector:@selector(updateLocation)
-  //                               selector:@selector(testMapUpdate)
+#endif
                                  userInfo:nil
                                   repeats:YES];
   
@@ -778,6 +781,16 @@ static const int kStartingNumPoints = 2000;
       NSString* dataName = _setName;
       
       NSMutableString* dataValue = [NSMutableString string];
+      
+      if (_start) {
+        // User did not click stop before hitting save
+        _elapsedTime = [_start timeIntervalSinceNow];
+        
+        [_timer invalidate];
+        _timer = nil;
+        
+        [self stopTrackingLocation];
+      }
       
       //Store total distance, time elapsed
       [dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f, \n", -1 * _elapsedTime, _elapsedDistance]];
