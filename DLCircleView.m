@@ -15,6 +15,23 @@
   CGFloat _strokeWidth;
   BOOL _selectFill;
   UIColor *_selectedColor;
+  UIColor *_boundaryColor;
+}
+
+- (id) initWithFrame:(CGRect) frame
+         strokeWidth:(CGFloat) strokeWidth
+          selectFill:(BOOL) selectFill
+         selectColor:(UIColor *) selectedColor
+       boundaryColor:(UIColor *)boundaryColor
+{
+  self = [super initWithFrame:frame];
+  if (self) {
+    _strokeWidth = strokeWidth;
+    _selectFill = selectFill;
+    _selectedColor = selectedColor;
+    _boundaryColor = boundaryColor;
+  }
+  return self;
 }
 
 - (id) initWithFrame:(CGRect) frame
@@ -27,6 +44,7 @@
     _strokeWidth = strokeWidth;
     _selectFill = selectFill;
     _selectedColor = selectedColor;
+    _boundaryColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1.0];
   }
   return self;
 }
@@ -38,6 +56,7 @@
     _strokeWidth = 3.0f;
     _selectFill = YES;
     _selectedColor = [UIColor colorWithRed:0.25 green:0.25 blue:1 alpha:1.0];
+    _boundaryColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1.0];
   }
   return self;
 }
@@ -73,13 +92,20 @@
     
     CGContextStrokeEllipseInRect( context, EllipseRect );
   } else {
-    CGContextSetStrokeColorWithColor(context, [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:1.0].CGColor);
+    CGContextSetStrokeColorWithColor(context, _boundaryColor.CGColor);
     
     // Set the border width
     CGContextSetLineWidth(context, _strokeWidth);
     
     CGContextStrokeEllipseInRect( context, EllipseRect );
   }
+}
+
+- (void) setBoundaryColor: (UIColor *)boundaryColor
+{
+  _boundaryColor = boundaryColor;
+  
+  [self setNeedsDisplay];
 }
 
 @end

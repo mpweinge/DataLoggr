@@ -238,8 +238,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     // this is imporant - we set our input date format to match our input string
     // if format doesn't match you'll get nil from your string, so be careful
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+    dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a";
     NSDate *dateFromString = [[NSDate alloc] init];
     // time = @"08/26/14";
     dateFromString = [dateFormatter dateFromString:currObj.DataTime];
@@ -278,8 +277,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     // this is imporant - we set our input date format to match our input string
     // if format doesn't match you'll get nil from your string, so be careful
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+    dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a";
     NSDate *dateFromString = [[NSDate alloc] init];
    // time = @"08/26/14";
     dateFromString = [dateFormatter dateFromString:time];
@@ -370,6 +368,11 @@
   
   plotData = newData;
   
+  if ([plotData count] == 0)
+  {
+    _minDate = [NSDate date];
+    _maxDate = [NSDate date];
+  }
 }
 
 -(void)renderInLayer:(CPTGraphHostingView *)layerHostingView withTheme:(CPTTheme *)theme animated:(BOOL)animated
@@ -405,11 +408,32 @@
   
     if (_val >= 0) {
       if (_val == 0) {
-        graph.title = @"Distance vs Time";
+        graph.title = @"Distance vs Time     ";
+        CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
+        textStyle.color                = [CPTColor grayColor];
+        textStyle.fontName             = @"Helvetica-Bold";
+        textStyle.fontSize             = round( bounds.size.height / CPTFloat(20.0) );
+        graph.titleTextStyle           = textStyle;
+        graph.titleDisplacement        = CPTPointMake( 0.0, textStyle.fontSize * CPTFloat(1.5) );
+        graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
       } else if (_val == 1) {
-        graph.title = @"Distance";
+        graph.title = @"Distance     ";
+        CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
+        textStyle.color                = [CPTColor grayColor];
+        textStyle.fontName             = @"Helvetica-Bold";
+        textStyle.fontSize             = round( bounds.size.height / CPTFloat(20.0) );
+        graph.titleTextStyle           = textStyle;
+        graph.titleDisplacement        = CPTPointMake( 0.0, textStyle.fontSize * CPTFloat(1.5) );
+        graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
       } else if (_val == 2) {
-        graph.title = @"Time";
+        graph.title = @"Time     ";
+        CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
+        textStyle.color                = [CPTColor grayColor];
+        textStyle.fontName             = @"Helvetica-Bold";
+        textStyle.fontSize             = round( bounds.size.height / CPTFloat(20.0) );
+        graph.titleTextStyle           = textStyle;
+        graph.titleDisplacement        = CPTPointMake( 0.0, textStyle.fontSize * CPTFloat(1.5) );
+        graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
       } else {
         assert(0);
       }
@@ -421,7 +445,7 @@
     
     CGFloat boundsPadding = round( bounds.size.width / CPTFloat(20.0) ); // Ensure that padding falls on an integral pixel
     
-    graph.paddingLeft = boundsPadding;
+    graph.paddingLeft = boundsPadding - 10;
     
     if ( graph.titleDisplacement.y > 0.0 ) {
         graph.paddingTop = graph.titleTextStyle.fontSize * 2.0;
@@ -440,7 +464,7 @@
     CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)graph.defaultPlotSpace;
     NSTimeInterval xLow       = -dayDiff * oneDay / 5.0;
   
-    if (dateDiff == 0) {
+    if ((dateDiff == 0) && ([plotData count] > 0)) {
       dateDiff = [plotData count] - 1;
     }
   
@@ -449,19 +473,19 @@
     xLow = -dayDiff * oneDay / 3.0;
     xLow = 0;
     
-    if ([plotData count] == 1) {
+    if ([plotData count] <= 1) {
       plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(-0.5) length:CPTDecimalFromDouble(1)];
     } else {
-      plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay)  )];
+      plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay) +1 )];
     }
   } else {
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay))];
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay) + 1)];
   }
   
   graph.plotAreaFrame.paddingTop = 2.0f;
   graph.plotAreaFrame.paddingRight = 55.0f;
   graph.plotAreaFrame.paddingBottom = 30.0f;
-  graph.plotAreaFrame.paddingLeft = 44.0f;
+  graph.plotAreaFrame.paddingLeft = 30.0f;
   
   NSTimeInterval yLow = 0;
   
@@ -476,10 +500,10 @@
     CPTXYAxis *x          = axisSet.xAxis;
   
   if ( dayDiff < 4 ) {
-    if ([plotData count] == 1) {
+    if ([plotData count] <= 1) {
       x.majorIntervalLength = CPTDecimalFromInt(1);
     } else {
-      x.majorIntervalLength         = CPTDecimalFromFloat( (dayDiff * oneDay) * 1);
+      x.majorIntervalLength         = CPTDecimalFromFloat( (dayDiff * oneDay) * 1.0);
     }
   } else {
     x.majorIntervalLength         = CPTDecimalFromFloat( (dayDiff * oneDay) / 4.0);
@@ -488,11 +512,12 @@
     x.minorTicksPerInterval       = 0;
   
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateStyle = kCFDateFormatterShortStyle;
+    dateFormatter.dateFormat = @"MM/dd/yy";
   
   if (dayDiff < 4) {
-    dateFormatter.timeStyle = kCFDateFormatterShortStyle;
-    dateFormatter.dateFormat = @" MM/dd/yy\nhh:mm a";
+    dateFormatter.dateFormat = @"MM/dd/yy\nhh:mm a";
+    [dateFormatter setAMSymbol:@"am"];
+    [dateFormatter setPMSymbol:@"pm"];
     graph.plotAreaFrame.paddingBottom = 50.0f;
   }
   
@@ -506,7 +531,7 @@
     y.majorIntervalLength         = CPTDecimalFromDouble((fabs(_maxY)) / 5.0);
     y.minorTicksPerInterval       = 4;
   
-  if ([plotData count] == 1) {
+  if ([plotData count] <= 1) {
     y.orthogonalCoordinateDecimal = CPTDecimalFromFloat(-0.5);
     graph.plotAreaFrame.paddingLeft = 30.0f;
   } else {
@@ -532,7 +557,7 @@
     CPTScatterPlot *dataSourceLinePlot = [[CPTScatterPlot alloc] init];
     dataSourceLinePlot.identifier = @"Date Plot";
   
-  if ([plotData count] == 1) {
+  if ([plotData count] <= 1) {
     CPTPlotSymbol *plotSymbol = [CPTPlotSymbol ellipsePlotSymbol]; // Ellipse is used for circles
     plotSymbol.fill = [CPTFill fillWithColor:[CPTColor redColor]];
     plotSymbol.size = CGSizeMake(10.0, 10.0);

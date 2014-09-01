@@ -26,6 +26,7 @@
   NSMutableArray* rowData;
   BOOL newData;
   BOOL _isEditClicked;
+  BOOL _showNuxSlideOnce;
 }
 @end
 
@@ -56,6 +57,8 @@
   newData = NO;
   _isEditClicked = NO;
   
+  _showNuxSlideOnce = YES;
+  
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc ] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(TitleCellTouched:)];
   self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(EditClicked)];
   
@@ -67,21 +70,21 @@
   
   static NSString *myIdentifier = @"HomeCells";
   
-  /*if ([indexPath row] == 0)
+  if ([rowData count] == 0)
   {
-    
+    // Cell that tells you to add data
     DLTitleTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:myIdentifier];
     
     if (cell == nil)
     {
-      cell = [[DLTitleTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier];
+      cell = [[DLTitleTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier isHome:YES];
       
       cell.selectionStyle = UITableViewCellSelectionStyleNone;
       cell.delegate = self;
     }
     
     return cell;
-  }*/
+  }
   
   DLHomeTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:myIdentifier];
 
@@ -223,7 +226,15 @@
 
 - (NSInteger) tableView: (UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-  return ([rowData count] );
+  if (([rowData count] > 0) || (!_showNuxSlideOnce)) {
+    _showNuxSlideOnce = NO;
+    self.navigationItem.leftBarButtonItem.enabled = YES;
+    return [rowData count];
+  } else {
+    // Nux slide
+    self.navigationItem.leftBarButtonItem.enabled = NO;
+    return 1;
+  }
 }
 
 - (void) CellViewTouched :(DLDataViewCell *) cell
@@ -256,6 +267,8 @@
 {
   //Just invalidate data now. Do a fresh reinstall
   newData = YES;
+  _showNuxSlideOnce = NO;
+  self.navigationItem.leftBarButtonItem.enabled = YES;
   //Add data to row
   [rowData addObject:newObject];
 }

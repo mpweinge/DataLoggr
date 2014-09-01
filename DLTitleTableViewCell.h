@@ -19,4 +19,6 @@
 
 @property id <DLTitleTableViewCellDelegate> delegate;
 
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier isHome: (BOOL) isHome;
+
 @end

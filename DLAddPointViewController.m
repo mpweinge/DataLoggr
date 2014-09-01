@@ -13,6 +13,7 @@
 #import "LocationTracker.h"
 #import <MapKit/MapKit.h>
 #import "DLDataIconView.h"
+#import "DLCircleView.h"
 
 static const int kValueOffsetY = 25;
 static int kNotesOffsetY = 150;
@@ -31,6 +32,9 @@ static const int kStartingNumPoints = 2000;
   NSString *_typeName;
   NSArray * dataTypeOptions;
   UIButton *_startButton;
+  DLCircleView * _startCircle;
+  DLCircleView *_resetCircle;
+  UIColor * greenWatchColor;
   UIButton *_resetButton;
   NSDate *_start;
   BOOL _isAdd;
@@ -111,7 +115,11 @@ static const int kStartingNumPoints = 2000;
     _existingCentroidLatitude = 0;
     _existingCentroidLongitude = 0;
     
+    greenWatchColor = [UIColor colorWithRed:0 green:204/255.0 blue:0 alpha:1.0];
+    
     currZoom = 400;
+    
+    self.view.backgroundColor = [UIColor whiteColor];
     
     if (_isAdd) {
       self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(CancelClicked)];
@@ -641,17 +649,37 @@ static const int kStartingNumPoints = 2000;
 - (void) setupTimer
 {
   //Add buttons for start, stop
-  _startButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  _startButton =  [UIButton buttonWithType:UIButtonTypeCustom];
   [_startButton setTitle:@"Start" forState:UIControlStateNormal];
   [_startButton sizeToFit];
-  _startButton.center = CGPointMake(100, kButtonOffsetY);
+  _startButton.center = CGPointMake(90, kButtonOffsetY);
+  _startButton.titleLabel.textColor = greenWatchColor;
+  [ _startButton setTitleColor:greenWatchColor forState:UIControlStateNormal];
   [_startButton addTarget:self action:@selector(StartTimerClicked:) forControlEvents:UIControlEventTouchUpInside];
   
-  _resetButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  int _startCircleX = _startButton.frame.origin.x - (_startButton.frame.size.width * 2 - _startButton.frame.size.width) / (2);
+  int _startCircleY = _startButton.frame.origin.y - 2 - (_startButton.frame.size.width * 2 - _startButton.frame.size.width) / (2);
+  
+  _startCircle = [[DLCircleView alloc] initWithFrame:CGRectMake(_startCircleX, _startCircleY, _startButton.frame.size.width * 2, _startButton.frame.size.width * 2) strokeWidth:1.0 selectFill:NO selectColor:greenWatchColor boundaryColor:greenWatchColor];
+  _startCircle.selected = NO;
+  _startCircle.backgroundColor = [UIColor clearColor];
+  [self.view addSubview:_startCircle];
+  
+  _resetButton =  [UIButton buttonWithType:UIButtonTypeCustom];
   [_resetButton setTitle:@"Reset" forState:UIControlStateNormal];
   [_resetButton sizeToFit];
-  _resetButton.center = CGPointMake(250, kButtonOffsetY);
+  [ _resetButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+  _resetButton.center = CGPointMake(230, kButtonOffsetY);
+  _resetButton.enabled = NO;
   [_resetButton addTarget:self action:@selector(ResetTimerClicked:) forControlEvents:UIControlEventTouchUpInside];
+  
+  int _resetCircleX = _resetButton.frame.origin.x - (_startButton.frame.size.width * 2 - _resetButton.frame.size.width) / (2);
+  int _resetCircleY = _startCircleY;
+  
+  _resetCircle = [[DLCircleView alloc] initWithFrame:CGRectMake(_resetCircleX, _resetCircleY, _startButton.frame.size.width * 2, _startButton.frame.size.width * 2) strokeWidth:1.0 selectFill:NO selectColor:[UIColor lightGrayColor] boundaryColor:[UIColor lightGrayColor]];
+  _resetCircle.selected = NO;
+  _resetCircle.backgroundColor = [UIColor clearColor];
+  [self.view addSubview:_resetCircle];
   
   _start = nil;
   
@@ -708,10 +736,23 @@ static const int kStartingNumPoints = 2000;
     [_timer invalidate];
     _timer = nil;
     [_startButton setTitle:@"Start" forState:UIControlStateNormal];
+    [_startButton setTitleColor:greenWatchColor forState:UIControlStateNormal];
+    [_startCircle setBoundaryColor:greenWatchColor];
+    
+    [_resetButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    [_resetCircle setBoundaryColor:[UIColor lightGrayColor]];
+    
+    _resetButton.enabled = NO;
+    
     _timerStarted = false;
     //Reset the clock
     _start = nil;
     ((UILabel *)_dataName).text = @"00:00.00";
+  } else {
+    [_resetButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    [_resetCircle setBoundaryColor:[UIColor lightGrayColor]];
+    
+    _resetButton.enabled = NO;
   }
   currPausedTime = 0;
   ((UILabel *)_dataName).text = @"00:00.00";
@@ -731,12 +772,25 @@ static const int kStartingNumPoints = 2000;
                                            userInfo:nil
                                             repeats:YES];
     
+    //[_startButton setTitle:@"Stop" forState:UIControlStateNormal];
+    [ _startButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [_startCircle setBoundaryColor:[UIColor redColor]];
+    _startButton.titleLabel.text = @"Stop";
     [_startButton setTitle:@"Stop" forState:UIControlStateNormal];
+    
+    [_resetButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [_resetCircle setBoundaryColor:[UIColor blackColor]];
+    
+    _resetButton.enabled = YES;
+    
   } else {
     currPausedTime = [_start timeIntervalSinceNow] * -1 + currPausedTime;
     _start = nil;
     [_timer invalidate];
     _timer = nil;
+    [ _startButton setTitleColor:[UIColor colorWithRed:0 green:204/255.0 blue:0 alpha:1.0] forState:UIControlStateNormal];
+    [_startCircle setBoundaryColor:[UIColor colorWithRed:0 green:204/255.0 blue:0 alpha:1.0]];
+    _startButton.titleLabel.text = @"Start";
     [_startButton setTitle:@"Start" forState:UIControlStateNormal];
   }
   _timerStarted = !_timerStarted;
@@ -804,8 +858,7 @@ static const int kStartingNumPoints = 2000;
       
       NSDate *currentTime = [NSDate date];
       NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-      [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-      [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+      dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a";
       NSString *resultString = [dateFormatter stringFromDate: currentTime];
       
       //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
@@ -827,8 +880,7 @@ static const int kStartingNumPoints = 2000;
       
       NSDate *currentTime = [NSDate date];
       NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-      [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-      [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+      dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a";
       NSString *resultString = [dateFormatter stringFromDate: currentTime];
       
       //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);

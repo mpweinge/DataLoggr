@@ -31,7 +31,6 @@
 		C3B9F9D417503CDD001CCC50 /* BlueTexture.png in Resources */ = {isa = PBXBuildFile; fileRef = C3B9F9D317503CDD001CCC50 /* BlueTexture.png */; };
 		C3BB7D611633516500BC9515 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C3BB7D601633516500BC9515 /* Default-568h@2x.png */; };
 		C3CD283E17DE9C95008EED1E /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3CD283D17DE9C95008EED1E /* Accelerate.framework */; };
-		F7AE270A0FFFB61E001F26F0 /* libCorePlot-CocoaTouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BC9B83B50FB8A9BC0035D8DA /* libCorePlot-CocoaTouch.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +64,7 @@
 		28AD73870D9D96C1002E5188 /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A658E69019B458C300E1F809 /* CorePlot.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CorePlot.framework; path = "/Users/Mikey/DataLoggr/core-plot/framework/../build/Debug/CorePlot.framework"; sourceTree = "<absolute>"; };
 		BC74A33810FC40C600E7E90D /* CPTTestAppPieChartController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTTestAppPieChartController.h; sourceTree = "<group>"; };
 		BC74A33910FC40C600E7E90D /* CPTTestAppPieChartController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTTestAppPieChartController.m; sourceTree = "<group>"; };
 		BC74A34010FC418D00E7E90D /* PieChart.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PieChart.xib; sourceTree = "<group>"; };
@@ -98,7 +98,6 @@
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */,
 				BC9B81DA0FB893F70035D8DA /* QuartzCore.framework in Frameworks */,
-				F7AE270A0FFFB61E001F26F0 /* libCorePlot-CocoaTouch.a in Frameworks */,
 				C3CD283E17DE9C95008EED1E /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -182,6 +181,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A658E69019B458C300E1F809 /* CorePlot.framework */,
 				BC9B81D90FB893F70035D8DA /* QuartzCore.framework */,
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 				1D30AB110D05D00D00671497 /* Foundation.framework */,
@@ -318,6 +318,10 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/Mikey/DataLoggr/core-plot/framework/../build/Debug",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -342,6 +346,10 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/Mikey/DataLoggr/core-plot/framework/../build/Debug",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = CPTTestApp_iPhone_Prefix.pch;
 				HEADER_SEARCH_PATHS = "";

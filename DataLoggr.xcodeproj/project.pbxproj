@@ -380,6 +380,9 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = Weingert;
 				TargetAttributes = {
+					FFA65425196E7D8D002BA286 = {
+						DevelopmentTeam = TSLZ6U7CTT;
+					};
 					FFA65440196E7D8D002BA286 = {
 						TestTargetID = FFA65425196E7D8D002BA286;
 					};
@@ -572,6 +575,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DataLoggr/DataLoggr-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -587,6 +592,7 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "397b337d-48c0-4536-ba08-e58473881c4b";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -596,6 +602,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DataLoggr/DataLoggr-Prefix.pch";
 				HEADER_SEARCH_PATHS = (
@@ -611,6 +619,7 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "9be780e0-19ee-4776-989a-91e80aa2d2c1";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

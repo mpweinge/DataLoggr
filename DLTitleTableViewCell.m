@@ -13,18 +13,28 @@
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
+  assert(0);
+}
+
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier isHome: (BOOL) isHome
+{
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         // Initialization code
       
-      UILabel * chartName = [[UILabel alloc] initWithFrame:CGRectMake(50, 13, 100, 22)];
+      UILabel * chartName = [[UILabel alloc] initWithFrame:CGRectMake(50, 13, 220, 22)];
       chartName.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-      chartName.text = @"All Charts";
+      
+      if (isHome) {
+        chartName.text = @"No charts, click the + to add!";
+      } else {
+        chartName.text = @"No points, click the + to add!";
+      }
       [self addSubview:chartName];
       
-      UILabel* advanceIcon=[[UILabel alloc] initWithFrame:CGRectMake(300, 13, 100, 22)];
+      UILabel* advanceIcon=[[UILabel alloc] initWithFrame:CGRectMake(291, 13, 100, 22)];
       advanceIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
-      advanceIcon.text = [NSString fontAwesomeIconStringForEnum:FAPlus];
+      advanceIcon.text = [NSString fontAwesomeIconStringForEnum:FALongArrowUp];
       [self addSubview:advanceIcon];
     }
   

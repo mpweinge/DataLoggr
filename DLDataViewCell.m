@@ -27,6 +27,9 @@
   BOOL _deleteActive;
   
   UITapGestureRecognizer *_deleteRecognizer;
+  
+  double _distanceNum;
+  double _timeNum;
 }
 @end
 
@@ -46,7 +49,8 @@
       _deleteActive = NO;
       _deleteRecognizer = nil;
       // Initialization code
-      _dayValue = [[UILabel alloc] initWithFrame:CGRectMake(50, 10, 100, 22)];
+      _dayValue = [[UILabel alloc] initWithFrame:CGRectMake(40, 10, 80, 22)];
+      _dayValue.textAlignment = NSTextAlignmentRight;
       _dayValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
       
       //Search for comma in string to separate date from time
@@ -55,9 +59,10 @@
       
       [self addSubview:_dayValue];
       
-      _timeValue = [[UILabel alloc] initWithFrame:CGRectMake(55, 25, 100, 22)];
-      _timeValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:12.0];
+      _timeValue = [[UILabel alloc] initWithFrame:CGRectMake(20, 25, 100, 22)];
+      _timeValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:11.0];
       _timeValue.text = [time substringFromIndex:splitLocation + 1];
+      _timeValue.textAlignment = NSTextAlignmentRight;
       [self addSubview:_timeValue];
       
       
@@ -101,31 +106,13 @@
         NSString *time = [value substringWithRange:NSMakeRange(timeColonIdx + 2, (timeCommaIdx - timeColonIdx - 2))];
         NSString *distance = [value substringWithRange:NSMakeRange(distanceColonIdx + 2, (distanceCommaIdx - distanceColonIdx - 2))];
         
-        double timeNum = [time doubleValue];
-        double distanceNum = [distance doubleValue];
+        _timeNum = [time doubleValue];
+        _distanceNum = [distance doubleValue];
         
-        int numMinutes = timeNum / 60;
-        int numMinutesTen = numMinutes / 10;
-        
-        int numSeconds = (timeNum - numMinutes * 60);
-        int numSecondsTen = numSeconds / 10;
-        
-        int numMilli = (timeNum - numSeconds) * 100;
-        int numMilliTen = numMilli / 10;
-        numMilli -= numMilliTen * 10;
-        
-        numMinutes -= numMinutesTen * 10;
-        numSeconds -= numSecondsTen * 10;
-        
-        _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(130, 8, 150, 22)];
-        _dataValue.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0];
-        _dataValue.text = [NSString stringWithFormat:@"Distance: %.01f m", distanceNum];
-        
-        UILabel * distLabel = [[UILabel alloc] initWithFrame:CGRectMake(130, 25, 150, 22)];
-        distLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:14.0];
-        distLabel.text = [NSString stringWithFormat:@"Time: %i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
-        
-        [self addSubview:distLabel];
+        _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 70, 22)];
+        _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:14.0];
+        _dataValue.textAlignment = NSTextAlignmentRight;
+        _dataValue.text = [NSString stringWithFormat:@"%.01f m/s", (_distanceNum / _timeNum)];
         
         [self addSubview:_dataValue];
         
@@ -211,6 +198,31 @@
     _trashIcon.userInteractionEnabled = YES;
     [_trashIcon addGestureRecognizer:_deleteRecognizer];
     
+  }
+}
+
+-(void) graphViewDidScroll:(NSUInteger)pageNum
+{
+  if (pageNum == 0) {
+    _dataValue.text = [NSString stringWithFormat:@"%.01f m/s", (_distanceNum / _timeNum)];
+  } else if (pageNum == 1) {
+    _dataValue.text = [NSString stringWithFormat:@"%.01f m",_distanceNum ];
+  } else {
+    
+    int numMinutes = _timeNum / 60;
+    int numMinutesTen = numMinutes / 10;
+    
+    int numSeconds = (_timeNum - numMinutes * 60);
+    int numSecondsTen = numSeconds / 10;
+    
+    int numMilli = (_timeNum - numSeconds) * 100;
+    int numMilliTen = numMilli / 10;
+    numMilli -= numMilliTen * 10;
+    
+    numMinutes -= numMinutesTen * 10;
+    numSeconds -= numSecondsTen * 10;
+    
+    _dataValue.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i s", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
   }
 }
 

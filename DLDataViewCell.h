@@ -39,4 +39,6 @@
               notes:(NSString *)notes
          dataObject:(DLDataPointRowObject *)dataObject;
 
+-(void) graphViewDidScroll:(NSUInteger)pageNum;
+
 @end

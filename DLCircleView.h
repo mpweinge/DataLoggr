@@ -17,4 +17,12 @@
             selectFill:(BOOL) selectFill
            selectColor:(UIColor *) selectedColor;
 
+- (id) initWithFrame:(CGRect) frame
+         strokeWidth:(CGFloat) strokeWidth
+          selectFill:(BOOL) selectFill
+         selectColor:(UIColor *) selectedColor
+       boundaryColor:(UIColor *)boundaryColor;
+
+- (void) setBoundaryColor: (UIColor *)boundaryColor;
+
 @end

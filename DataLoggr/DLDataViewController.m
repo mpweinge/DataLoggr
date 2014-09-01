@@ -25,6 +25,7 @@
   BOOL newData;
   BOOL invalidateData;
   DLGraphViewCell *_graphCell;
+  BOOL _showNoPointNux;
 }
 
 @end
@@ -66,6 +67,8 @@
     
     _typeName = dataType;
   
+  _showNoPointNux = YES;
+  
   return self;
 }
 
@@ -78,9 +81,22 @@
   if ( [indexPath row] == 0 ) {
     //if (cell == nil) {
       _graphCell = [[DLGraphViewCell alloc]  initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier dataPoints:dataValues type:_typeName];
-      
+    _graphCell.delegate = self;
+    
       cell = _graphCell;
     //}
+  } else if ((_showNoPointNux) && ([indexPath row] == 1)) {
+    DLTitleTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:myIdentifier];
+    
+    if (cell == nil)
+    {
+      cell = [[DLTitleTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier isHome:NO];
+      
+      cell.selectionStyle = UITableViewCellSelectionStyleNone;
+      cell.delegate = self;
+    }
+    
+    return cell;
   }
   else /*if (cell == nil)*/ {
     
@@ -178,7 +194,12 @@
 
 - (NSInteger) tableView: (UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-  return ([dataValues count] + 1);
+  if ((!_showNoPointNux ) || ([dataValues count] > 0))
+  {
+    return ([dataValues count] + 1);
+  } else {
+    return 2;
+  }
 }
 
 - (void)viewDidLoad
@@ -193,6 +214,11 @@
     DLDatabaseManager *sharedInstance = [DLDatabaseManager getSharedInstance];
     
     dataValues = [sharedInstance fetchDataPoints:_setName];
+    
+    if ([dataValues count] > 0)
+    {
+      _showNoPointNux = NO;
+    }
     
     invalidateData = NO;
   }
@@ -209,6 +235,7 @@
 {
   //Just invalidate data now. Do a fresh reinstall
   newData = YES;
+  _showNoPointNux = NO;
   //Add data to row
   [dataValues addObject:newObject];
 }
@@ -229,6 +256,22 @@
       
       dataValues[[path row] - 1] = newObject;
     }
+  }
+}
+
+-(void) scrollViewDidChangePage : (NSUInteger) pageNum
+{
+  //Change the text of all of the cells
+  UITableView *tableView = (UITableView *)self.view;
+  NSArray *paths = [tableView indexPathsForVisibleRows];
+  
+  for (NSIndexPath *path in paths) {
+    if ([path row] == 0)
+      continue;
+    
+    DLDataViewCell* currCell =  [tableView cellForRowAtIndexPath:path];
+    
+    [currCell graphViewDidScroll:pageNum];
   }
 }
 

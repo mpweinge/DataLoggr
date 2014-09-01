@@ -54,6 +54,7 @@
         [graphScrollView addSubview:hostView2];
         [graphScrollView addSubview:hostView3];
         graphScrollView.contentSize = CGSizeMake(1080, 50);
+        graphScrollView.contentOffset = CGPointMake(0,0);
         graphScrollView.showsHorizontalScrollIndicator = YES;
         graphScrollView.backgroundColor = [UIColor clearColor];
         graphScrollView.pagingEnabled = YES;
@@ -97,6 +98,8 @@
     [((DLCircleView *)_indicatorCircles[previousPage]) setNeedsDisplay];
     
     previousPage = page;
+    
+    [_delegate scrollViewDidChangePage:page];
   }
 }
 
