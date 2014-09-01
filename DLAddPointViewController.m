@@ -226,6 +226,21 @@ static const int kStartingNumPoints = 2000;
   
   if (!_isAdd) {
     ((UILabel *)_dataName).text = _currCell.title;
+    
+    // Change the title into
+    NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+    [f setNumberStyle:NSNumberFormatterDecimalStyle];
+    
+    NSString *minutes = [_currCell.title substringWithRange:NSMakeRange(0, 2)];
+    NSString *seconds = [_currCell.title substringWithRange:NSMakeRange(3, 2)];
+    NSString *milliSeconds = [_currCell.title substringWithRange:NSMakeRange(6, 2)];
+    
+    NSNumber *iMinutes = [f numberFromString:minutes];
+    NSNumber *iSeconds = [f numberFromString:seconds];
+    NSNumber *iMilliSeconds = [f numberFromString:milliSeconds];
+    
+    currPausedTime = [iMinutes intValue] * 60 + [iSeconds intValue] + [iMilliSeconds floatValue] / 100;
+    
   } else if ([_typeName isEqualToString:@"Time"]) {
     ((UILabel *)_dataName).text = @"00:00.00";
   }
@@ -413,6 +428,9 @@ static const int kStartingNumPoints = 2000;
   numSeconds -= numSecondsTen * 10;
   
   _timeText.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+  
+  _elapsedTime = timeNum;
+  _elapsedDistance = distanceNum;
 }
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
@@ -897,13 +915,37 @@ static const int kStartingNumPoints = 2000;
     // Save changes to database
     NSString* dataName = _setName;
     //NSInteger row = [_typeDataView selectedRowInComponent:0];
-    NSString* dataValue =  ((UILabel *)_dataName).text;
+    NSString* dataValue;
     NSString* notes = _notesView.text;
+    
+    if ([_typeName isEqualToString:@"GPS"]) {
+      dataValue = [NSMutableString string];
+      
+      if (_start) {
+        // User did not click stop before hitting save
+        _elapsedTime = [_start timeIntervalSinceNow];
+        
+        [_timer invalidate];
+        _timer = nil;
+        
+        [self stopTrackingLocation];
+      }
+      
+      //Store total distance, time elapsed
+      [(NSMutableString *)dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f, \n", -1 * _elapsedTime, _elapsedDistance]];
+      
+      for (int i = 0; i < mapPointCount; i++)
+      {
+        [(NSMutableString *)dataValue appendString:[NSString stringWithFormat:@"%.7f, %.7f, \n", mapPoints[i].latitude, mapPoints[i].longitude]];
+      }
+
+    } else {
+      dataValue =  ((UILabel *)_dataName).text;
+    }
     
     NSDate *currentTime = [NSDate date];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+    dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a";
     NSString *resultString = [dateFormatter stringFromDate: currentTime];
     
     //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);

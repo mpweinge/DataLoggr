@@ -22,6 +22,8 @@
   UILabel *_trashIcon;
   UILabel *_circleDeleteIcon;
   
+  UILabel *_notesIcon;
+  
   DLCircleView *_circleDeleteBorder;
   
   BOOL _deleteActive;
@@ -116,11 +118,26 @@
         
         [self addSubview:_dataValue];
         
+        if ([notes length] > 0) {
+          _notesIcon = [[UILabel alloc] initWithFrame:CGRectMake(225, 13, 70, 22)];
+          _notesIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:12];
+          _notesIcon.textColor = [UIColor blackColor];
+          _notesIcon.text = [NSString fontAwesomeIconStringForEnum:FAFileTextO];
+          [self addSubview:_notesIcon];
+        }
       } else {
         _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
         _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
         _dataValue.text = value;
         [self addSubview:_dataValue];
+        
+        if ([notes length] > 0) {
+          _notesIcon = [[UILabel alloc] initWithFrame:CGRectMake(225, 13, 70, 22)];
+          _notesIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:12];
+          _notesIcon.textColor = [UIColor blackColor];
+          _notesIcon.text = [NSString fontAwesomeIconStringForEnum:FAFileTextO];
+          [self addSubview:_notesIcon];
+        }
       }
       
       _editIcon=[[UILabel alloc] initWithFrame:CGRectMake(290, 13, 100, 22)];
