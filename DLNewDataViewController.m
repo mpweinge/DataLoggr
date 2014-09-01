@@ -293,9 +293,19 @@ static const int kIconOffset = 170;
 
 - (void) CreateClicked//: (UIButton *)createButton
 {
+  // Check for name conflict
+  NSString * dataName = _dataName.text;
+  
+  if ([[DLDatabaseManager getSharedInstance] hasNameConflict:dataName] )
+  {
+    UIAlertView * newView = [[UIAlertView alloc] initWithTitle:@"Invalid Name" message:@"Name already exists. Please choose a unique name." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    
+    [newView show];
+    return;
+  }
+  
   if (_isEdit) {
     if (_didEdit) {
-      NSString* dataName = _dataName.text;
       NSString* dataType =  _selectedDataType.title;
       NSString* iconStr = _selectedIcon.title;
       
@@ -312,7 +322,6 @@ static const int kIconOffset = 170;
       [self.navigationController popViewControllerAnimated:YES];
     }
   } else {
-    NSString* dataName = _dataName.text;
     NSString* dataType =  _selectedDataType.title;
     NSString* iconStr = _selectedIcon.title;
     

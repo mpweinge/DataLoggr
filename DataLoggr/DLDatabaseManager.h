@@ -51,4 +51,6 @@
 
 - (NSString *) fetchLastUpdatedTime: (NSString *) setName;
 
+-(BOOL) hasNameConflict: (NSString *)name;
+
 @end

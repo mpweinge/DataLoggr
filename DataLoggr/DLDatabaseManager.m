@@ -479,4 +479,30 @@ static NSString* kDataTypeName = @"DataTypes";
   return @"Never";
 }
 
+-(BOOL) hasNameConflict: (NSString *)name
+{
+  const char *dbpath = [databasePath UTF8String];
+  
+  if (sqlite3_open(dbpath, &database) == SQLITE_OK)
+  {
+    NSMutableString *insertSQL = [NSMutableString string];
+    [insertSQL appendString:@"SELECT * FROM "];
+    [insertSQL appendString:kDataTypeName];
+    [insertSQL appendString:@" WHERE DataName = \""];
+    [insertSQL appendString:name];
+    [insertSQL appendString:@"\""];
+    
+    const char *query_stmt = [insertSQL UTF8String];
+    if (sqlite3_prepare_v2(database,
+                           query_stmt, -1, &statement, NULL) == SQLITE_OK)
+    {
+      if (sqlite3_step(statement) == SQLITE_ROW) {
+        return YES;
+      }
+    }
+    sqlite3_reset(statement);
+  }
+  return NO;
+}
+
 @end
