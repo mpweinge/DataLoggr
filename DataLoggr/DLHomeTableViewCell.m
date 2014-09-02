@@ -109,7 +109,7 @@
       
       _trashTapRegion = [[DLCircleView alloc] initWithFrame:CGRectMake(280, 1, 40, 40) strokeWidth:1.0 selectFill:YES selectColor:[UIColor clearColor] boundaryColor:[UIColor clearColor]];
       _trashTapRegion.alpha = 0;
-      _trashTapRegion.backgroundColor = [UIColor blackColor];
+      _trashTapRegion.backgroundColor = [UIColor clearColor];
       [self addSubview:_trashTapRegion];
       
       _trashIcon = [[UILabel alloc] initWithFrame:CGRectMake(290, 13, 100, 22)];
