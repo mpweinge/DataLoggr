@@ -400,7 +400,18 @@ static NSString* kDataTypeName = @"DataTypes";
     sqlite3_prepare_v2(database, insert_stmt,-1, &statement, NULL);
     if (sqlite3_step(statement) == SQLITE_DONE)
     {
-      return YES;
+      NSMutableString *insertSQL = [NSMutableString string];
+      [insertSQL appendString:@"DELETE FROM "];
+      [insertSQL appendString: kDataPointDatabaseName];
+      [insertSQL appendString: @" WHERE "];
+      [insertSQL appendString:[row  deleteString: _dataTypeFieldNames ]];
+      
+      const char *insert_stmt = [insertSQL UTF8String];
+      sqlite3_prepare_v2(database, insert_stmt,-1, &statement, NULL);
+      if (sqlite3_step(statement) == SQLITE_DONE)
+      {
+        return YES;
+      }
     }
     else {
       return NO;

@@ -943,16 +943,18 @@ static const int kStartingNumPoints = 2000;
       dataValue =  ((UILabel *)_dataName).text;
     }
     
-    NSDate *currentTime = [NSDate date];
+    NSString *timeString = _currCell.time;
+    
+    /*NSDate *currentTime = [NSDate date];
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a";
-    NSString *resultString = [dateFormatter stringFromDate: currentTime];
+    NSString *resultString = [dateFormatter stringFromDate: currentTime];*/
     
     //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
     DLDataPointRowObject *newObject = [[DLDataPointRowObject alloc]
                                        initWithName:dataName
                                        value:dataValue
-                                       time:resultString
+                                       time:timeString
                                        notes:notes];
     
     [[DLDatabaseManager getSharedInstance] updateOldPoint: [_currCell dataPoint] newPoint: newObject];

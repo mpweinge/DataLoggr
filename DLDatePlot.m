@@ -571,6 +571,8 @@
     dataSourceLinePlot.plotSymbol = plotSymbol;
     
   }
+  
+  dataSourceLinePlot.interpolation = CPTScatterPlotInterpolationCurved;
     
     CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
     lineStyle.lineWidth              = 3.0;

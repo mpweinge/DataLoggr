@@ -163,6 +163,9 @@
     }];
   } else if (editFrame.origin.x > 290) {
     editFrame.origin.x = 290;
+    [UIView animateWithDuration:0.5 animations:^{
+      _circleDeleteIcon.textColor = [UIColor lightGrayColor];
+    }];
   } else if ((editFrame.origin.x > 280) && ([panRecognizer state] == UIGestureRecognizerStateEnded)) {
       _deleteActive = NO;
       editFrame.origin.x = 290;
@@ -222,11 +225,9 @@
                               _advanceIcon.alpha = 0;
                               _circleDeleteIcon.alpha = 1.0;
                               _circleDeleteBorder.alpha = 1.0;
-                              _circleTapRegion.alpha = 1.0;
                               _trashTapRegion.alpha = 1.0;
                               _editIcon.alpha = 1;
                               _whiteView.alpha = 1;
-                              _trashIcon.alpha = 1;
                             }completion:^(BOOL success){
                               UITapGestureRecognizer * deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteClicked:)];
                               deleteRecognizer.delegate = self;
@@ -246,6 +247,9 @@
                               deleteRecognizer3.numberOfTapsRequired = 1;
                               
                               [_trashTapRegion addGestureRecognizer:deleteRecognizer3];
+                              
+                              _trashIcon.alpha = 1;
+                              _circleTapRegion.alpha = 1.0;
                             }];
   } else {
     CGRect chartIconFrame = _chartIcon.frame;
@@ -336,6 +340,9 @@
 
 -(void) unAnimateForEdit
 {
+  _trashIcon.alpha = 0;
+  _circleTapRegion.alpha = 0;
+  
   [UIView animateKeyframesWithDuration:0.5
                                  delay:0.0
                                options:UIViewKeyframeAnimationOptionLayoutSubviews
@@ -354,12 +361,15 @@
                               _whiteView.alpha = 0;
                               _circleDeleteIcon.alpha = 0;
                               _advanceIcon.alpha = 1.0;
-                              _trashIcon.alpha = 0;
                               _circleDeleteBorder.alpha = 0;
-                              _circleTapRegion.alpha = 0;
                               _trashTapRegion.alpha = 0;
                             }completion:^(BOOL success){
-    
+                              _deleteActive = NO;
+                              _circleDeleteIcon.textColor = [UIColor lightGrayColor];
+                              CGRect editFrame = _editIcon.frame;
+                              editFrame.origin.x = 290;
+                              _editIcon.frame = editFrame;
+                              _whiteView.frame = editFrame;
                             }];
   
   [self removeGestureRecognizer:_panRecognizer];

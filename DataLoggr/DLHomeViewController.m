@@ -51,7 +51,7 @@
   
   self.view = chartTable;
   
-  self.title = @"Your Data";
+  self.title = @"Charts";
   
   invalidatedData = YES;
   newData = NO;

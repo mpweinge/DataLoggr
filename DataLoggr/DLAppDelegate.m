@@ -25,7 +25,7 @@
   [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
   
   [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
-                                                         [UIFont fontWithName:@"HelveticaNeue-CondensedBlack" size:21.0], NSFontAttributeName, [UIColor whiteColor], NSForegroundColorAttributeName, nil]];
+                                                         [UIFont fontWithName:@"HelveticaNeue-Light" size:23.0], NSFontAttributeName, [UIColor whiteColor], NSForegroundColorAttributeName, nil]];
   
   [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
   

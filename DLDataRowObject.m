@@ -78,7 +78,7 @@
   [values appendString:ValuesString[0]];
   [values appendString:@"= \""];
   [values appendString:_DataName];
-  [values appendString:@"\" AND "];
+  /*[values appendString:@"\" AND "];
   
   [values appendString:ValuesString[1]];
   [values appendString:@"= \""];
@@ -87,7 +87,7 @@
   
   [values appendString:ValuesString[2]];
   [values appendString:@"= \""];
-  [values appendString:_IconName];
+  [values appendString:_IconName];*/
   [values appendString:@"\" "];
   
   return values;
