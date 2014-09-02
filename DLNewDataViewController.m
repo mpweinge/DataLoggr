@@ -15,6 +15,7 @@
 #import "DLCircleView.h"
 #import "DLHomeTableViewCell.h"
 #import "DLDatabaseManager.h"
+#import "DLExtendedScrollView.h"
 
 static const int kNameOffsetY = 0;
 static const int kTypeOffsetY = 80;
@@ -47,6 +48,8 @@ static const int kIconOffset = 170;
   BOOL _didEdit;
   BOOL _textFieldEmpty;
   DLHomeTableViewCell* _currCell;
+  
+  DLExtendedScrollView *scrollviewTouchArea;
 }
 
 @end
@@ -176,6 +179,10 @@ static const int kIconOffset = 170;
     _iconSwitcherView.backgroundColor = [UIColor clearColor];
     _iconSwitcherView.pagingEnabled = YES;
     _iconSwitcherView.delegate = self;
+  
+  scrollviewTouchArea = [[DLExtendedScrollView alloc] initWithFrame:CGRectMake(50, kIconOffset, 250, 150) andScrollView:_iconSwitcherView];
+  scrollviewTouchArea.backgroundColor = [UIColor clearColor];
+  [self.view addSubview:scrollviewTouchArea];
   
   _indicatorCircles = [NSMutableArray array];
   

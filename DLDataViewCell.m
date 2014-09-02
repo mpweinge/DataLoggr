@@ -32,6 +32,8 @@
   
   double _distanceNum;
   double _timeNum;
+  
+  DLCircleView *_circleTapRegion;
 }
 @end
 
@@ -145,6 +147,11 @@
       _editIcon.text = [NSString fontAwesomeIconStringForEnum:FAPencilSquareO];
       [self addSubview:_editIcon];
       
+      _circleTapRegion = [[DLCircleView alloc] initWithFrame:CGRectMake(10, 4, 40, 40) strokeWidth:1.0 selectFill:YES selectColor:[UIColor clearColor] boundaryColor:[UIColor clearColor]];
+      _circleTapRegion.alpha = 1.0;
+      _circleTapRegion.backgroundColor = [UIColor clearColor];
+      [self addSubview:_circleTapRegion];
+      
       _circleDeleteBorder = [[DLCircleView alloc] initWithFrame:CGRectMake(20, 14, 20, 20) strokeWidth:1.0 selectFill:YES selectColor:[UIColor lightGrayColor]];
       _circleDeleteBorder.alpha = 1.0;
       _circleDeleteBorder.backgroundColor = [UIColor clearColor];
@@ -171,10 +178,12 @@
       [self addGestureRecognizer:touchRecognizer];
       
       UITapGestureRecognizer *deleteTouchRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteClicked:)];
-      
       deleteTouchRecognizer.numberOfTapsRequired = 1;
+      [_circleTapRegion addGestureRecognizer:deleteTouchRecognizer];
       
-      [_circleDeleteBorder addGestureRecognizer:deleteTouchRecognizer];
+      UITapGestureRecognizer *deleteTouchRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteClicked:)];
+      deleteTouchRecognizer2.numberOfTapsRequired = 1;
+      [_circleDeleteBorder addGestureRecognizer:deleteTouchRecognizer2];
       
       _notes = notes;
       _title = value;

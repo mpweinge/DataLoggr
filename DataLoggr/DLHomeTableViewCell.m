@@ -23,6 +23,7 @@
   UILabel *_circleDeleteIcon;
   
   DLCircleView *_circleDeleteBorder;
+  DLCircleView *_circleTapRegion;
   UILabel *_trashIcon;
   
   BOOL _deleteActive;
@@ -78,6 +79,11 @@
       _editIcon.text = [NSString fontAwesomeIconStringForEnum:FAPencilSquareO];
       _editIcon.alpha = 0;
       [self addSubview:_editIcon];
+      
+      _circleTapRegion = [[DLCircleView alloc] initWithFrame:CGRectMake(10, 1, 40, 40) strokeWidth:1.0 selectFill:YES selectColor:[UIColor clearColor] boundaryColor:[UIColor clearColor]];
+      _circleTapRegion.alpha = 0;
+      _circleTapRegion.backgroundColor = [UIColor clearColor];
+      [self addSubview:_circleTapRegion];
       
       _circleDeleteBorder = [[DLCircleView alloc] initWithFrame:CGRectMake(20, 11, 20, 20) strokeWidth:1.0 selectFill:YES selectColor:[UIColor lightGrayColor]];
       _circleDeleteBorder.alpha = 0;
@@ -144,6 +150,7 @@
                               _advanceIcon.alpha = 0;
                               _circleDeleteIcon.alpha = 1.0;
                               _circleDeleteBorder.alpha = 1.0;
+                              _circleTapRegion.alpha = 1.0;
                               _editIcon.alpha = 1;
                             }completion:^(BOOL success){
                               UITapGestureRecognizer * deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteClicked:)];
@@ -151,6 +158,13 @@
                               deleteRecognizer.numberOfTapsRequired = 1;
                               
                               [_circleDeleteBorder addGestureRecognizer:deleteRecognizer];
+                              
+                              
+                              UITapGestureRecognizer * deleteRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteClicked:)];
+                              deleteRecognizer2.delegate = self;
+                              deleteRecognizer2.numberOfTapsRequired = 1;
+                              
+                              [_circleTapRegion addGestureRecognizer:deleteRecognizer2];
                             }];
   } else {
     CGRect chartIconFrame = _chartIcon.frame;
@@ -166,6 +180,7 @@
     _advanceIcon.alpha = 0;
     _circleDeleteIcon.alpha = 1.0;
     _circleDeleteBorder.alpha = 1.0;
+    _circleTapRegion.alpha = 1.0;
     _editIcon.alpha = 1;
     
     UITapGestureRecognizer * deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteClicked:)];
@@ -173,6 +188,12 @@
     deleteRecognizer.numberOfTapsRequired = 1;
     
     [_circleDeleteBorder addGestureRecognizer:deleteRecognizer];
+    
+    UITapGestureRecognizer * deleteRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteClicked:)];
+    deleteRecognizer2.delegate = self;
+    deleteRecognizer2.numberOfTapsRequired = 1;
+    
+    [_circleTapRegion addGestureRecognizer:deleteRecognizer2];
   }
 }
 
@@ -231,6 +252,7 @@
                               _advanceIcon.alpha = 1.0;
                               _trashIcon.alpha = 0;
                               _circleDeleteBorder.alpha = 0;
+                              _circleTapRegion.alpha = 0;
                             }completion:^(BOOL success){
     
                             }];
