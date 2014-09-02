@@ -681,6 +681,10 @@ static const int kStartingNumPoints = 2000;
   _startCircle = [[DLCircleView alloc] initWithFrame:CGRectMake(_startCircleX, _startCircleY, _startButton.frame.size.width * 2, _startButton.frame.size.width * 2) strokeWidth:1.0 selectFill:NO selectColor:greenWatchColor boundaryColor:greenWatchColor];
   _startCircle.selected = NO;
   _startCircle.backgroundColor = [UIColor clearColor];
+  
+  UITapGestureRecognizer *circleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(StartTimerClicked:)];
+  circleRecognizer.numberOfTouchesRequired = 1;
+  [_startCircle addGestureRecognizer:circleRecognizer];
   [self.view addSubview:_startCircle];
   
   _resetButton =  [UIButton buttonWithType:UIButtonTypeCustom];
@@ -698,6 +702,10 @@ static const int kStartingNumPoints = 2000;
   _resetCircle.selected = NO;
   _resetCircle.backgroundColor = [UIColor clearColor];
   [self.view addSubview:_resetCircle];
+  
+  UITapGestureRecognizer *resetCircleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(ResetTimerClicked:)];
+  resetCircleRecognizer.numberOfTouchesRequired = 1;
+  [_resetCircle addGestureRecognizer:resetCircleRecognizer];
   
   _start = nil;
   
