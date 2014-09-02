@@ -24,6 +24,7 @@
   
   DLCircleView *_circleDeleteBorder;
   DLCircleView *_circleTapRegion;
+  DLCircleView *_trashTapRegion;
   
   UIView *_whiteView;
   UIView *_whiteView2;
@@ -106,6 +107,11 @@
       _circleDeleteIcon.alpha = 0;
       [self addSubview:_circleDeleteIcon];
       
+      _trashTapRegion = [[DLCircleView alloc] initWithFrame:CGRectMake(280, 1, 40, 40) strokeWidth:1.0 selectFill:YES selectColor:[UIColor clearColor] boundaryColor:[UIColor clearColor]];
+      _trashTapRegion.alpha = 0;
+      _trashTapRegion.backgroundColor = [UIColor blackColor];
+      [self addSubview:_trashTapRegion];
+      
       _trashIcon = [[UILabel alloc] initWithFrame:CGRectMake(290, 13, 100, 22)];
       _trashIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
       _trashIcon.textColor = [UIColor redColor];
@@ -131,6 +137,15 @@
   [self addGestureRecognizer:touchRecognizer];
   
   return self;
+}
+
+-(void) TrashEditClicked
+{
+  if (_deleteActive) {
+    [self DeleteRow:nil];
+  } else {
+    [self tappedCell:nil];
+  }
 }
 
 -(void) pannedCell: (UIPanGestureRecognizer *)panRecognizer
@@ -208,6 +223,7 @@
                               _circleDeleteIcon.alpha = 1.0;
                               _circleDeleteBorder.alpha = 1.0;
                               _circleTapRegion.alpha = 1.0;
+                              _trashTapRegion.alpha = 1.0;
                               _editIcon.alpha = 1;
                               _whiteView.alpha = 1;
                               _trashIcon.alpha = 1;
@@ -224,6 +240,12 @@
                               deleteRecognizer2.numberOfTapsRequired = 1;
                               
                               [_circleTapRegion addGestureRecognizer:deleteRecognizer2];
+                              
+                              UITapGestureRecognizer * deleteRecognizer3 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(TrashEditClicked)];
+                              deleteRecognizer3.delegate = self;
+                              deleteRecognizer3.numberOfTapsRequired = 1;
+                              
+                              [_trashTapRegion addGestureRecognizer:deleteRecognizer3];
                             }];
   } else {
     CGRect chartIconFrame = _chartIcon.frame;
@@ -240,6 +262,7 @@
     _circleDeleteIcon.alpha = 1.0;
     _circleDeleteBorder.alpha = 1.0;
     _circleTapRegion.alpha = 1.0;
+    _trashTapRegion.alpha = 1.0;
     _editIcon.alpha = 1;
     _whiteView.alpha = 1;
     _trashIcon.alpha = 1;
@@ -255,6 +278,12 @@
     deleteRecognizer2.numberOfTapsRequired = 1;
     
     [_circleTapRegion addGestureRecognizer:deleteRecognizer2];
+    
+    UITapGestureRecognizer * deleteRecognizer3 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(TrashEditClicked)];
+    deleteRecognizer3.delegate = self;
+    deleteRecognizer3.numberOfTapsRequired = 1;
+    
+    [_trashTapRegion addGestureRecognizer:deleteRecognizer3];
   }
   
   _panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pannedCell:)];
@@ -328,6 +357,7 @@
                               _trashIcon.alpha = 0;
                               _circleDeleteBorder.alpha = 0;
                               _circleTapRegion.alpha = 0;
+                              _trashTapRegion.alpha = 0;
                             }completion:^(BOOL success){
     
                             }];
