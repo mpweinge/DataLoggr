@@ -70,7 +70,13 @@
       
       _lastModifiedTime = [[UILabel alloc] initWithFrame:CGRectMake(70, 21, 300, 22)];
       _lastModifiedTime.font = [UIFont fontWithName:@"HelveticaNeue-Italic" size:10.0];
-      _lastModifiedTime.text = [NSString stringWithFormat:@"Last modified: %@", lastModifiedTime ];
+      
+      if ([lastModifiedTime length] > 17) {
+        _lastModifiedTime.text = [NSString stringWithFormat:@"Last modified: %@", [lastModifiedTime substringToIndex: 18]];
+      } else {
+        _lastModifiedTime.text = [NSString stringWithFormat:@"Last modified: %@", lastModifiedTime];
+
+      }
       [self addSubview:_lastModifiedTime];
       
       _advanceIcon=[[UILabel alloc] initWithFrame:CGRectMake(300, 13, 100, 22)];

@@ -238,7 +238,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     // this is imporant - we set our input date format to match our input string
     // if format doesn't match you'll get nil from your string, so be careful
-    dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a";
+    dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a:ss";
     NSDate *dateFromString = [[NSDate alloc] init];
     // time = @"08/26/14";
     dateFromString = [dateFormatter dateFromString:currObj.DataTime];
@@ -277,7 +277,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     // this is imporant - we set our input date format to match our input string
     // if format doesn't match you'll get nil from your string, so be careful
-    dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a";
+    dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a:ss";
     NSDate *dateFromString = [[NSDate alloc] init];
    // time = @"08/26/14";
     dateFromString = [dateFormatter dateFromString:time];
@@ -476,10 +476,10 @@
     if ([plotData count] <= 1) {
       plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(-0.5) length:CPTDecimalFromDouble(1)];
     } else {
-      plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay) +1 )];
+      plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay) + (dayDiff * oneDay) / 40 )];
     }
   } else {
-    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay) + 1)];
+    plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay) + (dayDiff * oneDay) / 40)];
   }
   
   graph.plotAreaFrame.paddingTop = 2.0f;
@@ -557,7 +557,7 @@
     CPTScatterPlot *dataSourceLinePlot = [[CPTScatterPlot alloc] init];
     dataSourceLinePlot.identifier = @"Date Plot";
   
-  if ([plotData count] <= 1) {
+  if ([plotData count] <= 10) {
     CPTPlotSymbol *plotSymbol = [CPTPlotSymbol ellipsePlotSymbol]; // Ellipse is used for circles
     plotSymbol.fill = [CPTFill fillWithColor:[CPTColor redColor]];
     plotSymbol.size = CGSizeMake(10.0, 10.0);
@@ -572,7 +572,7 @@
     
   }
   
-  dataSourceLinePlot.interpolation = CPTScatterPlotInterpolationCurved;
+  dataSourceLinePlot.interpolation = CPTScatterPlotInterpolationLinear;
     
     CPTMutableLineStyle *lineStyle = [dataSourceLinePlot.dataLineStyle mutableCopy];
     lineStyle.lineWidth              = 3.0;

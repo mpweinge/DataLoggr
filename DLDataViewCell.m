@@ -65,7 +65,7 @@
       
       _timeValue = [[UILabel alloc] initWithFrame:CGRectMake(20, 25, 100, 22)];
       _timeValue.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:11.0];
-      _timeValue.text = [time substringFromIndex:splitLocation + 1];
+      _timeValue.text = [time substringWithRange: NSMakeRange(splitLocation + 1, ([time length] - (splitLocation + 4)))];
       _timeValue.textAlignment = NSTextAlignmentRight;
       [self addSubview:_timeValue];
       

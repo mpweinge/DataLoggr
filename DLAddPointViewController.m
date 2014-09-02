@@ -876,7 +876,7 @@ static const int kStartingNumPoints = 2000;
       
       NSDate *currentTime = [NSDate date];
       NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-      dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a";
+      dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a:ss";
       NSString *resultString = [dateFormatter stringFromDate: currentTime];
       
       //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
@@ -898,7 +898,7 @@ static const int kStartingNumPoints = 2000;
       
       NSDate *currentTime = [NSDate date];
       NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-      dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a";
+      dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a:ss";
       NSString *resultString = [dateFormatter stringFromDate: currentTime];
       
       //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
@@ -944,11 +944,6 @@ static const int kStartingNumPoints = 2000;
     }
     
     NSString *timeString = _currCell.time;
-    
-    /*NSDate *currentTime = [NSDate date];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a";
-    NSString *resultString = [dateFormatter stringFromDate: currentTime];*/
     
     //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
     DLDataPointRowObject *newObject = [[DLDataPointRowObject alloc]
