@@ -24,11 +24,16 @@
   
   DLCircleView *_circleDeleteBorder;
   DLCircleView *_circleTapRegion;
+  
+  UIView *_whiteView;
+  UIView *_whiteView2;
+  
   UILabel *_trashIcon;
   
   BOOL _deleteActive;
   
   UITapGestureRecognizer *_deleteRecognizer;
+  UIPanGestureRecognizer *_panRecognizer;
 }
 @end
 
@@ -73,12 +78,16 @@
       _advanceIcon.text = [NSString fontAwesomeIconStringForEnum:FAAngleRight];
       [self addSubview:_advanceIcon];
       
-      _editIcon = [[UILabel alloc] initWithFrame:CGRectMake(290, 13, 100, 22)];
+      _editIcon = [[UILabel alloc] initWithFrame:CGRectMake(290, 13, 20, 22)];
       _editIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
       _editIcon.textColor = [UIColor blackColor];
       _editIcon.text = [NSString fontAwesomeIconStringForEnum:FAPencilSquareO];
       _editIcon.alpha = 0;
-      [self addSubview:_editIcon];
+      _editIcon.backgroundColor = [UIColor whiteColor];
+      
+      _whiteView = [[UIView alloc] initWithFrame:CGRectMake(290, 13, 20, 22)];
+      _whiteView.backgroundColor = [UIColor whiteColor];
+      _whiteView.alpha = 0;
       
       _circleTapRegion = [[DLCircleView alloc] initWithFrame:CGRectMake(10, 1, 40, 40) strokeWidth:1.0 selectFill:YES selectColor:[UIColor clearColor] boundaryColor:[UIColor clearColor]];
       _circleTapRegion.alpha = 0;
@@ -101,9 +110,15 @@
       _trashIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
       _trashIcon.textColor = [UIColor redColor];
       _trashIcon.text = [NSString fontAwesomeIconStringForEnum:FATrashO];
-      _trashIcon.alpha = 0;
+      _trashIcon.alpha = 0.0;
       [self addSubview:_trashIcon];
       
+      [self addSubview:_whiteView];
+      [self addSubview:_editIcon];
+      
+      _whiteView2 = [[UIView alloc] initWithFrame:CGRectMake(250, 13, 40, 22)];
+      _whiteView2.backgroundColor = [UIColor whiteColor];
+      [self addSubview:_whiteView2];
       
       _title = caption;
       _type = type;
@@ -116,6 +131,48 @@
   [self addGestureRecognizer:touchRecognizer];
   
   return self;
+}
+
+-(void) pannedCell: (UIPanGestureRecognizer *)panRecognizer
+{
+  CGPoint translation = [panRecognizer translationInView:self];
+  
+  CGRect editFrame = _editIcon.frame;
+  editFrame.origin.x += (translation.x / 4);
+  
+  if (editFrame.origin.x < 270) {
+    editFrame.origin.x = 270;
+    _deleteActive = YES;
+    [UIView animateWithDuration:0.5 animations:^{
+      _circleDeleteIcon.textColor = [UIColor redColor];
+    }];
+  } else if (editFrame.origin.x > 290) {
+    editFrame.origin.x = 290;
+  } else if ((editFrame.origin.x > 280) && ([panRecognizer state] == UIGestureRecognizerStateEnded)) {
+      _deleteActive = NO;
+      editFrame.origin.x = 290;
+      [UIView animateWithDuration:0.2 animations:^{
+        _editIcon.frame = editFrame;
+        _whiteView.frame = editFrame;
+        _circleDeleteIcon.textColor = [UIColor lightGrayColor];
+      }];
+    return;
+    } else if([panRecognizer state] == UIGestureRecognizerStateEnded){
+      _deleteActive = YES;
+      editFrame.origin.x = 270;
+      [UIView animateWithDuration:0.2 animations:^{
+        _editIcon.frame = editFrame;
+        _whiteView.frame = editFrame;
+        _circleDeleteIcon.textColor = [UIColor redColor];
+      }];
+      return;
+    }
+  
+  _editIcon.frame = editFrame;
+  
+  _whiteView.frame = editFrame;
+  
+  [panRecognizer setTranslation:CGPointMake(0, 0) inView:self];
 }
 
 -(void) setTitle:(NSString *)title
@@ -152,6 +209,8 @@
                               _circleDeleteBorder.alpha = 1.0;
                               _circleTapRegion.alpha = 1.0;
                               _editIcon.alpha = 1;
+                              _whiteView.alpha = 1;
+                              _trashIcon.alpha = 1;
                             }completion:^(BOOL success){
                               UITapGestureRecognizer * deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteClicked:)];
                               deleteRecognizer.delegate = self;
@@ -182,6 +241,8 @@
     _circleDeleteBorder.alpha = 1.0;
     _circleTapRegion.alpha = 1.0;
     _editIcon.alpha = 1;
+    _whiteView.alpha = 1;
+    _trashIcon.alpha = 1;
     
     UITapGestureRecognizer * deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteClicked:)];
     deleteRecognizer.delegate = self;
@@ -195,6 +256,10 @@
     
     [_circleTapRegion addGestureRecognizer:deleteRecognizer2];
   }
+  
+  _panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pannedCell:)];
+  
+  [self addGestureRecognizer:_panRecognizer];
 }
 
 -(void) DeleteClicked: (UITapGestureRecognizer *)tapClicked
@@ -203,8 +268,12 @@
     _deleteActive = NO;
     
     [UIView animateWithDuration:0.5 animations:^{
-      _trashIcon.alpha = 0;
-      _editIcon.alpha = 1;
+      //_editIcon.alpha = 1.0;
+      //_whiteView.alpha = 1.0;
+      CGRect frame =_editIcon.frame;
+      frame.origin.x = 290;
+      _editIcon.frame = frame;
+      _whiteView.frame = frame;
       _circleDeleteIcon.textColor = [UIColor lightGrayColor];
     }];
     
@@ -214,8 +283,13 @@
     _deleteActive = YES;
     
     [UIView animateWithDuration:0.5 animations:^{
-      _trashIcon.alpha = 1;
-      _editIcon.alpha = 0;
+      //_trashIcon.alpha = 1;
+      //_editIcon.alpha = 0;
+      CGRect frame =_editIcon.frame;
+      frame.origin.x = 270;
+      _editIcon.frame = frame;
+      _whiteView.frame = frame;
+      //_whiteView.alpha = 0;
       _circleDeleteIcon.textColor = [UIColor redColor];
     }];
     
@@ -248,6 +322,7 @@
                               
                               _lastModifiedTime.alpha = 1.0;
                               _editIcon.alpha = 0;
+                              _whiteView.alpha = 0;
                               _circleDeleteIcon.alpha = 0;
                               _advanceIcon.alpha = 1.0;
                               _trashIcon.alpha = 0;
@@ -256,6 +331,8 @@
                             }completion:^(BOOL success){
     
                             }];
+  
+  [self removeGestureRecognizer:_panRecognizer];
 }
 
 -(void) DeleteRow:(UITapGestureRecognizer *)gestureRecognizer

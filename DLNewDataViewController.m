@@ -173,12 +173,12 @@ static const int kIconOffset = 170;
   iconDataLabel.text = @"Icon: ";
   iconDataLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
   
-    _iconSwitcherView = [[UIScrollView alloc] initWithFrame:CGRectMake(60, kIconOffset, 200, 150)];
-    _iconSwitcherView.contentSize = CGSizeMake(800, 50);
-    _iconSwitcherView.showsHorizontalScrollIndicator = YES;
-    _iconSwitcherView.backgroundColor = [UIColor clearColor];
-    _iconSwitcherView.pagingEnabled = YES;
-    _iconSwitcherView.delegate = self;
+  _iconSwitcherView = [[UIScrollView alloc] initWithFrame:CGRectMake(60, kIconOffset, 200, 150)];
+  _iconSwitcherView.contentSize = CGSizeMake(800, 50);
+  _iconSwitcherView.showsHorizontalScrollIndicator = YES;
+  _iconSwitcherView.backgroundColor = [UIColor clearColor];
+  _iconSwitcherView.pagingEnabled = YES;
+  _iconSwitcherView.delegate = self;
   
   scrollviewTouchArea = [[DLExtendedScrollView alloc] initWithFrame:CGRectMake(50, kIconOffset, 250, 150) andScrollView:_iconSwitcherView];
   scrollviewTouchArea.backgroundColor = [UIColor clearColor];
