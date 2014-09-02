@@ -51,7 +51,7 @@
 
 - (void) restartLocationUpdates
 {
-    NSLog(@"restartLocationUpdates");
+    //NSLog(@"restartLocationUpdates");
     
     if (self.shareModel.timer) {
         [self.shareModel.timer invalidate];
@@ -169,7 +169,7 @@
     CLLocationManager *locationManager = [LocationTracker sharedLocationManager];
     [locationManager stopUpdatingLocation];
     
-    NSLog(@"locationManager stop Updating after 10 seconds");
+   // NSLog(@"locationManager stop Updating after 10 seconds");
 }
 
 
@@ -202,7 +202,7 @@
 //Send the location to Server
 - (void)updateLocationToServer {
     
-    NSLog(@"updateLocationToServer");
+    //NSLog(@"updateLocationToServer");
     
     // Find the best location from the array based on accuracy
     NSMutableDictionary * myBestLocation = [[NSMutableDictionary alloc]init];
@@ -237,9 +237,10 @@
         self.myLocationAccuracy =[[myBestLocation objectForKey:ACCURACY]floatValue];
     }
     
-    NSLog(@"Send to Server: Latitude(%f) Longitude(%f) Accuracy(%f)",self.myLocation.latitude, self.myLocation.longitude,self.myLocationAccuracy);
+   // NSLog(@"Send to Server: Latitude(%f) Longitude(%f) Accuracy(%f)",self.myLocation.latitude, self.myLocation.longitude,self.myLocationAccuracy);
     
     //TODO: Your code to send the self.myLocation and self.myLocationAccuracy to your server
+  NSLog(@"Coming from location tracker");
   [_delegate DidGetLocation:self.myLocation];
   
     //After sending the location to the server successful, remember to clear the current array with the following code. It is to make sure that you clear up old location in the array and add the new locations from locationManager

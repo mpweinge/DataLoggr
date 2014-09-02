@@ -174,7 +174,7 @@ static const int kStartingNumPoints = 2000;
     iconDataLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
     [self.view addSubview:iconDataLabel];
     
-    _timeText = [[UITextField alloc] initWithFrame:CGRectMake(60, kNotesOffsetY + 66, 200, 50)];
+    _timeText = [[UILabel alloc] initWithFrame:CGRectMake(60, kNotesOffsetY + 66, 200, 50)];
     _timeText.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
     _timeText.text = @"00:00.00";
     [self.view addSubview:_timeText];
@@ -184,12 +184,12 @@ static const int kStartingNumPoints = 2000;
     iconDataLabel2.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
     [self.view addSubview:iconDataLabel2];
     
-    _distanceText = [[UITextField alloc] initWithFrame:CGRectMake(250, kNotesOffsetY + 66, 200, 50)];
+    _distanceText = [[UILabel alloc] initWithFrame:CGRectMake(250, kNotesOffsetY + 66, 200, 50)];
     _distanceText.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
     _distanceText.text = @"0.0 m";
     [self.view addSubview:_distanceText];
     
-    kNotesOffsetY = 295;
+    kNotesOffsetY = 285;
     [self.view addSubview:_addMap];
     
     // Create a button with icon
@@ -245,7 +245,12 @@ static const int kStartingNumPoints = 2000;
     ((UILabel *)_dataName).text = @"00:00.00";
   }
   
-  UIView *dataDivider = [[UIView alloc] initWithFrame:CGRectMake(5, kNotesOffsetY - 35, 310, 1)];
+  UIView *dataDivider;
+  if ([_typeName isEqualToString:@"GPS"]) {
+    dataDivider = [[UIView alloc] initWithFrame:CGRectMake(5, kNotesOffsetY - 25, 310, 1)];
+  } else {
+    dataDivider = [[UIView alloc] initWithFrame:CGRectMake(5, kNotesOffsetY - 35, 310, 1)];
+  }
   dataDivider.backgroundColor = [UIColor lightGrayColor];
   [self.view addSubview:dataDivider];
   
@@ -452,6 +457,7 @@ static const int kStartingNumPoints = 2000;
       }
     }
   }
+  NSLog(@"Point coming from cllocationdelegate");
   [self DidGetLocation:userLocation.coordinate];
 }
 
@@ -488,6 +494,9 @@ static const int kStartingNumPoints = 2000;
                                   repeats:YES];
   
   _start = [NSDate date];
+  
+  [_locationManager startUpdatingLocation];
+  _locationManager.delegate = self;
 }
 
 - (void) stopTrackingLocation
@@ -496,6 +505,8 @@ static const int kStartingNumPoints = 2000;
   locationUpdateTimer = nil;
   [locationTracker stopLocationTracking];
   _start = nil;
+  [_locationManager stopUpdatingLocation];
+  _locationManager.delegate = nil;
 }
 
 -(void) testMapUpdate
@@ -503,6 +514,8 @@ static const int kStartingNumPoints = 2000;
   CLLocationCoordinate2D location;
   location.latitude = mapPointCount / (double)5000.0;
   location.longitude = mapPointCount / (double)5000.0;
+  
+  NSLog(@"Coming from test map update");
   [self DidGetLocation:location];
 }
 
@@ -558,8 +571,6 @@ static const int kStartingNumPoints = 2000;
   }
 #endif
   
-  NSLog(@"Added New Point To Log");
-  
   if (!_start || !_timerStarted) {
     //Don't track location until we hit start
     return;
@@ -580,16 +591,16 @@ static const int kStartingNumPoints = 2000;
   _previousLocation = newLocation;
   
   //Calculate centroid of location
-  CLLocationCoordinate2D centroid = [self CalculateCentroidwithNewLocation:location];
+  //CLLocationCoordinate2D centroid = [self CalculateCentroidwithNewLocation:location];
   
-  // If in background, store other way
-  MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(centroid, currZoom, currZoom);
+  // If in background, store either way
+  MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(location, currZoom, currZoom);
   MKCoordinateRegion adjustedRegion = [_addMap regionThatFits:viewRegion];
   
   _lastSetRegion = adjustedRegion;
   
   if (!_userPanning ) {
-    [_addMap setCenterCoordinate:centroid animated:YES];
+    [_addMap setCenterCoordinate:location animated:YES];
   }
   
   if (mapPointCount == 0) {
@@ -603,6 +614,15 @@ static const int kStartingNumPoints = 2000;
   
   if (mapPointCount > 1) {
     myPolyline = [MKPolyline polylineWithCoordinates:mapPoints count:mapPointCount];
+    
+    for (id<MKOverlay> overlayToRemove in _addMap.overlays)
+    {
+      if ([overlayToRemove isKindOfClass:[MKPolyline class]])
+      {
+        [_addMap removeOverlay:overlayToRemove];
+      }
+    }
+    
     [_addMap addOverlay:myPolyline];
   }
   
@@ -656,6 +676,8 @@ static const int kStartingNumPoints = 2000;
   CGRect theFrame = view.frame;
   float y = theFrame.origin.y - 15;
   y -= (y/1.7);
+  y += theFrame.size.height;
+  y -= 15;
   [self scrollToY:-y];
 }
 
@@ -715,12 +737,51 @@ static const int kStartingNumPoints = 2000;
 
 - (void) setupGPS
 {
-  _startButton =  [UIButton buttonWithType:UIButtonTypeRoundedRect];
+  //Add buttons for start, stop
+  _startButton =  [UIButton buttonWithType:UIButtonTypeCustom];
   [_startButton setTitle:@"Start" forState:UIControlStateNormal];
   [_startButton sizeToFit];
-  _startButton.center = CGPointMake(100, kNotesOffsetY + 80);
+  _startButton.center = CGPointMake(90, kNotesOffsetY + 90);
+  _startButton.titleLabel.textColor = greenWatchColor;
+  [ _startButton setTitleColor:greenWatchColor forState:UIControlStateNormal];
   [_startButton addTarget:self action:@selector(StartGPSClicked:) forControlEvents:UIControlEventTouchUpInside];
+  
+  int _startCircleX = _startButton.frame.origin.x - (_startButton.frame.size.width * 2 - _startButton.frame.size.width) / (2);
+  int _startCircleY = _startButton.frame.origin.y - 2 - (_startButton.frame.size.width * 2 - _startButton.frame.size.width) / (2);
+  
+  _startCircle = [[DLCircleView alloc] initWithFrame:CGRectMake(_startCircleX, _startCircleY, _startButton.frame.size.width * 2, _startButton.frame.size.width * 2) strokeWidth:1.0 selectFill:NO selectColor:greenWatchColor boundaryColor:greenWatchColor];
+  _startCircle.selected = NO;
+  _startCircle.backgroundColor = [UIColor clearColor];
+  
+  UITapGestureRecognizer *circleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(StartTimerClicked:)];
+  circleRecognizer.numberOfTouchesRequired = 1;
+  [_startCircle addGestureRecognizer:circleRecognizer];
+  [self.view addSubview:_startCircle];
+  
+  _resetButton =  [UIButton buttonWithType:UIButtonTypeCustom];
+  [_resetButton setTitle:@"Reset" forState:UIControlStateNormal];
+  [_resetButton sizeToFit];
+  [ _resetButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+  _resetButton.center = CGPointMake(230, kNotesOffsetY + 90);
+  _resetButton.enabled = NO;
+  [_resetButton addTarget:self action:@selector(ResetGPSClicked:) forControlEvents:UIControlEventTouchUpInside];
+  
+  int _resetCircleX = _resetButton.frame.origin.x - (_startButton.frame.size.width * 2 - _resetButton.frame.size.width) / (2);
+  int _resetCircleY = _startCircleY;
+  
+  _resetCircle = [[DLCircleView alloc] initWithFrame:CGRectMake(_resetCircleX, _resetCircleY, _startButton.frame.size.width * 2, _startButton.frame.size.width * 2) strokeWidth:1.0 selectFill:NO selectColor:[UIColor lightGrayColor] boundaryColor:[UIColor lightGrayColor]];
+  _resetCircle.selected = NO;
+  _resetCircle.backgroundColor = [UIColor clearColor];
+  [self.view addSubview:_resetCircle];
+  
+  UITapGestureRecognizer *resetCircleRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(ResetGPSClicked:)];
+  resetCircleRecognizer.numberOfTouchesRequired = 1;
+  [_resetCircle addGestureRecognizer:resetCircleRecognizer];
+  
+  _start = nil;
+  
   [self.view addSubview:_startButton];
+  [self.view addSubview:_resetButton];
 }
 
 - (void) StartGPSClicked: (UIButton *)gpsButton
@@ -728,7 +789,6 @@ static const int kStartingNumPoints = 2000;
   if (!_timerStarted) {
     _timerStarted = YES;
     [self startTrackingLocation];
-    [_startButton setTitle:@"Stop" forState:UIControlStateNormal];
     
     if (!_start) {
       _start = [NSDate date];
@@ -739,6 +799,16 @@ static const int kStartingNumPoints = 2000;
                                             selector:@selector(updateTime)
                                             userInfo:nil
                                              repeats:YES];
+    
+    [ _startButton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [_startCircle setBoundaryColor:[UIColor redColor]];
+    _startButton.titleLabel.text = @"Stop";
+    [_startButton setTitle:@"Stop" forState:UIControlStateNormal];
+    
+    [_resetButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [_resetCircle setBoundaryColor:[UIColor blackColor]];
+    
+    _resetButton.enabled = YES;
   } else {
     _elapsedTime = [_start timeIntervalSinceNow];
     currPausedTime = [_start timeIntervalSinceNow] * -1 + currPausedTime;
@@ -750,8 +820,54 @@ static const int kStartingNumPoints = 2000;
     _timer = nil;
     
     [self stopTrackingLocation];
+    
+    [ _startButton setTitleColor:[UIColor colorWithRed:0 green:204/255.0 blue:0 alpha:1.0] forState:UIControlStateNormal];
+    [_startCircle setBoundaryColor:[UIColor colorWithRed:0 green:204/255.0 blue:0 alpha:1.0]];
+    _startButton.titleLabel.text = @"Start";
     [_startButton setTitle:@"Start" forState:UIControlStateNormal];
   }
+}
+
+- (void) ResetGPSClicked: (UIButton *)resetButton
+{
+  if (_timer)
+  {
+    [_timer invalidate];
+    _timer = nil;
+    [_startButton setTitle:@"Start" forState:UIControlStateNormal];
+    [_startButton setTitleColor:greenWatchColor forState:UIControlStateNormal];
+    [_startCircle setBoundaryColor:greenWatchColor];
+    
+    _timerStarted = false;
+  }
+  
+  //Reset the clock
+  _start = nil;
+  _elapsedTime = 0;
+  _timeText.text = @"00:00.00";
+  
+  //Reset the distance text
+  _elapsedDistance = 0;
+  _distanceText.text = @"0 m";
+  
+  //Reset the polyline points
+  mapPointCount = 0;
+  
+  for (id<MKOverlay> overlayToRemove in _addMap.overlays)
+  {
+    if ([overlayToRemove isKindOfClass:[MKPolyline class]])
+    {
+      [_addMap removeOverlay:overlayToRemove];
+    }
+  }
+  
+  [_resetButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+  [_resetCircle setBoundaryColor:[UIColor lightGrayColor]];
+  _resetButton.enabled = NO;
+  
+  currPausedTime = 0;
+  ((UILabel *)_dataName).text = @"00:00.00";
+  _didEdit = YES;
 }
 
 - (void) ResetTimerClicked: (UIButton *)resetButton
@@ -765,21 +881,17 @@ static const int kStartingNumPoints = 2000;
     [_startButton setTitleColor:greenWatchColor forState:UIControlStateNormal];
     [_startCircle setBoundaryColor:greenWatchColor];
     
-    [_resetButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-    [_resetCircle setBoundaryColor:[UIColor lightGrayColor]];
-    
-    _resetButton.enabled = NO;
-    
     _timerStarted = false;
     //Reset the clock
     _start = nil;
     ((UILabel *)_dataName).text = @"00:00.00";
-  } else {
-    [_resetButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-    [_resetCircle setBoundaryColor:[UIColor lightGrayColor]];
-    
-    _resetButton.enabled = NO;
   }
+  
+  [_resetButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+  [_resetCircle setBoundaryColor:[UIColor lightGrayColor]];
+  
+  _resetButton.enabled = NO;
+  
   currPausedTime = 0;
   ((UILabel *)_dataName).text = @"00:00.00";
   _didEdit = YES;
@@ -831,10 +943,10 @@ static const int kStartingNumPoints = 2000;
   int numMinutes = timeInterval / 60;
   int numMinutesTen = numMinutes / 10;
   
-  int numSeconds = (timeInterval - numMinutes * 60);
+  int numSeconds = (timeInterval - numMinutes * 60 );
   int numSecondsTen = numSeconds / 10;
   
-  int numMilli = (timeInterval - numSeconds) * 100;
+  int numMilli = (timeInterval - numSeconds - numMinutes * 60 ) * 100;
   int numMilliTen = numMilli / 10;
   numMilli -= numMilliTen * 10;
   
@@ -850,6 +962,17 @@ static const int kStartingNumPoints = 2000;
 
 - (void) CancelClicked
 {
+  [self stopTrackingLocation];
+  
+  if (_addMap) {
+    _addMap.showsUserLocation = NO;
+  }
+  
+  if (_timer){
+    [_timer invalidate];
+    _timer = nil;
+  }
+  
   [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -965,6 +1088,7 @@ static const int kStartingNumPoints = 2000;
     [_delegate didEditObject:_currCell withData:newObject];
   }
   
+  _addMap.showsUserLocation = NO;
   [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -1012,7 +1136,10 @@ static const int kStartingNumPoints = 2000;
 {
   _didEdit = YES;
   
-  [self scrollToView:textView];
+  if ([_typeName isEqual:@"GPS"])
+    [self scrollToY:-142];
+  else
+    [self scrollToY:-40];
 }
 
 -(void) textViewDidEndEditing:(UITextView *)textView

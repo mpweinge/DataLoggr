@@ -40,8 +40,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     // this is imporant - we set our input date format to match our input string
     // if format doesn't match you'll get nil from your string, so be careful
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+    dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a:ss";
     NSDate *dateFromString = [[NSDate alloc] init];
     // time = @"08/26/14";
     dateFromString = [dateFormatter dateFromString:currObj.DataTime];
@@ -80,8 +79,7 @@
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     // this is imporant - we set our input date format to match our input string
     // if format doesn't match you'll get nil from your string, so be careful
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+    dateFormatter.dateFormat = @"MM/dd/yy, hh:mm a:ss";
     NSDate *dateFromString = [[NSDate alloc] init];
     // time = @"08/26/14";
     dateFromString = [dateFormatter dateFromString:time];

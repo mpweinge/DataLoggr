@@ -269,6 +269,9 @@
     
     DLDataViewCell* currCell =  [tableView cellForRowAtIndexPath:path];
     
+    if ([currCell isKindOfClass:[DLTitleTableViewCell class]])
+      return;
+    
     [currCell graphViewDidScroll:pageNum];
   }
 }
