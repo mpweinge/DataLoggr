@@ -16,6 +16,8 @@
   NSDate *_maxDate;
   float _maxY;
   int _val;
+  NSString * _yAxisTitle;
+  BOOL _isLinear;
 }
 
 -(id)init
@@ -36,6 +38,69 @@
                units:(NSInteger) units
 {
   assert([type isEqualToString:@"GPS"]);
+  _isLinear = isLinear;
+  
+  switch (val) {
+    case 0: {
+      switch (units) {
+        case 0: {
+          _yAxisTitle = @"m/s";
+          break;
+        }
+        case 1: {
+          _yAxisTitle = @"mi/hr";
+          break;
+        }
+        case 2: {
+          _yAxisTitle = @"km/hr";
+          break;
+        }
+        default:
+          assert(0);
+      }
+      break;
+    }
+    case 1: {
+      switch (units) {
+        case 0: {
+          _yAxisTitle = @"m";
+          break;
+        }
+        case 1: {
+          _yAxisTitle = @"mi";
+          break;
+        }
+        case 2: {
+          _yAxisTitle = @"km";
+          break;
+        }
+        default:
+          assert(0);
+      }
+      break;
+    }
+    case 2: {
+      switch (units) {
+        case 0: {
+          _yAxisTitle = @"s";
+          break;
+        }
+        case 1: {
+          _yAxisTitle = @"hr";
+          break;
+        }
+        case 2: {
+          _yAxisTitle = @"hr";
+          break;
+        }
+        default:
+          assert(0);
+      }
+      break;
+    }
+    default:
+      assert(0);
+  }
   
   _maxY = 0;
   
@@ -194,6 +259,28 @@
             isLinear: (BOOL) isLinear
                units:(NSInteger) units
 {
+  _isLinear = isLinear;
+  if ([type isEqualToString:@"Time"])
+  {
+    switch (units) {
+      case 0: {
+        _yAxisTitle = @"s";
+        break;
+      }
+      case 1: {
+        _yAxisTitle = @"min";
+        break;
+      }
+      case 2: {
+        _yAxisTitle = @"hr";
+        break;
+      }
+      default:
+        assert(0);
+    }
+  }
+  
+
   _val = -1;
   //Find minimum (start) date
   _minDate = nil;
@@ -452,7 +539,7 @@
       dateDiff = [plotData count] - 1;
     }
   
-  if (dayDiff < 4 ) {
+  if ((dayDiff < 4 ) || (_isLinear) ) {
     dayDiff = dateDiff / oneDay;
     xLow = -dayDiff * oneDay / 3.0;
     xLow = 0;
@@ -469,13 +556,15 @@
   _graph.plotAreaFrame.paddingTop = 2.0f;
   _graph.plotAreaFrame.paddingRight = 55.0f;
   _graph.plotAreaFrame.paddingBottom = 30.0f;
-  _graph.plotAreaFrame.paddingLeft = 30.0f;
+  _graph.plotAreaFrame.paddingLeft = 50.0f;
   
-  int numDecimals = (log10(_maxY / 5.0));
-  if (numDecimals < 0) {
-    numDecimals = numDecimals * -1;
+  if (_maxY != 0) {
+    int numDecimals = (log10(_maxY / 5.0));
+    if (numDecimals < 0) {
+      numDecimals = numDecimals * -1;
+    }
+    _graph.plotAreaFrame.paddingLeft = 50.0 + numDecimals * 10.0f;
   }
-  _graph.plotAreaFrame.paddingLeft = 30.0 + numDecimals * 10.0f;
   
   NSTimeInterval yLow = 0;
   
@@ -489,7 +578,7 @@
     CPTXYAxisSet *axisSet = (CPTXYAxisSet *)_graph.axisSet;
     CPTXYAxis *x          = axisSet.xAxis;
   
-  if ( dayDiff < 4 ) {
+  if ( ( dayDiff < 4 ) || (_isLinear) ) {
     if ([plotData count] <= 1) {
       x.majorIntervalLength = CPTDecimalFromInt(1);
     } else {
@@ -520,6 +609,8 @@
 
     y.majorIntervalLength         = CPTDecimalFromDouble((fabs(_maxY)) / 5.0);
     y.minorTicksPerInterval       = 4;
+    y.title = _yAxisTitle;
+  y.titleOffset = _graph.plotAreaFrame.paddingLeft - 20;
   
   if ([plotData count] <= 1) {
     y.orthogonalCoordinateDecimal = CPTDecimalFromFloat(-0.5);

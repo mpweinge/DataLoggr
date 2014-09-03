@@ -248,6 +248,9 @@
   }
   else if (newData)
   {
+    //Before this, hide the exposed view
+    _moreClicked = NO;
+    
     UITableView * tableView = (UITableView *)self.view;
     [tableView reloadData];
     // [tableView reloadRowsAtIndexPaths:[tableView indexPathsForVisibleRows]
@@ -333,6 +336,10 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (NSUInteger)supportedInterfaceOrientations {
+  return UIInterfaceOrientationMaskPortrait;
 }
 
 @end

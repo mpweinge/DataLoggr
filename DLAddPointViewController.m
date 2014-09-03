@@ -1237,4 +1237,8 @@ static const int kStartingNumPoints = 2000;
   return YES;
 }
 
+- (NSUInteger)supportedInterfaceOrientations {
+  return UIInterfaceOrientationMaskPortrait;
+}
+
 @end

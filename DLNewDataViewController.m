@@ -388,4 +388,8 @@ static const int kIconOffset = 170;
   return YES;
 }
 
+- (NSUInteger)supportedInterfaceOrientations {
+  return UIInterfaceOrientationMaskPortrait;
+}
+
 @end

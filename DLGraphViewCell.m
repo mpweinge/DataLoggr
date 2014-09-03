@@ -139,7 +139,7 @@
       _downCaret.textColor = [UIColor blueColor];
       _downCaret.text = [NSString fontAwesomeIconStringForEnum:FACaretDown];
       
-      _caretCircle = [[DLCircleView alloc] initWithFrame:CGRectMake(281, 280, 30, 30) strokeWidth:1.0 selectFill:NO selectColor:[UIColor blueColor] boundaryColor:[UIColor blueColor]];
+      _caretCircle = [[DLCircleView alloc] initWithFrame:CGRectMake(283, 283, 25, 25) strokeWidth:1.0 selectFill:NO selectColor:[UIColor blueColor] boundaryColor:[UIColor blueColor]];
       _caretCircle.backgroundColor = [UIColor clearColor];
       _caretCircle.selected = NO;
       [self addSubview:_caretCircle];
@@ -191,18 +191,18 @@
     if ([selectedSegment isEqualToString:@"m/s"]) {
       _units = 0;
       [_datePlot generateData:_dataPoints type:_type valueNum:0 isLinear:_switchON units:_units];
-      [_datePlot2 generateData:_dataPoints type:_type valueNum:0 isLinear:_switchON units:_units];
-      [_datePlot3 generateData:_dataPoints type:_type valueNum:0 isLinear:_switchON units:_units];
+      [_datePlot2 generateData:_dataPoints type:_type valueNum:1 isLinear:_switchON units:_units];
+      [_datePlot3 generateData:_dataPoints type:_type valueNum:2 isLinear:_switchON units:_units];
     } else if ([selectedSegment isEqualToString:@"mi/hr"]) {
       _units = 1;
       [_datePlot generateData:_dataPoints type:_type valueNum:0 isLinear:_switchON units:_units];
-      [_datePlot2 generateData:_dataPoints type:_type valueNum:0 isLinear:_switchON units:_units];
-      [_datePlot3 generateData:_dataPoints type:_type valueNum:0 isLinear:_switchON units:_units];
+      [_datePlot2 generateData:_dataPoints type:_type valueNum:1 isLinear:_switchON units:_units];
+      [_datePlot3 generateData:_dataPoints type:_type valueNum:2 isLinear:_switchON units:_units];
     } else {
       _units = 2;
       [_datePlot generateData:_dataPoints type:_type valueNum:0 isLinear:_switchON units:_units];
-      [_datePlot2 generateData:_dataPoints type:_type valueNum:0 isLinear:_switchON units:_units];
-      [_datePlot3 generateData:_dataPoints type:_type valueNum:0 isLinear:_switchON units:_units];
+      [_datePlot2 generateData:_dataPoints type:_type valueNum:1 isLinear:_switchON units:_units];
+      [_datePlot3 generateData:_dataPoints type:_type valueNum:2 isLinear:_switchON units:_units];
     }
     
     [_datePlot renderInLayer:_datePlot.hostView withTheme:[CPTTheme themeNamed: kCPTPlainWhiteTheme ] animated:YES];
@@ -234,6 +234,15 @@
   [_delegate moreClicked : !_caretDown];
   if (!_caretDown) {
     _linearScale.alpha = 1.0;
+    
+    CATransition *animation = [CATransition animation];
+    animation.duration = 0.5;
+    animation.type = kCATransitionFade;
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    [_downCaret.layer addAnimation:animation forKey:@"changeTextTransition"];
+    
+    // Change the text
+    
     [UIView animateWithDuration:0.3 animations:^{
       CGRect caretFrame = _downCaret.frame;
       caretFrame.origin.y += 100;
