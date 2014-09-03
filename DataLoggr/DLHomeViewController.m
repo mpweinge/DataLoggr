@@ -97,7 +97,8 @@
     if ([indexPath row] <= [rowData count]) {
       currItem = rowData[[indexPath row] ];
     } else {
-      currItem = [[DLDataRowObject alloc] initWithName:@"SampleData" type:@"NotImportant" iconName:@"FAGithub"];
+      assert(0);
+     // currItem = [[DLDataRowObject alloc] initWithName:@"SampleData" type:@"NotImportant" iconName:@"FAGithub"];
     }
     
     cell = [[DLHomeTableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
@@ -240,11 +241,17 @@
 - (void) CellViewTouched :(DLDataViewCell *) cell
 {
   if (_isEditClicked) {
-    DLNewDataViewController *editViewController = [[ DLNewDataViewController alloc] initWithDelegate:self isEdit:YES cell:cell];
+    
+    DLHomeTableViewCell *homeCell = (DLHomeTableViewCell *)cell;
+    
+    DLNewDataViewController *editViewController = [[ DLNewDataViewController alloc] initWithDelegate:self isEdit:YES cell: homeCell.rowObject];
     
     [self.navigationController pushViewController:editViewController animated:YES];
   } else {
-    DLDataViewController *newDataController = [[DLDataViewController alloc]initWithDataValue: cell.title dataType: cell.type];
+    
+        DLHomeTableViewCell *homeCell = (DLHomeTableViewCell *)cell;
+    
+    DLDataViewController *newDataController = [[DLDataViewController alloc]initWithDataValue: cell.title dataType: cell.type dataObject:homeCell.rowObject ];
     
     [self.navigationController pushViewController:newDataController animated:YES];
   }

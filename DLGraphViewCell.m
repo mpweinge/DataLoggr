@@ -12,6 +12,8 @@
 #import "CPTTheme.h"
 #import "DLCircleView.h"
 #import "NSString+FontAwesome.h"
+#import "DLDatabaseManager.h"
+#import "DLDataRowObject.h"
 
 @implementation DLGraphViewCell
 {
@@ -29,34 +31,71 @@
   BOOL _caretDown;
   BOOL _switchON;
   NSInteger _units;
+  DLDataRowObject *_dataObject;
 }
 
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
          dataPoints:(NSMutableArray *)dataPoints
                type:(NSString *) type
+         dataObject:(DLDataRowObject *) dataObject
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+      _dataObject = dataObject;
+      
+      UISegmentedControl *segmentControl;
+      if ([type isEqualToString:@"GPS"])
+      {
+        segmentControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"m/s", @"mi/hr", @"km/hr", nil]];
+        
+        if ([dataObject.UnitsName isEqualToString:@"mi/hr"]) {
+          [segmentControl setSelectedSegmentIndex:1];
+          _units = 1;
+        } else if ([dataObject.UnitsName isEqualToString:@"km/hr"]) {
+          [segmentControl setSelectedSegmentIndex:2];
+          _units = 2;
+        } else {
+          [segmentControl setSelectedSegmentIndex:0];
+          _units = 0;
+        }
+        
+      } else if ([type isEqualToString:@"Time"]) {
+        segmentControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"s", @"min", @"hr", nil]];
+        
+        if ([dataObject.UnitsName isEqualToString:@"min"]) {
+          [segmentControl setSelectedSegmentIndex:1];
+          _units = 1;
+        } else if ([dataObject.UnitsName isEqualToString:@"hr"]) {
+          [segmentControl setSelectedSegmentIndex:2];
+          _units = 2;
+        } else {
+          [segmentControl setSelectedSegmentIndex:0];
+          _units = 0;
+        }
+      }
+      
+      _switchON = dataObject.isLinear;
+      
       // If type is GPS, we actually want to have 3 graphs in one cell with scrolling
       if ([type isEqualToString:@"GPS"]) {
         
         CPTGraphHostingView *hostView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, 0, 360, 310)];
         _datePlot = [[DLDatePlot alloc] init];
         _datePlot.hostView = hostView;
-        [_datePlot generateData: dataPoints type:type valueNum:0 isLinear:NO units:0];
+        [_datePlot generateData: dataPoints type:type valueNum:0 isLinear:_switchON units:_units];
         [_datePlot renderInLayer:hostView withTheme:[CPTTheme themeNamed: kCPTPlainWhiteTheme ] animated:YES];
         
         CPTGraphHostingView *hostView2 = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(360, 0, 360, 310)];
         _datePlot2 = [[DLDatePlot alloc] init];
         _datePlot2.hostView = hostView2;
-        [_datePlot2 generateData: dataPoints type:type valueNum:1 isLinear:NO units:0];
+        [_datePlot2 generateData: dataPoints type:type valueNum:1 isLinear:_switchON units:_units];
         [_datePlot2 renderInLayer:hostView2 withTheme:[CPTTheme themeNamed: kCPTPlainWhiteTheme ] animated:YES];
         
         CPTGraphHostingView *hostView3 = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(720, 0, 360, 310)];
         _datePlot3 = [[DLDatePlot alloc] init];
         _datePlot3.hostView = hostView3;
-        [_datePlot3 generateData: dataPoints type:type valueNum:2 isLinear:NO units:0];
+        [_datePlot3 generateData: dataPoints type:type valueNum:2 isLinear:_switchON units:_units];
         [_datePlot3 renderInLayer:hostView3 withTheme:[CPTTheme themeNamed: kCPTPlainWhiteTheme ] animated:YES];
         
         CGRect graphScrollViewFrame = CGRectMake(0, 0, 360, 310);
@@ -87,7 +126,7 @@
         CPTGraphHostingView *hostView = [[CPTGraphHostingView alloc] initWithFrame:CGRectMake(0, 0, 360, 310)];
         _datePlot = [[DLDatePlot alloc] init];
         _datePlot.hostView = hostView;
-        [_datePlot generateData: dataPoints type:type isLinear:NO units:0];
+        [_datePlot generateData: dataPoints type:type isLinear:_switchON units:_units];
         [_datePlot renderInLayer:hostView withTheme:[CPTTheme themeNamed: kCPTPlainWhiteTheme ] animated:YES];
         _datePlot2 = nil;
         _datePlot3 = nil;
@@ -111,8 +150,9 @@
       tapRecognizer.numberOfTouchesRequired = 1;
       [_caretCircle addGestureRecognizer:tapRecognizer];
       
-      _linearScale = [[UISwitch alloc] initWithFrame:CGRectMake(200, 370, 50, 50)];
+      _linearScale = [[UISwitch alloc] initWithFrame:CGRectMake(180, 360, 50, 50)];
       _linearScale.alpha = 0;
+      [_linearScale setOn:_switchON animated:NO];
       [_linearScale addTarget:self action:@selector(changeSwitch:) forControlEvents:UIControlEventValueChanged];
       
       UILabel * unitsLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 300, 70, 50)];
@@ -125,20 +165,12 @@
       scaleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
       [self addSubview:scaleLabel];
       
-      UISegmentedControl *segmentControl;
-      if ([type isEqualToString:@"GPS"])
-      {
-        segmentControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"m/s", @"mi/hr", @"km/hr", nil]];
-      } else if ([type isEqualToString:@"Time"]) {
-        segmentControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"s", @"min", @"hr", nil]];
-      }
       [segmentControl addTarget:self action:@selector(segmentedControlChanged:)forControlEvents:UIControlEventValueChanged];
       [segmentControl setWidth:60 forSegmentAtIndex:0];
       [segmentControl setWidth:60 forSegmentAtIndex:1];
       [segmentControl setWidth:60 forSegmentAtIndex:2];
       segmentControl.frame = CGRectMake(80,310,180,30);
       segmentControl.momentary = NO;
-      [segmentControl setSelectedSegmentIndex:0];
       
       if (([type isEqualToString:@"GPS"]) || ([type isEqualToString:@"Time"]) )
         [self addSubview:segmentControl];
@@ -192,6 +224,9 @@
   }
   
   [_delegate didChangeUnits:_units];
+  
+  [[DLDatabaseManager getSharedInstance] updateOldRow:_dataObject withNewUnits:selectedSegment];
+  _dataObject.UnitsName = selectedSegment;
 }
 
 -(void) downCaretClicked:(UITapGestureRecognizer *)recognizer
@@ -244,6 +279,9 @@
     [_datePlot2.graph reloadData];
     [_datePlot3.graph reloadData];
   }
+  
+  [[DLDatabaseManager getSharedInstance] updateOldRow:_dataObject withNewLinear:switchON];
+  _dataObject.isLinear = switchON;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView

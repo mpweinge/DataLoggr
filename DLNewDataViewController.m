@@ -316,7 +316,11 @@ static const int kIconOffset = 170;
       NSString* dataType =  _selectedDataType.title;
       NSString* iconStr = _selectedIcon.title;
       
-      DLDataRowObject *newObject = [[DLDataRowObject alloc] initWithName:dataName type:dataType iconName:iconStr];
+      DLDataRowObject *newObject = [[DLDataRowObject alloc] initWithName:dataName
+                                                                    type:dataType
+                                                                iconName:iconStr
+                                                               unitsName:@""
+                                                                isLinear:NO];
       
       //Need to update current object
       [[DLDatabaseManager getSharedInstance] updateOldRow: _currCell.rowObject withNewRow: newObject];
@@ -333,7 +337,11 @@ static const int kIconOffset = 170;
     NSString* iconStr = _selectedIcon.title;
     
     //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
-    DLDataRowObject *newObject = [[DLDataRowObject alloc] initWithName:dataName type:dataType iconName:iconStr];
+    DLDataRowObject *newObject = [[DLDataRowObject alloc] initWithName:dataName
+                                                                  type:dataType
+                                                              iconName:iconStr
+                                                             unitsName:@""
+                                                              isLinear:NO];
     
     [newObject save];
     [_delegate didCreateNewObject:newObject];

@@ -10,6 +10,7 @@
 
 @class DLDataViewCell;
 @class DLDataPointRowObject;
+@class DLDataRowObject;
 
 @protocol DLDataViewCellDelegate
 
@@ -30,6 +31,8 @@
 
 -(DLDataPointRowObject *) dataPoint;
 
+- (DLDataRowObject *) dataObject;
+
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
                name:(NSString *)name
@@ -37,9 +40,10 @@
                time:(NSString *)time
                type:(NSString *)type
               notes:(NSString *)notes
-         dataObject:(DLDataPointRowObject *)dataObject
+    dataPointObject:(DLDataPointRowObject *)dataObject
             pageNum:(NSInteger) page
-              units:(NSInteger) units;
+              units:(NSInteger) units
+         dataObject:(DLDataRowObject *)dataObject;
 
 -(void) graphViewDidScroll:(NSUInteger)pageNum;
 

@@ -17,13 +17,19 @@
 
 @implementation DLDataRowObject
 
-- (instancetype) initWithName: (NSString *)DataName type: (NSString *)DataType iconName: (NSString *)IconName;
+- (instancetype) initWithName: (NSString *)DataName
+                         type: (NSString *)DataType
+                     iconName: (NSString *)IconName
+                    unitsName:(NSString *)UnitsName
+                     isLinear:(BOOL) isLinear;
 {
   self = [super init];
   if (self) {
     _DataName = DataName;
     _DataType = DataType;
     _IconName = IconName;
+    _UnitsName = UnitsName;
+    _isLinear = isLinear;
   }
   
   return self;
@@ -44,8 +50,11 @@
   [values appendString:_DataType];
   [values appendString:@"','"];
   [values appendString:_IconName];
+  [values appendString:@"','"];
+  [values appendString:_UnitsName];
+  [values appendString:@"','"];
+  [values appendFormat:@"%i", _isLinear];
   [values appendString:@"')"];
-  
   return values;
 }
 
@@ -66,6 +75,16 @@
   [values appendString:ValuesArray[2]];
   [values appendString:@"= \""];
   [values appendString:_IconName];
+  [values appendString:@"\", "];
+  
+  [values appendString:ValuesArray[3]];
+  [values appendString:@"= \""];
+  [values appendString:_UnitsName];
+  [values appendString:@"\", "];
+  
+  [values appendString:ValuesArray[4]];
+  [values appendString:@"= \""];
+  [values appendFormat:@"%i", _isLinear];
   [values appendString:@"\" "];
   
   return values;
@@ -102,6 +121,10 @@
       return _DataType;
     case 2:
       return _IconName;
+    case 3:
+      return _UnitsName;
+    case 4:
+      return [NSString stringWithFormat:@"%i", _isLinear ];
     default:
       assert(0);
       return nil;

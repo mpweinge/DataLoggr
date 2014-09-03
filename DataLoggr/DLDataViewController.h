@@ -11,6 +11,7 @@
 @protocol DLDataViewCellDelegate;
 @protocol DLTitleTableViewCellDelegate;
 @protocol DLAddPointViewControllerDelegate;
+@class DLDataRowObject;
 
 @interface DLDataViewController : UIViewController <
   UITableViewDataSource,
@@ -19,6 +20,8 @@
   DLAddPointViewControllerDelegate,
   UITableViewDelegate>
 
--(instancetype) initWithDataValue: (NSString*) setName dataType: (NSString *)dataType;
+-(instancetype) initWithDataValue: (NSString*) setName
+                         dataType: (NSString *)dataType
+                       dataObject: (DLDataRowObject *)dataObject;
 
 @end

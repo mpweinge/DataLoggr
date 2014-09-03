@@ -30,6 +30,8 @@
   BOOL _moreClicked;
   
   NSInteger _units;
+  
+  DLDataRowObject *_dataObject;
 }
 
 @end
@@ -45,7 +47,9 @@
     return self;
 }
 
--(instancetype) initWithDataValue: (NSString*) setName dataType: (NSString *)dataType
+-(instancetype) initWithDataValue: (NSString*) setName
+                         dataType: (NSString *)dataType
+                       dataObject: (DLDataRowObject *)dataObject
 {
   self = [super init];
   
@@ -57,6 +61,8 @@
   _setName = setName;
   _currPageNum = 0;
   _units = 0;
+  
+  _dataObject = dataObject;
   
   self.view = chartTable;
   
@@ -84,7 +90,11 @@
   
   if ( [indexPath row] == 0 ) {
     //if (cell == nil) {
-      _graphCell = [[DLGraphViewCell alloc]  initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier dataPoints:dataValues type:_typeName];
+      _graphCell = [[DLGraphViewCell alloc]  initWithStyle:UITableViewCellStyleDefault
+                                           reuseIdentifier:myIdentifier
+                                                dataPoints:dataValues
+                                                      type:_typeName
+                                                dataObject:_dataObject];
     _graphCell.delegate = self;
     _graphCell.clipsToBounds = YES;
     _graphCell.clipsToBounds = YES;
@@ -116,18 +126,20 @@
     
     if (currItem != nil) {
       newCell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
-                                 reuseIdentifier:myIdentifier
+                                      reuseIdentifier:myIdentifier
                                                 name:currItem.DataName
-                                           value:currItem.DataValue
-                                            time:currItem.DataTime
-                                            type:_typeName
-                                           notes:currItem.DataNotes
-                                           dataObject:currItem
+                                                value:currItem.DataValue
+                                                 time:currItem.DataTime
+                                                 type:_typeName
+                                                notes:currItem.DataNotes
+                                      dataPointObject:currItem
                                               pageNum:_currPageNum
-                                                units:_units];
+                                                units:_units
+                                           dataObject:nil];
     }
     else {
-      newCell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+      assert(0);
+      /*newCell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                       reuseIdentifier:myIdentifier
                                                  name:@"No Name Yet"
                                                 value:@"Insert values!"
@@ -136,7 +148,7 @@
                                                 notes:@"No notes yet"
                                            dataObject:nil
                                               pageNum:0
-                                                units:0];
+                                                units:0];*/
     } 
     
     newCell.selectionStyle = UITableViewCellSelectionStyleNone;

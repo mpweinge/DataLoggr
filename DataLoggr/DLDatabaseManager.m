@@ -49,8 +49,8 @@ static NSString* kDataTypeName = @"DataTypes";
   _dataPointFieldNames = @[ @"DataName", @"DataValue", @"AddTime", @"Notes"];
   [self createTable:kDataPointDatabaseName withFields:dataPointFields];
   
-  NSArray *dataTypeFields = @[ @"DataName text primary key", @"DataType text", @"icon text" ];
-  _dataTypeFieldNames = @[ @"DataName", @"DataType", @"icon" ];
+  NSArray *dataTypeFields = @[ @"DataName text primary key", @"DataType text", @"icon text", @"units text", @"linear int" ];
+  _dataTypeFieldNames = @[ @"DataName", @"DataType", @"icon", @"units", @"linear" ];
   [self createTable:kDataTypeName withFields:dataTypeFields];
 }
 
@@ -162,6 +162,130 @@ static NSString* kDataTypeName = @"DataTypes";
   return NO;
 }
 
+-(BOOL) updateOldRow:(id<DLSerializableProtocol>)oldRow withNewLinear:(int) isLinear
+{
+  //Check to make sure the serialized object has the same number of properties
+  const char *dbpath = [databasePath UTF8String];
+  
+  if (sqlite3_open(dbpath, &database) == SQLITE_OK)
+  {
+    //Serialize the object
+    //NSString *objData = [dataPoint serializeData];
+    
+    NSMutableString *insertSQL = [NSMutableString string];
+    [insertSQL appendString:@"UPDATE "];
+    [insertSQL appendString: kDataTypeName];
+    [insertSQL appendString: @" SET linear =\""];
+    [insertSQL appendFormat: @"%i", isLinear];
+    [insertSQL appendString: @"\""];
+    
+    [insertSQL appendString: @" WHERE "];
+    [insertSQL appendString: _dataTypeFieldNames[0]];
+    [insertSQL appendString: @"= \""];
+    [insertSQL appendString: [oldRow valueAtIndex:0]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataTypeFieldNames[1]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldRow valueAtIndex:1]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataTypeFieldNames[2]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldRow valueAtIndex:2]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataTypeFieldNames[3]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldRow valueAtIndex:3]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataTypeFieldNames[4]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldRow valueAtIndex:4]];
+    [insertSQL appendString: @"\""];
+    
+    const char *insert_stmt = [insertSQL UTF8String];
+    sqlite3_prepare_v2(database, insert_stmt,-1, &statement, NULL);
+    if (sqlite3_step(statement) == SQLITE_DONE)
+    {
+      return YES;
+    }
+    else {
+      return NO;
+    }
+    sqlite3_reset(statement);
+  }
+  //INSERT INTO DATABASENAME(x, x, x) VALUES(x, x, x)
+  return NO;
+}
+
+-(BOOL) updateOldRow:(id<DLSerializableProtocol>)oldRow withNewUnits:(NSString *)units
+{
+  //Check to make sure the serialized object has the same number of properties
+  const char *dbpath = [databasePath UTF8String];
+  
+  if (sqlite3_open(dbpath, &database) == SQLITE_OK)
+  {
+    //Serialize the object
+    //NSString *objData = [dataPoint serializeData];
+    
+    NSMutableString *insertSQL = [NSMutableString string];
+    [insertSQL appendString:@"UPDATE "];
+    [insertSQL appendString: kDataTypeName];
+    [insertSQL appendString: @" SET units =\""];
+    [insertSQL appendString:units];
+    [insertSQL appendString: @"\""];
+    
+    [insertSQL appendString: @" WHERE "];
+    [insertSQL appendString: _dataTypeFieldNames[0]];
+    [insertSQL appendString: @"= \""];
+    [insertSQL appendString: [oldRow valueAtIndex:0]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataTypeFieldNames[1]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldRow valueAtIndex:1]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataTypeFieldNames[2]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldRow valueAtIndex:2]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataTypeFieldNames[3]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldRow valueAtIndex:3]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataTypeFieldNames[4]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldRow valueAtIndex:4]];
+    [insertSQL appendString: @"\""];
+    
+    const char *insert_stmt = [insertSQL UTF8String];
+    sqlite3_prepare_v2(database, insert_stmt,-1, &statement, NULL);
+    if (sqlite3_step(statement) == SQLITE_DONE)
+    {
+      return YES;
+    }
+    else {
+      return NO;
+    }
+    sqlite3_reset(statement);
+  }
+  //INSERT INTO DATABASENAME(x, x, x) VALUES(x, x, x)
+  return NO;
+}
+
 - (BOOL) updateOldRow: (id<DLSerializableProtocol>) oldRow withNewRow:(id<DLSerializableProtocol>) newRow
 {
   //Check to make sure the serialized object has the same number of properties
@@ -194,6 +318,18 @@ static NSString* kDataTypeName = @"DataTypes";
     [insertSQL appendString: _dataTypeFieldNames[2]];
     [insertSQL appendString: @" = \""];
     [insertSQL appendString: [oldRow valueAtIndex:2]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataTypeFieldNames[3]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldRow valueAtIndex:3]];
+    
+    [insertSQL appendString: @"\" AND "];
+    
+    [insertSQL appendString: _dataTypeFieldNames[4]];
+    [insertSQL appendString: @" = \""];
+    [insertSQL appendString: [oldRow valueAtIndex:4]];
     [insertSQL appendString: @"\""];
     
     const char *insert_stmt = [insertSQL UTF8String];
@@ -374,8 +510,15 @@ static NSString* kDataTypeName = @"DataTypes";
                           (const char *) sqlite3_column_text(statement, 1)];
         NSString *dataIcon = [[NSString alloc] initWithUTF8String:
                           (const char *) sqlite3_column_text(statement, 2)];
+        NSString *unitsName = [[NSString alloc] initWithUTF8String:
+                              (const char *) sqlite3_column_text(statement, 3)];
+        BOOL isLinear = (int) sqlite3_column_int(statement, 4);
         
-        [resultArray addObject:[[DLDataRowObject alloc] initWithName:dataName type:dataType iconName:dataIcon]];
+        [resultArray addObject:[[DLDataRowObject alloc] initWithName:dataName
+                                                                type:dataType
+                                                            iconName:dataIcon
+                                                           unitsName:unitsName
+                                                            isLinear:isLinear]];
       }
       return resultArray;
       sqlite3_reset(statement);

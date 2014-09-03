@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class DLDataRowObject;
+
 @protocol DLGraphViewCellDelegate
 
 -(void) scrollViewDidChangePage : (NSUInteger) pageNum;
@@ -22,6 +24,7 @@
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
          dataPoints:(NSMutableArray *)dataPoints
-               type:(NSString *) type;
+               type:(NSString *) type
+         dataObject:(DLDataRowObject *) dataObject;
 
 @end

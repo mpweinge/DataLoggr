@@ -10,9 +10,11 @@
 #import "NSString+FontAwesome.h"
 #import "DLCircleView.h"
 #import "DLDataPointRowObject.h"
+#import "DLDataRowObject.h"
 
 @interface DLDataViewCell() {
-  DLDataPointRowObject *_dataObject;
+  DLDataPointRowObject *_dataPointObject;
+  DLDataRowObject *_dataObject;
   UILabel *_dataValue;
   
   UILabel *_dayValue;
@@ -53,9 +55,10 @@
                time:(NSString *)time
                type:(NSString *)type
               notes:(NSString *)notes
-         dataObject:(DLDataPointRowObject *)dataObject
+    dataPointObject:(DLDataPointRowObject *)dataPointObject
             pageNum:(NSInteger) page
-              units:(NSInteger) units;
+              units:(NSInteger) units
+         dataObject:(DLDataRowObject *)dataObject;
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
@@ -244,6 +247,7 @@
       _title = value;
       _time = time;
       _dataObject = dataObject;
+      _dataPointObject = dataPointObject;
       _type = type;
     }
     return self;
@@ -487,6 +491,11 @@
 }
 
 -(DLDataPointRowObject *) dataPoint
+{
+  return _dataPointObject;
+}
+
+-(DLDataRowObject *) dataObject
 {
   return _dataObject;
 }
