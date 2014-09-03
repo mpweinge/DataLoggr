@@ -235,12 +235,12 @@
   if (!_caretDown) {
     _linearScale.alpha = 1.0;
     
-    CATransition *animation = [CATransition animation];
+    /*CATransition *animation = [CATransition animation];
     animation.duration = 0.5;
     animation.type = kCATransitionFade;
     animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     [_downCaret.layer addAnimation:animation forKey:@"changeTextTransition"];
-    
+    */
     // Change the text
     
     [UIView animateWithDuration:0.3 animations:^{

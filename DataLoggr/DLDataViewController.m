@@ -99,6 +99,7 @@
     _graphCell.clipsToBounds = YES;
     _graphCell.clipsToBounds = YES;
     _graphCell.contentView.clipsToBounds= YES;
+    [_graphCell setSelectionStyle:UITableViewCellSelectionStyleNone];
       cell = _graphCell;
     //}
   } else if ((_showNoPointNux) && ([indexPath row] == 1)) {
