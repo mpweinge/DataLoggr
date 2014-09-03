@@ -22,7 +22,7 @@
     if (self) {
         // Initialization code
       
-      UILabel * chartName = [[UILabel alloc] initWithFrame:CGRectMake(50, 13, 220, 22)];
+      UILabel * chartName = [[UILabel alloc] initWithFrame:CGRectMake(60, 13, 220, 22)];
       chartName.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
       
       if (isHome) {
@@ -32,10 +32,10 @@
       }
       [self addSubview:chartName];
       
-      UILabel* advanceIcon=[[UILabel alloc] initWithFrame:CGRectMake(291, 13, 100, 22)];
+      /*UILabel* advanceIcon=[[UILabel alloc] initWithFrame:CGRectMake(291, 13, 100, 22)];
       advanceIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
       advanceIcon.text = [NSString fontAwesomeIconStringForEnum:FALongArrowUp];
-      [self addSubview:advanceIcon];
+      [self addSubview:advanceIcon];*/
     }
   
   UITapGestureRecognizer *touchRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedCell:)];

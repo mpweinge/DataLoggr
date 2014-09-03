@@ -13,6 +13,9 @@
 #define ACCURACY @"theAccuracy"
 
 @implementation LocationTracker
+{
+  BOOL _isInBackground;
+}
 
 + (CLLocationManager *)sharedLocationManager {
 	static CLLocationManager *_locationManager;
@@ -31,10 +34,14 @@
         //Get the share model and also initialize myLocationArray
         self.shareModel = [LocationShareModel sharedModel];
         self.shareModel.myLocationArray = [[NSMutableArray alloc]init];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    
+        _isInBackground = NO;
 	}
 	return self;
+}
+
+-(void) applicationEnterForeground {
+  _isInBackground = NO;
 }
 
 -(void)applicationEnterBackground{
@@ -43,6 +50,8 @@
     locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
     locationManager.distanceFilter = kCLDistanceFilterNone;
     [locationManager startUpdatingLocation];
+  
+    _isInBackground = YES;
     
     //Use the BackgroundTaskManager to manage all the background Task
     self.shareModel.bgTask = [BackgroundTaskManager sharedBackgroundTaskManager];
@@ -68,6 +77,10 @@
 
 - (void)startLocationTracking {
     NSLog(@"startLocationTracking");
+  
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
+  
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnterForeground) name:UIApplicationWillEnterForegroundNotification object:nil];
 
 	if ([CLLocationManager locationServicesEnabled] == NO) {
         NSLog(@"locationServicesEnabled false");
@@ -100,6 +113,11 @@
     
 	CLLocationManager *locationManager = [LocationTracker sharedLocationManager];
 	[locationManager stopUpdatingLocation];
+  
+  NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+  
+  [center removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+  [center removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
 #pragma mark - CLLocationManagerDelegate Methods
@@ -114,8 +132,8 @@
         CLLocationAccuracy theAccuracy = newLocation.horizontalAccuracy;
         
         NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
-        
-        if (locationAge > 30.0)
+      
+        if( ((locationAge > 2.0) && (!_isInBackground)) || (locationAge > 10.0) )
         {
             continue;
         }
@@ -147,7 +165,7 @@
     self.shareModel.bgTask = [BackgroundTaskManager sharedBackgroundTaskManager];
     [self.shareModel.bgTask beginNewBackgroundTask];
     
-    //Restart the locationMaanger after 1 minute
+    //Restart the locationMaanger after 5 seconds
     self.shareModel.timer = [NSTimer scheduledTimerWithTimeInterval:5 target:self
                                                            selector:@selector(restartLocationUpdates)
                                                            userInfo:nil

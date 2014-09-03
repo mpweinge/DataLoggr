@@ -118,7 +118,7 @@ static const int kIconOffset = 170;
   _dataName.keyboardType = UIKeyboardTypeDefault;
   _dataName.textColor = [UIColor blackColor];
   
-  _backgroundText = [[UILabel alloc] initWithFrame:CGRectMake(10, kNameOffsetY, 200, 80)];
+  _backgroundText = [[UILabel alloc] initWithFrame:CGRectMake(10, kNameOffsetY, 350, 80)];
   _backgroundText.textColor = [UIColor lightGrayColor];
   _backgroundText.text = @"Name of Data Series";
   

@@ -47,7 +47,6 @@ static const int kStartingNumPoints = 2000;
   BOOL _textFieldEmpty;
   
   MKMapView *_addMap;
-  CLLocationManager *_locationManager;
   
   LocationTracker * locationTracker;
   NSTimer* locationUpdateTimer;
@@ -216,7 +215,7 @@ static const int kStartingNumPoints = 2000;
     ((UITextField *)_dataName).keyboardType = UIKeyboardTypeDecimalPad;
     
     if ((_isAdd) || ([_currCell.title length]== 0)) {
-      _backgroundText = [[UILabel alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 300, 50)];
+      _backgroundText = [[UILabel alloc] initWithFrame:CGRectMake(10, kValueOffsetY, 300, 50)];
       _backgroundText.text = @"Data Value";
       _backgroundText.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0];
       _backgroundText.textColor = [UIColor lightGrayColor];
@@ -436,6 +435,10 @@ static const int kStartingNumPoints = 2000;
   
   _elapsedTime = timeNum;
   _elapsedDistance = distanceNum;
+  
+  _userPanning = YES;
+  _ZoomPanIcon.selected = NO;
+  _addMap.userTrackingMode = MKUserTrackingModeNone;
 }
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
@@ -495,8 +498,8 @@ static const int kStartingNumPoints = 2000;
   
   _start = [NSDate date];
   
-  [_locationManager startUpdatingLocation];
-  _locationManager.delegate = self;
+  //[_locationManager startUpdatingLocation];
+  //_locationManager.delegate = self;
 }
 
 - (void) stopTrackingLocation
@@ -505,8 +508,8 @@ static const int kStartingNumPoints = 2000;
   locationUpdateTimer = nil;
   [locationTracker stopLocationTracking];
   _start = nil;
-  [_locationManager stopUpdatingLocation];
-  _locationManager.delegate = nil;
+  //[_locationManager stopUpdatingLocation];
+  //_locationManager.delegate = nil;
 }
 
 -(void) testMapUpdate
@@ -624,41 +627,6 @@ static const int kStartingNumPoints = 2000;
     }
     
     [_addMap addOverlay:myPolyline];
-  }
-  
-  if (location.latitude < minLat) {
-    minLat = location.latitude;
-  }
-  if (location.latitude > maxLat) {
-    maxLat = location.latitude;
-  }
-  
-  if (location.longitude > maxLong) {
-    maxLong = location.longitude;
-  }
-  
-  if (location.longitude < minLong) {
-    minLong = location.longitude;
-  }
-  
-  if (!_userPanning) {
-    //Test four corners to make sure all is in frame
-    CLLocationCoordinate2D topLeft = CLLocationCoordinate2DMake(minLat, maxLong);
-    CLLocationCoordinate2D topRight = CLLocationCoordinate2DMake(maxLat, maxLong);
-    CLLocationCoordinate2D bottomLeft = CLLocationCoordinate2DMake(minLat, minLong);
-    CLLocationCoordinate2D bottomRight = CLLocationCoordinate2DMake(maxLat, minLong);
-    
-    if(MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(topLeft)) &&
-       MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(topRight)) &&
-       MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(bottomLeft)) &&
-       MKMapRectContainsPoint(_addMap.visibleMapRect, MKMapPointForCoordinate(bottomRight))
-       )
-    {
-      //Do stuff
-    } else {
-      //Resize map
-      currZoom += 200;
-    }
   }
 }
 
