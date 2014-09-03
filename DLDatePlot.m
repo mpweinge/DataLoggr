@@ -485,6 +485,12 @@
   graph.plotAreaFrame.paddingBottom = 30.0f;
   graph.plotAreaFrame.paddingLeft = 30.0f;
   
+  int numDecimals = (log10(_maxY / 5.0));
+  if (numDecimals < 0) {
+    numDecimals = numDecimals * -1;
+  }
+  graph.plotAreaFrame.paddingLeft = 30.0 + numDecimals * 10.0f;
+  
   NSTimeInterval yLow = 0;
   
   if (_maxY == 0) {
@@ -531,7 +537,6 @@
   
   if ([plotData count] <= 1) {
     y.orthogonalCoordinateDecimal = CPTDecimalFromFloat(-0.5);
-    graph.plotAreaFrame.paddingLeft = 30.0f;
   } else {
     y.orthogonalCoordinateDecimal = CPTDecimalFromFloat(0);
   }
