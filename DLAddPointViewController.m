@@ -14,6 +14,7 @@
 #import <MapKit/MapKit.h>
 #import "DLDataIconView.h"
 #import "DLCircleView.h"
+#import "DLNoCaretTextView.h"
 
 static const int kValueOffsetY = 25;
 static int kNotesOffsetY = 150;
@@ -78,6 +79,10 @@ static const int kStartingNumPoints = 2000;
   
   DLDataIconView *_ZoomPanIcon;
   BOOL _changeMapZoomOnce;
+  
+  UITapGestureRecognizer *_timeTextTapper;
+  int _selectedLetterNum;
+  UITextView *_hiddenTextView;
 }
 
 @end
@@ -157,6 +162,12 @@ static const int kStartingNumPoints = 2000;
   _dataName = [[UILabel alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 300, 50)];
   ((UILabel *)_dataName).textColor = [UIColor blackColor];
   ((UILabel *)_dataName).font = [UIFont fontWithName:@"HelveticaNeue-Light" size:60.0];
+    
+    _hiddenTextView = [[DLNoCaretTextView alloc] initWithFrame:CGRectMake(30, kValueOffsetY, 300, 50)];
+    _hiddenTextView.backgroundColor = [UIColor clearColor];
+    _hiddenTextView.keyboardType = UIKeyboardTypeNumberPad;
+    _hiddenTextView.delegate = self;
+    
   } else if ([_typeName isEqualToString:@"GPS"] ) {
     _addMap = [[MKMapView alloc] initWithFrame:CGRectMake(40, kValueOffsetY - 13, 250, 200)];
     _addMap.showsUserLocation = YES;
@@ -242,6 +253,7 @@ static const int kStartingNumPoints = 2000;
     
   } else if ([_typeName isEqualToString:@"Time"]) {
     ((UILabel *)_dataName).text = @"00:00.00";
+    _dataName.userInteractionEnabled = YES;
   }
   
   UIView *dataDivider;
@@ -302,6 +314,10 @@ static const int kStartingNumPoints = 2000;
   if ([_typeName isEqualToString:@"Time"]) {
     //For time add a giant label for a timer
     [self setupTimer];
+    _timeTextTapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(timeTextTouched:)];
+    _timeTextTapper.numberOfTouchesRequired = 1;
+    [_hiddenTextView addGestureRecognizer:_timeTextTapper];
+    [self.view addSubview: _hiddenTextView];
   } else if ([_typeName isEqualToString:@"GPS"]) {
     [self setupGPS];
   }
@@ -703,6 +719,65 @@ static const int kStartingNumPoints = 2000;
   [self.view addSubview:_resetButton];
 }
 
+- (void) changeHighlightedLetter:(NSString *)text
+{
+  int newVal = [text intValue];
+  NSLog(@"Int val: %i", newVal);
+  
+  NSRange range = NSMakeRange(_selectedLetterNum,1);
+  NSString *newText = [((UILabel *)_dataName).text stringByReplacingCharactersInRange:range withString:text];
+  NSMutableAttributedString * currString = [[NSMutableAttributedString alloc] initWithString:newText];
+  [currString addAttribute:NSBackgroundColorAttributeName value:[UIColor colorWithRed:161 / 255.0 green:238 / 255.0 blue:238 / 255.0 alpha:1.0] range:NSMakeRange(_selectedLetterNum, 1)];
+  
+  ((UILabel *)_dataName).attributedText = currString;
+  
+  NSString *minutes = [newText substringWithRange:NSMakeRange(0, 2)];
+  NSString *seconds = [newText substringWithRange:NSMakeRange(3, 2)];
+  NSString *milliSeconds = [newText substringWithRange:NSMakeRange(6, 2)];
+  
+  NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+  [f setNumberStyle:NSNumberFormatterDecimalStyle];
+  
+  NSNumber *iMinutes = [f numberFromString:minutes];
+  NSNumber *iSeconds = [f numberFromString:seconds];
+  NSNumber *iMilliSeconds = [f numberFromString:milliSeconds];
+  
+  currPausedTime = [iMinutes intValue] * 60 + [iSeconds intValue] + [iMilliSeconds floatValue] / 100;
+}
+
+- (void) highlightLetter:(NSInteger) letterNum
+{
+  _selectedLetterNum = letterNum;
+  NSMutableAttributedString * currString = [[NSMutableAttributedString alloc] initWithString:((UILabel *)_dataName).text];
+  [currString addAttribute:NSBackgroundColorAttributeName value:[UIColor colorWithRed:161 / 255.0 green:238 / 255.0 blue:238 / 255.0 alpha:1.0] range:NSMakeRange(letterNum, 1)];
+    ((UILabel *)_dataName).attributedText = currString;
+
+  if (![_hiddenTextView isFirstResponder])
+    [_hiddenTextView becomeFirstResponder];
+}
+
+- (void) timeTextTouched:(UITapGestureRecognizer *)touchRecognizer
+{
+  if (_timerStarted)
+    return;
+  
+  CGPoint touchLoc = [touchRecognizer locationInView:_dataName];
+  NSLog(@"touchLoc x %f", touchLoc.x);
+  if (touchLoc.x < 33) {
+    [self highlightLetter:0];
+  } else if (touchLoc.x < 75) {
+    [self highlightLetter:1];
+  } else if (touchLoc.x < 116) {
+    [self highlightLetter:3];
+  } else if (touchLoc.x < 157) {
+    [self highlightLetter:4];
+  } else if (touchLoc.x < 200) {
+    [self highlightLetter:6];
+  } else {
+    [self highlightLetter:7];
+  }
+}
+
 - (void) setupGPS
 {
   //Add buttons for start, stop
@@ -924,7 +999,9 @@ static const int kStartingNumPoints = 2000;
   if ([_typeName isEqualToString:@"GPS"]) {
     _timeText.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
   } else {
-  ((UILabel *)_dataName).text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+  NSString *timeText = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+    
+    ((UILabel *)_dataName).text = timeText;
   }
 }
 
@@ -1092,6 +1169,12 @@ static const int kStartingNumPoints = 2000;
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
+  if (textView == _hiddenTextView)
+  {
+    [self changeHighlightedLetter:text];
+    return NO;
+  }
+  
   if([text isEqualToString:@"\n"]) {
     [textView resignFirstResponder];
     return NO;
@@ -1102,6 +1185,9 @@ static const int kStartingNumPoints = 2000;
 
 - (void)textViewDidBeginEditing:(UITextView *)textView           // became first responder
 {
+  if (textView == _hiddenTextView)
+    return;
+  
   _didEdit = YES;
   
   if ([_typeName isEqual:@"GPS"])
@@ -1114,6 +1200,12 @@ static const int kStartingNumPoints = 2000;
 {
   [self scrollToY:0];
   [textView resignFirstResponder];
+  
+  if (textView == _hiddenTextView)
+  {
+    _selectedLetterNum = 0;
+    ((UILabel *)_dataName).text = ((UILabel *)_dataName).text;
+  }
 }
 
 - (BOOL)textViewShouldReturn:(UITextView *)textView;

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A62719D419B6DF6A0010C26C /* DLNoCaretTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A62719D319B6DF6A0010C26C /* DLNoCaretTextView.m */; };
 		A658E69619B55CA800E1F809 /* DLExtendedScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = A658E69519B55CA800E1F809 /* DLExtendedScrollView.m */; };
 		A67492A219AADE28003E7C14 /* DLCircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = A67492A119AADE28003E7C14 /* DLCircleView.m */; };
 		A67492A519AAF98B003E7C14 /* DLBasicButton.m in Sources */ = {isa = PBXBuildFile; fileRef = A67492A419AAF98B003E7C14 /* DLBasicButton.m */; };
@@ -62,6 +63,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A62719D219B6DF6A0010C26C /* DLNoCaretTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLNoCaretTextView.h; sourceTree = "<group>"; };
+		A62719D319B6DF6A0010C26C /* DLNoCaretTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNoCaretTextView.m; sourceTree = "<group>"; };
 		A658E69419B55CA800E1F809 /* DLExtendedScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLExtendedScrollView.h; sourceTree = "<group>"; };
 		A658E69519B55CA800E1F809 /* DLExtendedScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLExtendedScrollView.m; sourceTree = "<group>"; };
 		A67492A019AADE28003E7C14 /* DLCircleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLCircleView.h; sourceTree = "<group>"; };
@@ -188,6 +191,8 @@
 				A67492A419AAF98B003E7C14 /* DLBasicButton.m */,
 				A658E69419B55CA800E1F809 /* DLExtendedScrollView.h */,
 				A658E69519B55CA800E1F809 /* DLExtendedScrollView.m */,
+				A62719D219B6DF6A0010C26C /* DLNoCaretTextView.h */,
+				A62719D319B6DF6A0010C26C /* DLNoCaretTextView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -464,6 +469,7 @@
 				A67492A819AAFE59003E7C14 /* UIButton+Bootstrap.m in Sources */,
 				FFA6547A1970840C002BA286 /* DLNewDataButton.m in Sources */,
 				FF6209DC1973C39C0032348F /* DLNewDataView.m in Sources */,
+				A62719D419B6DF6A0010C26C /* DLNoCaretTextView.m in Sources */,
 				A6A2940619B1659100E7942B /* LocationTracker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
