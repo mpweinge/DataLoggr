@@ -126,6 +126,8 @@
       timeValue *= -1;
     
     if (val == 0) {
+      if (timeValue == 0)
+        timeValue = 1;
       y = @(distValue / timeValue);
     } else if (val == 1) {
       y = @(distValue);

@@ -115,12 +115,16 @@
         NSString *distance = [value substringWithRange:NSMakeRange(distanceColonIdx + 2, (distanceCommaIdx - distanceColonIdx - 2))];
         
         _timeNum = [time doubleValue];
+        
+        if (_timeNum == 0)
+          _timeNum = 1;
+        
         _distanceNum = [distance doubleValue];
         
         _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 70, 22)];
         _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:14.0];
         _dataValue.textAlignment = NSTextAlignmentRight;
-        _dataValue.text = [NSString stringWithFormat:@"%.01f m/s", (_distanceNum / _timeNum)];
+        _dataValue.text = [NSString stringWithFormat:@"%.01fm/s", (_distanceNum / _timeNum)];
         
         [self addSubview:_dataValue];
         
@@ -131,14 +135,28 @@
           _notesIcon.text = [NSString fontAwesomeIconStringForEnum:FAFileTextO];
           [self addSubview:_notesIcon];
         }
+      } else if ([type isEqualToString:@"Time"]){
+        _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
+        _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
+        _dataValue.text = [value stringByAppendingString:@"s"];
+        [self addSubview:_dataValue];
+        
+        if ([notes length] > 0) {
+          _notesIcon = [[UILabel alloc] initWithFrame:CGRectMake(225, 12, 70, 22)];
+          _notesIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:12];
+          _notesIcon.textColor = [UIColor blackColor];
+          _notesIcon.text = [NSString fontAwesomeIconStringForEnum:FAFileTextO];
+          [self addSubview:_notesIcon];
+        }
       } else {
         _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
         _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
         _dataValue.text = value;
+        [_dataValue sizeToFit];
         [self addSubview:_dataValue];
         
         if ([notes length] > 0) {
-          _notesIcon = [[UILabel alloc] initWithFrame:CGRectMake(225, 13, 70, 22)];
+          _notesIcon = [[UILabel alloc] initWithFrame:CGRectMake(150 + _dataValue.frame.size.width + 5, 12, 70, 22)];
           _notesIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:12];
           _notesIcon.textColor = [UIColor blackColor];
           _notesIcon.text = [NSString fontAwesomeIconStringForEnum:FAFileTextO];
@@ -220,7 +238,7 @@
     return self;
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+- (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
   if (([gestureRecognizer class] == [UITapGestureRecognizer class]) ||
     ([otherGestureRecognizer class] == [UITapGestureRecognizer class]) )
@@ -273,9 +291,9 @@
 -(void) graphViewDidScroll:(NSUInteger)pageNum
 {
   if (pageNum == 0) {
-    _dataValue.text = [NSString stringWithFormat:@"%.01f m/s", (_distanceNum / _timeNum)];
+    _dataValue.text = [NSString stringWithFormat:@"%.01fm/s", (_distanceNum / _timeNum)];
   } else if (pageNum == 1) {
-    _dataValue.text = [NSString stringWithFormat:@"%.01f m",_distanceNum ];
+    _dataValue.text = [NSString stringWithFormat:@"%.01fm",_distanceNum ];
   } else {
     
     int numMinutes = _timeNum / 60;
@@ -291,7 +309,7 @@
     numMinutes -= numMinutesTen * 10;
     numSeconds -= numSecondsTen * 10;
     
-    _dataValue.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i s", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+    _dataValue.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%is", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
   }
 }
 

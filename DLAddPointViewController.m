@@ -237,20 +237,21 @@ static const int kStartingNumPoints = 2000;
   if (!_isAdd) {
     ((UILabel *)_dataName).text = _currCell.title;
     
-    // Change the title into
-    NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
-    [f setNumberStyle:NSNumberFormatterDecimalStyle];
-    
-    NSString *minutes = [_currCell.title substringWithRange:NSMakeRange(0, 2)];
-    NSString *seconds = [_currCell.title substringWithRange:NSMakeRange(3, 2)];
-    NSString *milliSeconds = [_currCell.title substringWithRange:NSMakeRange(6, 2)];
-    
-    NSNumber *iMinutes = [f numberFromString:minutes];
-    NSNumber *iSeconds = [f numberFromString:seconds];
-    NSNumber *iMilliSeconds = [f numberFromString:milliSeconds];
-    
-    currPausedTime = [iMinutes intValue] * 60 + [iSeconds intValue] + [iMilliSeconds floatValue] / 100;
-    
+    if ([_typeName isEqualToString:@"Time"]) {
+      // Change the title into
+      NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+      [f setNumberStyle:NSNumberFormatterDecimalStyle];
+      
+      NSString *minutes = [_currCell.title substringWithRange:NSMakeRange(0, 2)];
+      NSString *seconds = [_currCell.title substringWithRange:NSMakeRange(3, 2)];
+      NSString *milliSeconds = [_currCell.title substringWithRange:NSMakeRange(6, 2)];
+      
+      NSNumber *iMinutes = [f numberFromString:minutes];
+      NSNumber *iSeconds = [f numberFromString:seconds];
+      NSNumber *iMilliSeconds = [f numberFromString:milliSeconds];
+      
+      currPausedTime = [iMinutes intValue] * 60 + [iSeconds intValue] + [iMilliSeconds floatValue] / 100;
+    }
   } else if ([_typeName isEqualToString:@"Time"]) {
     ((UILabel *)_dataName).text = @"00:00.00";
     _dataName.userInteractionEnabled = YES;
@@ -1040,8 +1041,11 @@ static const int kStartingNumPoints = 2000;
         [self stopTrackingLocation];
       }
       
+      if (_elapsedTime < 0)
+        _elapsedTime *= -1;
+      
       //Store total distance, time elapsed
-      [dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f, \n", -1 * _elapsedTime, _elapsedDistance]];
+      [dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f, \n", _elapsedTime, _elapsedDistance]];
       
       for (int i = 0; i < mapPointCount; i++)
       {
