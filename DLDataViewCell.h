@@ -37,8 +37,12 @@
                time:(NSString *)time
                type:(NSString *)type
               notes:(NSString *)notes
-         dataObject:(DLDataPointRowObject *)dataObject;
+         dataObject:(DLDataPointRowObject *)dataObject
+            pageNum:(NSInteger) page
+              units:(NSInteger) units;
 
 -(void) graphViewDidScroll:(NSUInteger)pageNum;
+
+-(void) didChangeUnits:(NSInteger) units;
 
 @end

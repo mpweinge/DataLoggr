@@ -29,9 +29,15 @@
     return self;
 }
 
--(void)generateData : (NSMutableArray *)dataPoints type: (NSString *)type valueNum:(int) val
+-(void)generateData : (NSMutableArray *)dataPoints
+                type: (NSString *)type
+            valueNum:(int) val
+            isLinear:(BOOL)isLinear
+               units:(NSInteger) units
 {
   assert([type isEqualToString:@"GPS"]);
+  
+  _maxY = 0;
   
   _val = val;
   
@@ -121,9 +127,20 @@
     NSString *distSubstr= [value substringWithRange:NSMakeRange(colonIdx + 2, commaIdx - colonIdx - 2)];
     
     float distValue = [ distSubstr floatValue];
-    
+
     if (timeValue < 0)
       timeValue *= -1;
+    
+    if (units != 0) {
+      timeValue /= 3600.0;
+    }
+    
+    if (units == 1) {
+      // Convert feet to miles
+      distValue *= 0.000621371;
+    } else if (units == 2) {
+      distValue /= 1000;
+    }
     
     if (val == 0) {
       if (timeValue == 0)
@@ -151,6 +168,11 @@
       [newData addObject:@{ @(CPTScatterPlotFieldX): x,
                             @(CPTScatterPlotFieldY): y }];
     } else {
+      if (isLinear)
+      {
+        float xVal = ([_maxDate timeIntervalSinceDate:_minDate ]) / ([dataPoints count] - 1) * (idx-1);
+        x = [NSNumber numberWithFloat:xVal];
+      }
       [newData addObject:
        @{ @(CPTScatterPlotFieldX): x,
           @(CPTScatterPlotFieldY): y }
@@ -167,7 +189,10 @@
   plotData = newData;
 }
 
--(void)generateData : (NSMutableArray *)dataPoints type: (NSString *)type
+-(void)generateData : (NSMutableArray *)dataPoints
+                type: (NSString *)type
+            isLinear: (BOOL) isLinear
+               units:(NSInteger) units
 {
   _val = -1;
   //Find minimum (start) date
@@ -178,60 +203,6 @@
   
   _maxY = 0;
   
-  //NSMutableArray *newDataPoints = [NSMutableArray array];
-  
-  /*for (int i = 0; i < 20; i++)
-  {
-    NSString *value;
-    if ( i < 10 ) {
-        value = [NSString stringWithFormat:@"00:00:0%i", i];
-    } else {
-      value = [NSString stringWithFormat:@"00:00:%i", i];
-    }
-    NSString *time;
-    if (i < 9) {
-      time = [NSString stringWithFormat:@"8/25/14, 1:0%i am", (i+1)];
-    } else {
-      time = [NSString stringWithFormat:@"8/25/14, 1:%i am", i+1 ];
-    }
-    DLDataPointRowObject *newObj = [[DLDataPointRowObject alloc] initWithName:@"TEST" value:value time:time notes:@""];
-    [newDataPoints addObject:newObj];
-  }*/
-  
-  /*for (int i = 0; i < 20; i++)
-  {
-    NSString *value;
-    if ( i < 10 ) {
-      value = [NSString stringWithFormat:@"00:00:0%i", i];
-    } else {
-      value = [NSString stringWithFormat:@"00:00:%i", i];
-    }
-    NSString *time;
-    if (i < 9) {
-      time = [NSString stringWithFormat:@"8/25/14, %i:00 am", (i+1)];
-    } else {
-      time = [NSString stringWithFormat:@"8/26/14, %i:00 am", i - 9 ];
-    }
-    DLDataPointRowObject *newObj = [[DLDataPointRowObject alloc] initWithName:@"TEST" value:value time:time notes:@""];
-    [newDataPoints addObject:newObj];
-  }*/
-  
-  /*for (int i = 0; i < 20; i++)
-  {
-    NSString *value;
-    if ( i < 10 ) {
-      value = [NSString stringWithFormat:@"00:00:0%i", i];
-    } else {
-      value = [NSString stringWithFormat:@"00:00:%i", i];
-    }
-    NSString *time;
-    //if (i < 9) {
-      time = [NSString stringWithFormat:@"8/%i/14, 1:00 am", (i+1)];
-    DLDataPointRowObject *newObj = [[DLDataPointRowObject alloc] initWithName:@"TEST" value:value time:time notes:@""];
-    [newDataPoints addObject:newObj];
-  }*/
-  
-  //dataPoints = newDataPoints;
   
   for (DLDataPointRowObject* currObj in dataPoints)
   {
@@ -296,8 +267,13 @@
       NSNumber *iSeconds = [f numberFromString:seconds];
       NSNumber *iMilliSeconds = [f numberFromString:milliSeconds];
       
-      y = @([iMinutes intValue] * 60 + [iSeconds intValue] + [iMilliSeconds floatValue] / 100);
-      
+      if (units == 0) {
+        y = @([iMinutes intValue] * 60 + [iSeconds intValue] + [iMilliSeconds floatValue] / 100);
+      } else if (units == 1) {
+        y = @( ([iMinutes intValue] * 60 + [iSeconds intValue] + [iMilliSeconds floatValue] / 100) / 60.0) ;
+      } else if (units == 2) {
+        y = @( ([iMinutes intValue] * 60 + [iSeconds intValue] + [iMilliSeconds floatValue] / 100) / 3600.0) ;
+      }
       
     } else if ([type isEqualToString:@"GPS"]){
       //Read until colon for time:
@@ -353,6 +329,12 @@
       [newData addObject:@{ @(CPTScatterPlotFieldX): x,
                             @(CPTScatterPlotFieldY): y }];
     } else {
+      if (isLinear)
+      {
+        float xVal = ([_maxDate timeIntervalSinceDate:_minDate ]) / ([dataPoints count] - 1) * (idx-1);
+        x = [NSNumber numberWithFloat:xVal];
+      }
+      
       [newData addObject:
        @{ @(CPTScatterPlotFieldX): x,
           @(CPTScatterPlotFieldY): y }
@@ -375,7 +357,9 @@
   }
 }
 
--(void)renderInLayer:(CPTGraphHostingView *)layerHostingView withTheme:(CPTTheme *)theme animated:(BOOL)animated
+-(void)renderInLayer:(CPTGraphHostingView *)layerHostingView
+           withTheme:(CPTTheme *)theme
+            animated:(BOOL)animated
 {
     // If you make sure your dates are calculated at noon, you shouldn't have to
     // worry about daylight savings. If you use midnight, you will have to adjust
@@ -399,41 +383,41 @@
     CGRect bounds = NSRectToCGRect(layerHostingView.bounds);
 #endif
     
-    CPTGraph *graph = [[CPTXYGraph alloc] initWithFrame:bounds];
+    _graph = [[CPTXYGraph alloc] initWithFrame:bounds];
 
-    layerHostingView.hostedGraph = graph;
+    layerHostingView.hostedGraph = _graph;
   
-    [graph applyTheme:theme];
-    graph.plotAreaFrame.borderLineStyle = nil;
+    [_graph applyTheme:theme];
+    _graph.plotAreaFrame.borderLineStyle = nil;
   
     if (_val >= 0) {
       if (_val == 0) {
-        graph.title = @"Distance vs Time     ";
+        _graph.title = @"Distance vs Time     ";
         CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
         textStyle.color                = [CPTColor grayColor];
         textStyle.fontName             = @"Helvetica-Bold";
         textStyle.fontSize             = round( bounds.size.height / CPTFloat(20.0) );
-        graph.titleTextStyle           = textStyle;
-        graph.titleDisplacement        = CPTPointMake( 0.0, textStyle.fontSize * CPTFloat(1.5) );
-        graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
+        _graph.titleTextStyle           = textStyle;
+        _graph.titleDisplacement        = CPTPointMake( 0.0, textStyle.fontSize * CPTFloat(1.5) );
+        _graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
       } else if (_val == 1) {
-        graph.title = @"Distance     ";
+        _graph.title = @"Distance     ";
         CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
         textStyle.color                = [CPTColor grayColor];
         textStyle.fontName             = @"Helvetica-Bold";
         textStyle.fontSize             = round( bounds.size.height / CPTFloat(20.0) );
-        graph.titleTextStyle           = textStyle;
-        graph.titleDisplacement        = CPTPointMake( 0.0, textStyle.fontSize * CPTFloat(1.5) );
-        graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
+        _graph.titleTextStyle           = textStyle;
+        _graph.titleDisplacement        = CPTPointMake( 0.0, textStyle.fontSize * CPTFloat(1.5) );
+        _graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
       } else if (_val == 2) {
-        graph.title = @"Time     ";
+        _graph.title = @"Time     ";
         CPTMutableTextStyle *textStyle = [CPTMutableTextStyle textStyle];
         textStyle.color                = [CPTColor grayColor];
         textStyle.fontName             = @"Helvetica-Bold";
         textStyle.fontSize             = round( bounds.size.height / CPTFloat(20.0) );
-        graph.titleTextStyle           = textStyle;
-        graph.titleDisplacement        = CPTPointMake( 0.0, textStyle.fontSize * CPTFloat(1.5) );
-        graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
+        _graph.titleTextStyle           = textStyle;
+        _graph.titleDisplacement        = CPTPointMake( 0.0, textStyle.fontSize * CPTFloat(1.5) );
+        _graph.titlePlotAreaFrameAnchor = CPTRectAnchorTop;
       } else {
         assert(0);
       }
@@ -445,23 +429,23 @@
     
     CGFloat boundsPadding = round( bounds.size.width / CPTFloat(20.0) ); // Ensure that padding falls on an integral pixel
     
-    graph.paddingLeft = boundsPadding - 10;
+    _graph.paddingLeft = boundsPadding - 10;
     
-    if ( graph.titleDisplacement.y > 0.0 ) {
-        graph.paddingTop = graph.titleTextStyle.fontSize * 2.0;
+    if ( _graph.titleDisplacement.y > 0.0 ) {
+        _graph.paddingTop = _graph.titleTextStyle.fontSize * 2.0;
     }
     else {
-        graph.paddingTop = boundsPadding;
+        _graph.paddingTop = boundsPadding;
     }
     
-    graph.paddingRight  = boundsPadding;
-    graph.paddingBottom = boundsPadding;
+    _graph.paddingRight  = boundsPadding;
+    _graph.paddingBottom = boundsPadding;
   
     NSTimeInterval dateDiff = [_maxDate timeIntervalSinceDate:_minDate];
     float dayDiff = (int)(dateDiff / oneDay);
   
     // Setup scatter plot space
-    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)graph.defaultPlotSpace;
+    CPTXYPlotSpace *plotSpace = (CPTXYPlotSpace *)_graph.defaultPlotSpace;
     NSTimeInterval xLow       = -dayDiff * oneDay / 5.0;
   
     if ((dateDiff == 0) && ([plotData count] > 0)) {
@@ -482,16 +466,16 @@
     plotSpace.xRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(xLow) length:CPTDecimalFromDouble( fabs(xLow) + (dayDiff * oneDay) + (dayDiff * oneDay) / 40)];
   }
   
-  graph.plotAreaFrame.paddingTop = 2.0f;
-  graph.plotAreaFrame.paddingRight = 55.0f;
-  graph.plotAreaFrame.paddingBottom = 30.0f;
-  graph.plotAreaFrame.paddingLeft = 30.0f;
+  _graph.plotAreaFrame.paddingTop = 2.0f;
+  _graph.plotAreaFrame.paddingRight = 55.0f;
+  _graph.plotAreaFrame.paddingBottom = 30.0f;
+  _graph.plotAreaFrame.paddingLeft = 30.0f;
   
   int numDecimals = (log10(_maxY / 5.0));
   if (numDecimals < 0) {
     numDecimals = numDecimals * -1;
   }
-  graph.plotAreaFrame.paddingLeft = 30.0 + numDecimals * 10.0f;
+  _graph.plotAreaFrame.paddingLeft = 30.0 + numDecimals * 10.0f;
   
   NSTimeInterval yLow = 0;
   
@@ -502,7 +486,7 @@
     plotSpace.yRange = [CPTPlotRange plotRangeWithLocation:CPTDecimalFromDouble(yLow) length:CPTDecimalFromFloat(fabs(_maxY) + 2 * (fabs(_maxY) / 5.0))];
     
     // Axes
-    CPTXYAxisSet *axisSet = (CPTXYAxisSet *)graph.axisSet;
+    CPTXYAxisSet *axisSet = (CPTXYAxisSet *)_graph.axisSet;
     CPTXYAxis *x          = axisSet.xAxis;
   
   if ( dayDiff < 4 ) {
@@ -524,7 +508,7 @@
     dateFormatter.dateFormat = @"MM/dd/yy\nhh:mm a";
     [dateFormatter setAMSymbol:@"am"];
     [dateFormatter setPMSymbol:@"pm"];
-    graph.plotAreaFrame.paddingBottom = 50.0f;
+    _graph.plotAreaFrame.paddingBottom = 50.0f;
   }
   
     CPTTimeFormatter *timeFormatter = [[CPTTimeFormatter alloc] initWithDateFormatter:dateFormatter];
@@ -585,7 +569,7 @@
     dataSourceLinePlot.dataLineStyle = lineStyle;
     
     dataSourceLinePlot.dataSource = self;
-    [graph addPlot:dataSourceLinePlot];
+    [_graph addPlot:dataSourceLinePlot];
 }
 
 /*-(void)dealloc

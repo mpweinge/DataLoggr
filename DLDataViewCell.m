@@ -38,6 +38,9 @@
   
   double _distanceNum;
   double _timeNum;
+  
+  NSInteger _pageNum;
+  NSInteger _units;
 }
 @end
 
@@ -50,7 +53,9 @@
                time:(NSString *)time
                type:(NSString *)type
               notes:(NSString *)notes
-         dataObject:(DLDataPointRowObject *)dataObject;
+         dataObject:(DLDataPointRowObject *)dataObject
+            pageNum:(NSInteger) page
+              units:(NSInteger) units;
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
@@ -73,6 +78,7 @@
       _timeValue.textAlignment = NSTextAlignmentRight;
       [self addSubview:_timeValue];
       
+      [[[self contentView] superview] setClipsToBounds:YES];
       
       if ([type isEqualToString:@"GPS"]) {
         // Grab the first value
@@ -124,7 +130,11 @@
         _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 70, 22)];
         _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:14.0];
         _dataValue.textAlignment = NSTextAlignmentRight;
-        _dataValue.text = [NSString stringWithFormat:@"%.01fm/s", (_distanceNum / _timeNum)];
+        //_dataValue.text = [NSString stringWithFormat:@"%.01fm/s", (_distanceNum / _timeNum)];
+        _type = type;
+        [self changeLabelForPage:page units:units];
+        _pageNum = page;
+        _units = units;
         
         [self addSubview:_dataValue];
         
@@ -234,8 +244,14 @@
       _title = value;
       _time = time;
       _dataObject = dataObject;
+      _type = type;
     }
     return self;
+}
+
+- (void) layoutSubviews {
+  [[self contentView] setClipsToBounds:YES];
+  [super layoutSubviews];
 }
 
 - (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
@@ -290,26 +306,128 @@
 
 -(void) graphViewDidScroll:(NSUInteger)pageNum
 {
-  if (pageNum == 0) {
-    _dataValue.text = [NSString stringWithFormat:@"%.01fm/s", (_distanceNum / _timeNum)];
-  } else if (pageNum == 1) {
-    _dataValue.text = [NSString stringWithFormat:@"%.01fm",_distanceNum ];
-  } else {
-    
-    int numMinutes = _timeNum / 60;
-    int numMinutesTen = numMinutes / 10;
-    
-    int numSeconds = (_timeNum - numMinutes * 60);
-    int numSecondsTen = numSeconds / 10;
-    
-    int numMilli = (_timeNum - numSeconds) * 100;
-    int numMilliTen = numMilli / 10;
-    numMilli -= numMilliTen * 10;
-    
-    numMinutes -= numMinutesTen * 10;
-    numSeconds -= numSecondsTen * 10;
-    
-    _dataValue.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%is", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+  _pageNum = pageNum;
+  [self changeLabelForPage:pageNum units:_units];
+}
+
+-(void) didChangeUnits:(NSInteger) units
+{
+  if ([_type isEqualToString:@"GPS"]) {
+    [self changeLabelForPage:_pageNum units:units];
+    _units = units;
+  }
+}
+
+- (void) changeLabelForPage:(NSInteger) page units:(NSInteger) units
+{
+  if ([_type isEqualToString:@"GPS"]) {
+    switch (units) {
+      case 0: {
+        switch (page) {
+          case 0: {
+             _dataValue.text = [NSString stringWithFormat:@"%.01fm/s", (_distanceNum / _timeNum)];
+            break;
+          }
+          case 1: {
+             _dataValue.text = [NSString stringWithFormat:@"%.01fm", _distanceNum];
+            break;
+          }
+          case 2: {
+            
+            int numMinutes = _timeNum / 60;
+            int numMinutesTen = numMinutes / 10;
+            
+            int numSeconds = (_timeNum - numMinutes * 60);
+            int numSecondsTen = numSeconds / 10;
+            
+            int numMilli = (_timeNum - numSeconds) * 100;
+            int numMilliTen = numMilli / 10;
+            numMilli -= numMilliTen * 10;
+            
+            numMinutes -= numMinutesTen * 10;
+            numSeconds -= numSecondsTen * 10;
+            
+            _dataValue.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%is", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+            break;
+          }
+          default: {
+            assert(0);
+          }
+        }
+        break;
+      }
+      case 1: {
+        switch (page) {
+          case 0: {
+            _dataValue.text = [NSString stringWithFormat:@"%.01fmi/hr", (_distanceNum / _timeNum * 2.23694)];
+            break;
+          }
+          case 1: {
+            _dataValue.text = [NSString stringWithFormat:@"%.01fmi", _distanceNum * 0.000621371];
+            break;
+          }
+          case 2: {
+            
+            int numMinutes = _timeNum / 60;
+            int numMinutesTen = numMinutes / 10;
+            
+            int numSeconds = (_timeNum - numMinutes * 60);
+            int numSecondsTen = numSeconds / 10;
+            
+            int numMilli = (_timeNum - numSeconds) * 100;
+            int numMilliTen = numMilli / 10;
+            numMilli -= numMilliTen * 10;
+            
+            numMinutes -= numMinutesTen * 10;
+            numSeconds -= numSecondsTen * 10;
+            
+            _dataValue.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%is", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+            break;
+          }
+          default: {
+            assert(0);
+          }
+        }
+        break;
+      }
+      case 2: {
+        switch (page) {
+          case 0: {
+            _dataValue.text = [NSString stringWithFormat:@"%.01fkm/hr", (_distanceNum / _timeNum * 3.6)];
+            break;
+          }
+          case 1: {
+            _dataValue.text = [NSString stringWithFormat:@"%.01fkm", _distanceNum /1000];
+            break;
+          }
+          case 2: {
+            
+            int numMinutes = _timeNum / 60;
+            int numMinutesTen = numMinutes / 10;
+            
+            int numSeconds = (_timeNum - numMinutes * 60);
+            int numSecondsTen = numSeconds / 10;
+            
+            int numMilli = (_timeNum - numSeconds) * 100;
+            int numMilliTen = numMilli / 10;
+            numMilli -= numMilliTen * 10;
+            
+            numMinutes -= numMinutesTen * 10;
+            numSeconds -= numSecondsTen * 10;
+            
+            _dataValue.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%is", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
+            break;
+          }
+          default: {
+            assert(0);
+          }
+        }
+        break;
+      }
+      default: {
+        assert(0);
+      }
+    }
   }
 }
 

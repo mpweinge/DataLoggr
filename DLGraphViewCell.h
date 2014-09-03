@@ -11,6 +11,8 @@
 @protocol DLGraphViewCellDelegate
 
 -(void) scrollViewDidChangePage : (NSUInteger) pageNum;
+-(void) moreClicked : (BOOL) isDown;
+-(void) didChangeUnits : (NSInteger) units;
 @end
 
 @interface DLGraphViewCell : UITableViewCell

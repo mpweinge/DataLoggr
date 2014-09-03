@@ -26,6 +26,10 @@
   BOOL invalidateData;
   DLGraphViewCell *_graphCell;
   BOOL _showNoPointNux;
+  int _currPageNum;
+  BOOL _moreClicked;
+  
+  NSInteger _units;
 }
 
 @end
@@ -51,6 +55,8 @@
   chartTable.dataSource = self;
   
   _setName = setName;
+  _currPageNum = 0;
+  _units = 0;
   
   self.view = chartTable;
   
@@ -80,7 +86,9 @@
     //if (cell == nil) {
       _graphCell = [[DLGraphViewCell alloc]  initWithStyle:UITableViewCellStyleDefault reuseIdentifier:myIdentifier dataPoints:dataValues type:_typeName];
     _graphCell.delegate = self;
-    
+    _graphCell.clipsToBounds = YES;
+    _graphCell.clipsToBounds = YES;
+    _graphCell.contentView.clipsToBounds= YES;
       cell = _graphCell;
     //}
   } else if ((_showNoPointNux) && ([indexPath row] == 1)) {
@@ -114,7 +122,9 @@
                                             time:currItem.DataTime
                                             type:_typeName
                                            notes:currItem.DataNotes
-                                           dataObject:currItem];
+                                           dataObject:currItem
+                                              pageNum:_currPageNum
+                                                units:_units];
     }
     else {
       newCell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
@@ -124,7 +134,9 @@
                                                  time:@"No time yet"
                                                  type:nil
                                                 notes:@"No notes yet"
-                                           dataObject:nil];
+                                           dataObject:nil
+                                              pageNum:0
+                                                units:0];
     } 
     
     newCell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -141,7 +153,7 @@
     if ([indexPath row ] == 0)
     {
         //First cell is graph
-        return 310;
+        return 310 + _moreClicked * 100;
     } else {
         return 50;
     }
@@ -259,6 +271,25 @@
   }
 }
 
+-(void) didChangeUnits : (NSInteger) units
+{
+  UITableView *tableView = (UITableView *)self.view;
+  NSArray *paths = [tableView indexPathsForVisibleRows];
+  
+  for (NSIndexPath *path in paths) {
+    if ([path row] == 0)
+      continue;
+    
+    DLDataViewCell* currCell =  [tableView cellForRowAtIndexPath:path];
+    
+    if ([currCell isKindOfClass:[DLTitleTableViewCell class]])
+      return;
+    
+    [currCell didChangeUnits:units];
+  }
+  _units = units;
+}
+
 -(void) scrollViewDidChangePage : (NSUInteger) pageNum
 {
   //Change the text of all of the cells
@@ -275,7 +306,15 @@
       return;
     
     [currCell graphViewDidScroll:pageNum];
+    _currPageNum = pageNum;
   }
+}
+
+-(void) moreClicked : (BOOL) isDown;
+{
+  _moreClicked = isDown;
+  [chartTable beginUpdates];
+  [chartTable endUpdates];
 }
 
 - (void)didReceiveMemoryWarning
