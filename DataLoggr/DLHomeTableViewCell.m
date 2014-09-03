@@ -297,8 +297,19 @@
   }
   
   _panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pannedCell:)];
-  
+  _panRecognizer.delegate = self;
   [self addGestureRecognizer:_panRecognizer];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+  if (([gestureRecognizer class] == [UITapGestureRecognizer class]) ||
+      ([otherGestureRecognizer class] == [UITapGestureRecognizer class]) )
+  {
+    return NO;
+  } else if ([gestureRecognizer class] == [UIPanGestureRecognizer class]) {
+    return YES;
+  }
+  return NO;
 }
 
 -(void) DeleteClicked: (UITapGestureRecognizer *)tapClicked

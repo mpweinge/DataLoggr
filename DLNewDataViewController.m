@@ -110,7 +110,7 @@ static const int kIconOffset = 170;
   
   [self.view addSubview:whiteNameCard];
   
-  _dataName = [[UITextField alloc] initWithFrame:CGRectMake(10, kNameOffsetY, 200, 80)];
+  _dataName = [[UITextField alloc] initWithFrame:CGRectMake(10, kNameOffsetY, 350, 80)];
   _dataName.borderStyle = UITextBorderStyleNone;
   _dataName.returnKeyType = UIReturnKeyDone;
   _dataName.autocorrectionType = UITextAutocorrectionTypeNo;

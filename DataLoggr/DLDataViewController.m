@@ -149,15 +149,17 @@
 
 - (void) AddClicked
 {
-    [self TitleCellTouched:0];
+  DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: YES currCell: nil typeName:_typeName];
+  
+  [self.navigationController pushViewController:newPointController animated:YES];
 }
 
 -(void) TitleCellTouched:(NSInteger) number
 {
   //This is a call to create a new value
-  DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: YES currCell: nil typeName:_typeName];
+  /*DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: YES currCell: nil typeName:_typeName];
   
-  [self.navigationController pushViewController:newPointController animated:YES];
+  [self.navigationController pushViewController:newPointController animated:YES];*/
 }
 
 - (void) CellViewTouched:(DLDataViewCell *)cell

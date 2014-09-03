@@ -204,7 +204,7 @@ static const int kStartingNumPoints = 2000;
     }
     
   } else {
-    _dataName = [[UITextField alloc] initWithFrame:CGRectMake(40, kValueOffsetY, 300, 50)];
+    _dataName = [[UITextField alloc] initWithFrame:CGRectMake(10, kValueOffsetY, 350, 50)];
     
     ((UITextField *)_dataName).font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0];
     
@@ -215,7 +215,7 @@ static const int kStartingNumPoints = 2000;
     ((UITextField *)_dataName).keyboardType = UIKeyboardTypeDecimalPad;
     
     if ((_isAdd) || ([_currCell.title length]== 0)) {
-      _backgroundText = [[UILabel alloc] initWithFrame:CGRectMake(10, kValueOffsetY, 300, 50)];
+      _backgroundText = [[UILabel alloc] initWithFrame:CGRectMake(10, kValueOffsetY, 350, 50)];
       _backgroundText.text = @"Data Value";
       _backgroundText.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:40.0];
       _backgroundText.textColor = [UIColor lightGrayColor];

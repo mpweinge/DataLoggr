@@ -59,7 +59,7 @@
   
   _showNuxSlideOnce = YES;
   
-  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc ] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(TitleCellTouched:)];
+  self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc ] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(AddClicked)];
   self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(EditClicked)];
   
   return self;
@@ -250,11 +250,18 @@
   }
 }
 
--(void) TitleCellTouched:(NSInteger) number
+-(void) AddClicked
 {
   DLNewDataViewController *newDataController = [[ DLNewDataViewController alloc] initWithDelegate:self isEdit:NO cell:nil];
   
   [self.navigationController pushViewController:newDataController animated:YES];
+}
+
+-(void) TitleCellTouched:(NSInteger) number
+{
+  /*DLNewDataViewController *newDataController = [[ DLNewDataViewController alloc] initWithDelegate:self isEdit:NO cell:nil];
+  
+  [self.navigationController pushViewController:newDataController animated:YES];*/
 }
 
 - (void)viewDidLoad
