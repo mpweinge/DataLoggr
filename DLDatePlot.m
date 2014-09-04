@@ -447,6 +447,15 @@
 -(void)renderInLayer:(CPTGraphHostingView *)layerHostingView
            withTheme:(CPTTheme *)theme
             animated:(BOOL)animated
+         stringUnits:(NSString *)units
+{
+  _yAxisTitle = units;
+  [self renderInLayer:layerHostingView withTheme:theme animated:animated];
+}
+
+-(void)renderInLayer:(CPTGraphHostingView *)layerHostingView
+           withTheme:(CPTTheme *)theme
+            animated:(BOOL)animated
 {
     // If you make sure your dates are calculated at noon, you shouldn't have to
     // worry about daylight savings. If you use midnight, you will have to adjust

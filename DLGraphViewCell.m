@@ -33,6 +33,12 @@
   BOOL _switchON;
   NSInteger _units;
   DLDataRowObject *_dataObject;
+  
+  UITextField *_unitsName;
+  UILabel *_backgroundText;
+  
+  BOOL _textFieldEmpty;
+  BOOL _didEdit;
 }
 
 - (id)initWithStyle:(UITableViewCellStyle)style
@@ -44,7 +50,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
       _dataObject = dataObject;
-      
+      _textFieldEmpty = YES;
       UISegmentedControl *segmentControl;
       if ([type isEqualToString:@"GPS"])
       {
@@ -128,7 +134,13 @@
         _datePlot = [[DLDatePlot alloc] init];
         _datePlot.hostView = hostView;
         [_datePlot generateData: dataPoints type:type isLinear:_switchON units:_units];
-        [_datePlot renderInLayer:hostView withTheme:[CPTTheme themeNamed: kCPTPlainWhiteTheme ] animated:YES];
+        
+        if ([type isEqualToString:@"Time"]) {
+          [_datePlot renderInLayer:hostView withTheme:[CPTTheme themeNamed: kCPTPlainWhiteTheme ] animated:YES];
+        } else {
+          [_datePlot renderInLayer:hostView withTheme:[CPTTheme themeNamed: kCPTPlainWhiteTheme ] animated:YES stringUnits:dataObject.UnitsName];
+        }
+       
         _datePlot2 = nil;
         _datePlot3 = nil;
         [self addSubview:hostView];
@@ -165,7 +177,7 @@
       [_linearScale setOn:_switchON animated:NO];
       [_linearScale addTarget:self action:@selector(changeSwitch:) forControlEvents:UIControlEventValueChanged];
       
-      UILabel * unitsLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 300, 70, 50)];
+      UILabel * unitsLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 308, 70, 50)];
       unitsLabel.text = @"Units: ";
       unitsLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
       [self addSubview:unitsLabel];
@@ -179,11 +191,36 @@
       [segmentControl setWidth:60 forSegmentAtIndex:0];
       [segmentControl setWidth:60 forSegmentAtIndex:1];
       [segmentControl setWidth:60 forSegmentAtIndex:2];
-      segmentControl.frame = CGRectMake(80,310,180,30);
+      segmentControl.frame = CGRectMake(80,318,180,30);
       segmentControl.momentary = NO;
       
-      if (([type isEqualToString:@"GPS"]) || ([type isEqualToString:@"Time"]) )
+      if (([type isEqualToString:@"GPS"]) || ([type isEqualToString:@"Time"]) ) {
         [self addSubview:segmentControl];
+      } else {
+        // Create a text view
+        _unitsName = [[UITextField alloc] initWithFrame:CGRectMake(60, 310, 350, 50)];
+        _unitsName.borderStyle = UITextBorderStyleNone;
+        _unitsName.returnKeyType = UIReturnKeyDone;
+        _unitsName.font = [UIFont fontWithName:@"HelveticaNeue" size:16.0];
+        _unitsName.autocorrectionType = UITextAutocorrectionTypeNo;
+        _unitsName.delegate = self;
+        _unitsName.keyboardType = UIKeyboardTypeDefault;
+        _unitsName.textColor = [UIColor blackColor];
+        _unitsName.text = _dataObject.UnitsName;
+        
+        _backgroundText = [[UILabel alloc] initWithFrame:CGRectMake(60, 308, 350, 50)];
+        _backgroundText.textColor = [UIColor lightGrayColor];
+        _backgroundText.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
+        _backgroundText.text = @"Unitless";
+        
+        if ([_dataObject.UnitsName length] > 0) {
+          _textFieldEmpty = NO;
+          _backgroundText.hidden = YES;
+        }
+        
+        [self addSubview:_unitsName];
+        [self addSubview:_backgroundText];
+      }
       
 
       _dataPoints = dataPoints;
@@ -328,6 +365,58 @@
     [_delegate scrollViewDidChangePage:page];
   }
 }
+
+-(void)scrollToY:(float)y
+{
+  [UIView beginAnimations:@"registerScroll" context:NULL];
+  [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+  [UIView setAnimationDuration:0.4];
+  [self superview].transform = CGAffineTransformMakeTranslation(0, y);
+  [UIView commitAnimations];
+}
+
+-(BOOL) textFieldShouldBeginEditing:(UITextField *)textField
+{
+  [self scrollToY:-150];
+  return YES;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+  [textField resignFirstResponder];
+  [self scrollToY:0];
+  
+  [[DLDatabaseManager getSharedInstance] updateOldRow:_dataObject withNewUnits:textField.text];
+  _dataObject.UnitsName = textField.text;
+  
+  [_datePlot renderInLayer:_datePlot.hostView withTheme:[CPTTheme themeNamed: kCPTPlainWhiteTheme ] animated:YES stringUnits:_dataObject.UnitsName];
+  
+  [_delegate didChangeUnitString:textField.text];
+  
+  return YES;
+}
+
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+  if ((range.location == 0) && ([string isEqualToString:@""]) && (textField.text.length == 1))
+  {
+    _backgroundText.hidden = NO;
+    
+    UITextPosition *beginning = [textField beginningOfDocument];
+    [textField setSelectedTextRange:[textField textRangeFromPosition:beginning
+                                                          toPosition:beginning]];
+    _textFieldEmpty = true;
+    textField.text = @"";
+  } else if (_textFieldEmpty) {
+    _backgroundText.hidden = YES;
+    _textFieldEmpty = false;
+  }
+  
+  _didEdit = YES;
+  
+  return YES;
+}
+
 
 - (void)awakeFromNib
 {

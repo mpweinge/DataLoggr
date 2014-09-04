@@ -43,10 +43,42 @@
   
   NSInteger _pageNum;
   NSInteger _units;
+  
+  NSString *_stringUnits;
 }
 @end
 
 @implementation DLDataViewCell
+
+- (id)initWithStyle:(UITableViewCellStyle)style
+    reuseIdentifier:(NSString *)reuseIdentifier
+               name:(NSString *)name
+              value:(NSString *)value
+               time:(NSString *)time
+               type:(NSString *)type
+              notes:(NSString *)notes
+    dataPointObject:(DLDataPointRowObject *)dataObject
+            pageNum:(NSInteger) page
+        stringUnits:(NSString *) units
+         dataObject:(DLDataRowObject *)dataObject
+{
+  if (units) {
+    _stringUnits = units;
+  } else {
+    _stringUnits = @"";
+  }
+  return [self initWithStyle:style
+             reuseIdentifier:reuseIdentifier
+                        name:name
+                       value:value
+                        time:time
+                        type:type
+                       notes:notes
+             dataPointObject:dataObject
+                     pageNum:page
+                       units:units
+                  dataObject:dataObject];
+}
 
 - (id)initWithStyle:(UITableViewCellStyle)style
     reuseIdentifier:(NSString *)reuseIdentifier
@@ -164,7 +196,11 @@
       } else {
         _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
         _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
-        _dataValue.text = value;
+        if (_stringUnits) {
+          _dataValue.text = [value stringByAppendingFormat:@" %@", _stringUnits];
+        } else {
+          _dataValue.text = value;
+        }
         [_dataValue sizeToFit];
         [self addSubview:_dataValue];
         
@@ -320,6 +356,13 @@
     [self changeLabelForPage:_pageNum units:units];
     _units = units;
   }
+}
+
+-(void) didChangeUnitString:(NSString *) unitString
+{
+  _stringUnits = unitString;
+  
+  _dataValue.text = [_title stringByAppendingFormat:@" %@", _stringUnits];
 }
 
 - (void) changeLabelForPage:(NSInteger) page units:(NSInteger) units

@@ -29,7 +29,14 @@ CPTScatterPlotDelegate>
             isLinear:(BOOL) isLinear
                units:(NSInteger) units;
 
--(void)renderInLayer:(CPTGraphHostingView *)layerHostingView withTheme:(CPTTheme *)theme animated:(BOOL)animated;
+-(void)renderInLayer:(CPTGraphHostingView *)layerHostingView
+           withTheme:(CPTTheme *)theme
+            animated:(BOOL)animated;
+
+-(void)renderInLayer:(CPTGraphHostingView *)layerHostingView
+           withTheme:(CPTTheme *)theme
+            animated:(BOOL)animated
+         stringUnits:(NSString *)units;
 
 @property (nonatomic, readwrite, assign) CPTGraphHostingView *hostView;
 @property (nonatomic, readwrite) CPTXYGraph *graph;

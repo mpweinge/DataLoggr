@@ -72,7 +72,11 @@
   if (_selected) {
     CGContextSetFillColorWithColor( context, _selectedColor.CGColor );
   } else {
-    CGContextSetFillColorWithColor( context, [UIColor clearColor].CGColor );
+    if (_selectFill) {
+      CGContextSetFillColorWithColor( context, [UIColor whiteColor].CGColor );
+    } else {
+      CGContextSetFillColorWithColor( context, [UIColor clearColor].CGColor );
+    }
   }
   
   CGRect EllipseRect = rect;

@@ -45,8 +45,22 @@
               units:(NSInteger) units
          dataObject:(DLDataRowObject *)dataObject;
 
+- (id)initWithStyle:(UITableViewCellStyle)style
+    reuseIdentifier:(NSString *)reuseIdentifier
+               name:(NSString *)name
+              value:(NSString *)value
+               time:(NSString *)time
+               type:(NSString *)type
+              notes:(NSString *)notes
+    dataPointObject:(DLDataPointRowObject *)dataObject
+            pageNum:(NSInteger) page
+        stringUnits:(NSString *) units
+         dataObject:(DLDataRowObject *)dataObject;
+
 -(void) graphViewDidScroll:(NSUInteger)pageNum;
 
 -(void) didChangeUnits:(NSInteger) units;
+
+-(void) didChangeUnitString:(NSString *) unitString;
 
 @end

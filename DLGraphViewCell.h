@@ -15,7 +15,10 @@
 -(void) scrollViewDidChangePage : (NSUInteger) pageNum;
 -(void) moreClicked : (BOOL) isDown;
 -(void) didChangeUnits : (NSInteger) units;
+-(void) didChangeUnitString: (NSString *)unitString;
+
 @end
+
 
 @interface DLGraphViewCell : UITableViewCell
 

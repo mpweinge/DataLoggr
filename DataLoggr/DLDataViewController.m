@@ -138,7 +138,20 @@
     DLDataViewCell * newCell;
     
     if (currItem != nil) {
-      newCell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+      if ( [_typeName isEqualToString:@"Custom"]) {
+        newCell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
+                                        reuseIdentifier:myIdentifier
+                                                   name:currItem.DataName
+                                                  value:currItem.DataValue
+                                                   time:currItem.DataTime
+                                                   type:_typeName
+                                                  notes:currItem.DataNotes
+                                        dataPointObject:currItem
+                                                pageNum:_currPageNum
+                                            stringUnits:_dataObject.UnitsName
+                                             dataObject:nil];
+      } else {
+        newCell = [[DLDataViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle
                                       reuseIdentifier:myIdentifier
                                                 name:currItem.DataName
                                                 value:currItem.DataValue
@@ -149,6 +162,7 @@
                                               pageNum:_currPageNum
                                                 units:_units
                                            dataObject:nil];
+      }
     }
     else {
       assert(0);
@@ -296,6 +310,24 @@
       
       dataValues[[path row] - 1] = newObject;
     }
+  }
+}
+
+-(void) didChangeUnitString: (NSString *)unitString
+{
+  UITableView *tableView = (UITableView *)self.view;
+  NSArray *paths = [tableView indexPathsForVisibleRows];
+  
+  for (NSIndexPath *path in paths) {
+    if ([path row] == 0)
+      continue;
+    
+    DLDataViewCell* currCell =  [tableView cellForRowAtIndexPath:path];
+    
+    if ([currCell isKindOfClass:[DLTitleTableViewCell class]])
+      return;
+    
+    [currCell didChangeUnitString:unitString];
   }
 }
 
