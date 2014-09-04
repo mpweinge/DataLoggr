@@ -26,6 +26,7 @@
                        delegate:(id<DLAddPointViewControllerDelegate>) delegate
                           isAdd:(BOOL) isAdd
                        currCell:(DLDataViewCell *) currCell
-                       typeName:(NSString *)typeName;
+                       typeName:(NSString *)typeName
+                          units:(NSString *)unitsName;
 
 @end

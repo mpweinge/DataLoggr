@@ -15,6 +15,7 @@
 #import "DLDataIconView.h"
 #import "DLCircleView.h"
 #import "DLNoCaretTextView.h"
+#import "DLDataRowObject.h"
 
 static const int kValueOffsetY = 25;
 static int kNotesOffsetY = 150;
@@ -83,6 +84,8 @@ static const int kStartingNumPoints = 2000;
   UITapGestureRecognizer *_timeTextTapper;
   int _selectedLetterNum;
   UITextView *_hiddenTextView;
+  
+  NSString *_unitsName;
 }
 
 @end
@@ -94,6 +97,7 @@ static const int kStartingNumPoints = 2000;
                           isAdd:(BOOL) isAdd
                        currCell:(DLDataViewCell *) currCell
                        typeName:(NSString *)typeName
+                          units:(NSString *)unitsName
 {
   self = [super init];
   if (self) {
@@ -109,6 +113,8 @@ static const int kStartingNumPoints = 2000;
     currPausedTime = 0;
     _textFieldEmpty = YES;
     _userPanning = false;
+    
+    _unitsName = unitsName;
     
     mapPoints = malloc(sizeof(CLLocationCoordinate2D) * kStartingNumPoints );
     mapPointCount = 0;
@@ -132,6 +138,7 @@ static const int kStartingNumPoints = 2000;
     } else {
       self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(CreateClicked)];
     }
+    //self.title = @"Add Point";
   }
   
   return self;
@@ -196,7 +203,13 @@ static const int kStartingNumPoints = 2000;
     
     _distanceText = [[UILabel alloc] initWithFrame:CGRectMake(250, kNotesOffsetY + 66, 200, 50)];
     _distanceText.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:16.0];
-    _distanceText.text = @"0.0 m";
+    if ([_unitsName isEqualToString:@"m/s"]) {
+      _distanceText.text = [NSString stringWithFormat:@"0 m"];
+    } else if ([_unitsName isEqualToString:@"mi/hr"]) {
+      _distanceText.text = [NSString stringWithFormat:@"0 mi"];
+    } else {
+      _distanceText.text = [NSString stringWithFormat:@"0 km"];
+    }
     [self.view addSubview:_distanceText];
     
     kNotesOffsetY = 285;
@@ -433,7 +446,13 @@ static const int kStartingNumPoints = 2000;
   double timeNum = [time doubleValue];
   double distanceNum = [distance doubleValue];
   
-  _distanceText.text = [NSString stringWithFormat:@"%.01f m", distanceNum];
+  if ([_unitsName isEqualToString:@"m/s"]) {
+    _distanceText.text = [NSString stringWithFormat:@"%.01f m", distanceNum];
+  } else if ([_unitsName isEqualToString:@"mi/hr"]) {
+    _distanceText.text = [NSString stringWithFormat:@"%.01f mi", distanceNum * 0.000621371];
+  } else {
+    _distanceText.text = [NSString stringWithFormat:@"%.01f km", distanceNum / 1000];
+  }
   
   int numMinutes = timeNum / 60;
   int numMinutesTen = numMinutes / 10;
@@ -603,7 +622,14 @@ static const int kStartingNumPoints = 2000;
     CLLocationDistance elapsedDist = [newLocation distanceFromLocation:_previousLocation];
     _elapsedDistance += elapsedDist;
     
-    _distanceText.text = [NSString stringWithFormat:@"%.01f m", _elapsedDistance];
+    // Read in type of unit here
+    if ([_unitsName isEqualToString:@"m/s"]) {
+      _distanceText.text = [NSString stringWithFormat:@"%.01f m", _elapsedDistance];
+    } else if ([_unitsName isEqualToString:@"mi/hr"]) {
+      _distanceText.text = [NSString stringWithFormat:@"%.01f mi", _elapsedDistance * 0.000621371];
+    } else {
+      _distanceText.text = [NSString stringWithFormat:@"%.01f km", _elapsedDistance / 1000];
+    }
   } else {
     _elapsedDistance = 0;
   }
@@ -892,7 +918,14 @@ static const int kStartingNumPoints = 2000;
   
   //Reset the distance text
   _elapsedDistance = 0;
-  _distanceText.text = @"0 m";
+  
+  if ([_unitsName isEqualToString:@"m/s"]) {
+    _distanceText.text = [NSString stringWithFormat:@"0 m"];
+  } else if ([_unitsName isEqualToString:@"mi/hr"]) {
+    _distanceText.text = [NSString stringWithFormat:@"0 mi"];
+  } else {
+    _distanceText.text = [NSString stringWithFormat:@"0 km"];
+  }
   
   //Reset the polyline points
   mapPointCount = 0;

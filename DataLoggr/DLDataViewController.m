@@ -13,6 +13,7 @@
 #import "DLTitleTableViewCell.h"
 #import "DLAddPointViewController.h"
 #import "DLGraphViewCell.h"
+#import "DLDataRowObject.h"
 
 #import "CorePlot-CocoaTouch.h"
 
@@ -60,7 +61,18 @@
   
   _setName = setName;
   _currPageNum = 0;
+  
   _units = 0;
+  
+  if ([dataObject.UnitsName isEqualToString:@"mi/hr"]) {
+    _units = 1;
+  } else if ([dataObject.UnitsName isEqualToString:@"km/hr"]) {
+    _units = 2;
+  } else if ([dataObject.UnitsName isEqualToString:@"hr"]) { 
+    _units = 2;
+  } else if ([dataObject.UnitsName isEqualToString:@"min"]) {
+    _units = 1;
+  }
   
   _dataObject = dataObject;
   
@@ -174,7 +186,7 @@
 
 - (void) AddClicked
 {
-  DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: YES currCell: nil typeName:_typeName];
+  DLAddPointViewController *newPointController = [[ DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: YES currCell: nil typeName:_typeName units:_dataObject.UnitsName];
   
   [self.navigationController pushViewController:newPointController animated:YES];
 }
@@ -190,7 +202,7 @@
 - (void) CellViewTouched:(DLDataViewCell *)cell
 {
     //
-  DLAddPointViewController *editPointController = [[DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: NO currCell: cell typeName:_typeName];
+  DLAddPointViewController *editPointController = [[DLAddPointViewController alloc] initWithSetName:_setName delegate:self isAdd: NO currCell: cell typeName:_typeName units:_dataObject.UnitsName];
     
     [self.navigationController pushViewController:editPointController animated:YES];
 }

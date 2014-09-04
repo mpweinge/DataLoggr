@@ -28,6 +28,7 @@
   NSString *_type;
   UILabel * _downCaret;
   DLCircleView *_caretCircle;
+  DLCircleView *_caretTouchCircle;
   BOOL _caretDown;
   BOOL _switchON;
   NSInteger _units;
@@ -142,10 +143,19 @@
       _caretCircle = [[DLCircleView alloc] initWithFrame:CGRectMake(283, 283, 25, 25) strokeWidth:1.0 selectFill:NO selectColor:[UIColor blueColor] boundaryColor:[UIColor blueColor]];
       _caretCircle.backgroundColor = [UIColor clearColor];
       _caretCircle.selected = NO;
+      
+      //Add another view to just capture touch events
+      _caretTouchCircle = [[DLCircleView alloc] initWithFrame:CGRectMake(273, 273, 45, 45) strokeWidth:1.0 selectFill:NO selectColor:[UIColor clearColor] boundaryColor:[UIColor clearColor]];
+      _caretTouchCircle.backgroundColor = [UIColor clearColor];
+      UITapGestureRecognizer *tapRecognizer2 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(downCaretClicked:)];
+      tapRecognizer2.numberOfTouchesRequired = 1;
+      [_caretTouchCircle addGestureRecognizer:tapRecognizer2];
+      
+      [self addSubview:_caretTouchCircle];
+      
       [self addSubview:_caretCircle];
       [self addSubview:_downCaret];
-      
-      
+
       UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(downCaretClicked:)];
       tapRecognizer.numberOfTouchesRequired = 1;
       [_caretCircle addGestureRecognizer:tapRecognizer];
@@ -251,6 +261,10 @@
       CGRect caretCircleFrame = _caretCircle.frame;
       caretCircleFrame.origin.y += 100;
       _caretCircle.frame = caretCircleFrame;
+      
+      CGRect caretTouchCircleFrame = _caretTouchCircle.frame;
+      caretTouchCircleFrame.origin.y += 100;
+      _caretTouchCircle.frame = caretTouchCircleFrame;
     } completion:^(BOOL didComplete){
       _downCaret.text = [NSString fontAwesomeIconStringForEnum:FACaretUp];
       _linearScale.alpha = 1.0;
@@ -264,6 +278,10 @@
       CGRect caretCircleFrame = _caretCircle.frame;
       caretCircleFrame.origin.y -= 100;
       _caretCircle.frame = caretCircleFrame;
+      
+      CGRect caretTouchCircleFrame = _caretTouchCircle.frame;
+      caretTouchCircleFrame.origin.y -= 100;
+      _caretTouchCircle.frame = caretTouchCircleFrame;
     } completion:^(BOOL didComplete){
       _downCaret.text = [NSString fontAwesomeIconStringForEnum:FACaretDown];
     }];

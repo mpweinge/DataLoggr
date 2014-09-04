@@ -244,7 +244,7 @@
     
     DLHomeTableViewCell *homeCell = (DLHomeTableViewCell *)cell;
     
-    DLNewDataViewController *editViewController = [[ DLNewDataViewController alloc] initWithDelegate:self isEdit:YES cell: homeCell.rowObject];
+    DLNewDataViewController *editViewController = [[ DLNewDataViewController alloc] initWithDelegate:self isEdit:YES cell: homeCell];
     
     [self.navigationController pushViewController:editViewController animated:YES];
   } else {

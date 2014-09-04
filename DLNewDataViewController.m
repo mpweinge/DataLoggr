@@ -144,7 +144,7 @@ static const int kIconOffset = 170;
     [self.view addSubview:_timeIcon];
     _timeIcon.delegate = self;
     
-    _gpsIcon = [[DLDataIconView alloc]initWithFrame:CGRectMake(150, kTypeOffsetY, 50, 50) icon:FAGlobe title:@"GPS"];
+    _gpsIcon = [[DLDataIconView alloc]initWithFrame:CGRectMake(150, kTypeOffsetY, 50, 50) icon:FAGlobe title:@"Location"];
     [self.view addSubview:_gpsIcon];
     _gpsIcon.delegate = self;
     
@@ -302,18 +302,14 @@ static const int kIconOffset = 170;
 {
   // Check for name conflict
   NSString * dataName = _dataName.text;
+  NSString* dataType =  _selectedDataType.title;
   
-  if ([[DLDatabaseManager getSharedInstance] hasNameConflict:dataName] )
-  {
-    UIAlertView * newView = [[UIAlertView alloc] initWithTitle:@"Invalid Name" message:@"Name already exists. Please choose a unique name." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
-    
-    [newView show];
-    return;
+  if ([dataType isEqualToString:@"Location"]) {
+    dataType = @"GPS";
   }
   
   if (_isEdit) {
     if (_didEdit) {
-      NSString* dataType =  _selectedDataType.title;
       NSString* iconStr = _selectedIcon.title;
       
       DLDataRowObject *newObject = [[DLDataRowObject alloc] initWithName:dataName
@@ -333,6 +329,14 @@ static const int kIconOffset = 170;
       [self.navigationController popViewControllerAnimated:YES];
     }
   } else {
+    if ([[DLDatabaseManager getSharedInstance] hasNameConflict:dataName] )
+    {
+      UIAlertView * newView = [[UIAlertView alloc] initWithTitle:@"Invalid Name" message:@"Name already exists. Please choose a unique name." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+      
+      [newView show];
+      return;
+    }
+    
     NSString* dataType =  _selectedDataType.title;
     NSString* iconStr = _selectedIcon.title;
     

@@ -597,7 +597,7 @@
 					"\"${PROJECT_DIR}/core-plot/framework/\"/**",
 				);
 				INFOPLIST_FILE = "DataLoggr/DataLoggr-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/core-plot/build/Debug-iphoneos",
@@ -624,7 +624,7 @@
 					"\"${PROJECT_DIR}/core-plot/framework/\"/**",
 				);
 				INFOPLIST_FILE = "DataLoggr/DataLoggr-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/core-plot/build/Debug-iphoneos",
