@@ -1053,6 +1053,35 @@ static const int kStartingNumPoints = 2000;
 
 - (void) CreateClicked
 {
+  if ([_typeName isEqualToString:@"Custom"]) {
+    //Check to see that the string is formatted properly
+    NSString* dataValue =  ((UILabel *)_dataName).text;
+    NSMutableCharacterSet *notDigits = [NSMutableCharacterSet decimalDigitCharacterSet];
+    [notDigits addCharactersInString:@"."];
+    [notDigits invert];
+    if ([dataValue rangeOfCharacterFromSet:notDigits].location == NSNotFound)
+    {
+      // newString consists only of the digits 0 through 9
+    } else {
+      UIAlertView *invalidEntry = [[UIAlertView alloc] initWithTitle:@"Invalid String" message:@"Please enter in numbers only" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+      [invalidEntry show];
+      return;
+    }
+  } else if ( [_typeName isEqualToString:@"Time"] ) {
+    NSString* dataValue =  ((UILabel *)_dataName).text;
+    NSMutableCharacterSet *notDigits = [NSMutableCharacterSet decimalDigitCharacterSet];
+    [notDigits addCharactersInString:@":."];
+    [notDigits invert];
+    if ([dataValue rangeOfCharacterFromSet:notDigits].location == NSNotFound)
+    {
+      // newString consists only of the digits 0 through 9
+    } else {
+      UIAlertView *invalidEntry = [[UIAlertView alloc] initWithTitle:@"Invalid String" message:@"Please enter in numbers only" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+      [invalidEntry show];
+      return;
+    }
+  }
+  
   if (_isAdd)
   {
     if ([_typeName isEqualToString:@"GPS"]) {
@@ -1106,6 +1135,9 @@ static const int kStartingNumPoints = 2000;
       NSString* dataName = _setName;
       //NSInteger row = [_typeDataView selectedRowInComponent:0];
       NSString* dataValue =  ((UILabel *)_dataName).text;
+      
+      
+      
       NSString* notes = _notesView.text;
       
       NSDate *currentTime = [NSDate date];
