@@ -17,7 +17,7 @@
 
 #import "CorePlot-CocoaTouch.h"
 
-@interface DLDataViewController ()
+@interface DLDataViewController () < DLGraphViewCellDelegate >
 {
   UITableView* chartTable;
   NSMutableArray *dataValues;
@@ -322,7 +322,7 @@
     if ([path row] == 0)
       continue;
     
-    DLDataViewCell* currCell =  [tableView cellForRowAtIndexPath:path];
+    DLDataViewCell* currCell =  (DLDataViewCell *)[tableView cellForRowAtIndexPath:path];
     
     if ([currCell isKindOfClass:[DLTitleTableViewCell class]])
       return;
@@ -340,7 +340,7 @@
     if ([path row] == 0)
       continue;
     
-    DLDataViewCell* currCell =  [tableView cellForRowAtIndexPath:path];
+    DLDataViewCell* currCell =  (DLDataViewCell *)[tableView cellForRowAtIndexPath:path];
     
     if ([currCell isKindOfClass:[DLTitleTableViewCell class]])
       return;
@@ -360,7 +360,7 @@
     if ([path row] == 0)
       continue;
     
-    DLDataViewCell* currCell =  [tableView cellForRowAtIndexPath:path];
+    DLDataViewCell* currCell =  (DLDataViewCell *)[tableView cellForRowAtIndexPath:path];
     
     if ([currCell isKindOfClass:[DLTitleTableViewCell class]])
       return;

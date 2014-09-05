@@ -21,7 +21,7 @@ static const int kNameOffsetY = 0;
 static const int kTypeOffsetY = 80;
 static const int kIconOffset = 170;
 
-@interface DLNewDataViewController () < UIPickerViewDataSource, UIPickerViewDelegate, UIGestureRecognizerDelegate, DLDataIconViewDelegate, UITextFieldDelegate, UIScrollViewDelegate >
+@interface DLNewDataViewController () < UIPickerViewDelegate, UIGestureRecognizerDelegate, DLDataIconViewDelegate, UITextFieldDelegate, UIScrollViewDelegate >
 {
   UILabel *_backgroundText;
   UITextField* _dataName;
@@ -33,6 +33,7 @@ static const int kIconOffset = 170;
   DLDataIconView *_customIcon;
   
   DLDataIconView *_selectedIcon;
+  DLDataIconView *_clickedIcon;
   DLDataIconView *_selectedDataType;
   
   NSArray * dataTypeOptions;
@@ -46,6 +47,7 @@ static const int kIconOffset = 170;
   
   BOOL _isEdit;
   BOOL _didEdit;
+  BOOL _didChangeType;
   BOOL _textFieldEmpty;
   DLHomeTableViewCell* _currCell;
   
@@ -229,8 +231,8 @@ static const int kIconOffset = 170;
           
           [_iconSwitcherView setContentOffset:CGPointMake( page * 4 * 50, 0)];
           
-          ((DLCircleView *)_indicatorCircles[page]).selected = YES;
           ((DLCircleView *)_indicatorCircles[0]).selected = NO;
+          ((DLCircleView *)_indicatorCircles[page]).selected = YES;
         }
         i++;
     }
@@ -247,8 +249,35 @@ static const int kIconOffset = 170;
   [self.view addSubview:_dataName];
 }
 
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+  // the user clicked Cancel
+  if (buttonIndex == 0) {
+    // do something here...
+    [self iconClicked:_selectedDataType];
+  } else {
+    _selectedDataType = _clickedIcon;
+    _didChangeType = YES;
+    [self iconClicked:_clickedIcon];
+  }
+}
+
 -(void) iconClicked:(DLDataIconView *) selectedIcon
 {
+  _clickedIcon = selectedIcon;
+  
+  if (_isEdit) {
+    if ((_clickedIcon  == _timeIcon ) || (_clickedIcon == _gpsIcon) || (_clickedIcon == _customIcon) ) {
+      if (_clickedIcon != _selectedDataType) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Changed Type"
+                                                        message:@"Changing the type will delete all existing points for this data series. Continue?"
+                                                       delegate:self
+                                              cancelButtonTitle:@"Cancel"
+                                              otherButtonTitles:@"OK", nil];
+        [alert show];
+        return;
+      }
+    }
+  }
     //De select the other icons
     if (_timeIcon == selectedIcon) {
         _gpsIcon.selected = NO;
@@ -309,14 +338,35 @@ static const int kIconOffset = 170;
   }
   
   if (_isEdit) {
-    if (_didEdit) {
+    if (_didChangeType ) {
+      
+      NSString* iconStr = _selectedIcon.title;
+      
+      //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);
+      DLDataRowObject *newObject = [[DLDataRowObject alloc] initWithName:dataName
+                                                                    type:dataType
+                                                                iconName:iconStr
+                                                               unitsName:@""
+                                                                isLinear:_currCell.rowObject.isLinear];
+      
+      //Need to update current object
+      
+      [[DLDatabaseManager getSharedInstance] deleteAllPoints:_currCell.rowObject];
+      
+      [[DLDatabaseManager getSharedInstance] updateOldRow: _currCell.rowObject withNewRow: newObject];
+      
+      [_delegate didUpdateCell:_currCell withData:newObject];
+      [self.navigationController popViewControllerAnimated:YES];
+     
+    }
+    else if (_didEdit) {
       NSString* iconStr = _selectedIcon.title;
       
       DLDataRowObject *newObject = [[DLDataRowObject alloc] initWithName:dataName
                                                                     type:dataType
                                                                 iconName:iconStr
-                                                               unitsName:@""
-                                                                isLinear:NO];
+                                                               unitsName:_currCell.rowObject.UnitsName
+                                                                isLinear:_currCell.rowObject.isLinear];
       
       //Need to update current object
       [[DLDatabaseManager getSharedInstance] updateOldRow: _currCell.rowObject withNewRow: newObject];
@@ -336,8 +386,6 @@ static const int kIconOffset = 170;
       [newView show];
       return;
     }
-    
-    NSString* dataType =  _selectedDataType.title;
     NSString* iconStr = _selectedIcon.title;
     
     //NSLog(@"Name: %@, Type: %@, Icon: %@", dataName, dataType, iconStr);

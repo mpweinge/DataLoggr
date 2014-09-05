@@ -67,9 +67,9 @@ static NSString* kDataTypeName = @"DataTypes";
           [docsDir stringByAppendingPathComponent: @"student.db"]];
   
   BOOL isSuccess = YES;
-  NSFileManager *filemgr = [NSFileManager defaultManager];
+  //NSFileManager *filemgr = [NSFileManager defaultManager];
   
- // if ([filemgr fileExistsAtPath: databasePath ] == NO)
+  //if ([filemgr fileExistsAtPath: databasePath ] == NO)
   {
     const char *dbpath = [databasePath UTF8String];
     if (sqlite3_open(dbpath, &database) == SQLITE_OK)
@@ -118,14 +118,12 @@ static NSString* kDataTypeName = @"DataTypes";
           != SQLITE_OK)
       {
         isSuccess = NO;
-        NSLog(@"Failed to create table");
       }
       sqlite3_close(database);
       return  isSuccess;
     }
     else {
       isSuccess = NO;
-      NSLog(@"Failed to open/create database");
     }
   }
   return isSuccess;
@@ -525,6 +523,31 @@ static NSString* kDataTypeName = @"DataTypes";
     }
   }
   return nil;
+}
+
+-(BOOL) deleteAllPoints: (id<DLSerializableProtocol>) row
+{
+  const char *dbpath = [databasePath UTF8String];
+  
+  if (sqlite3_open(dbpath, &database) == SQLITE_OK)
+  {
+    NSMutableString *insertSQL = [NSMutableString string];
+    [insertSQL appendString:@"DELETE FROM "];
+    [insertSQL appendString: kDataPointDatabaseName];
+    [insertSQL appendString: @" WHERE "];
+    [insertSQL appendString:[row  deleteString: _dataTypeFieldNames ]];
+    
+    const char *insert_stmt = [insertSQL UTF8String];
+    sqlite3_prepare_v2(database, insert_stmt,-1, &statement, NULL);
+    if (sqlite3_step(statement) == SQLITE_DONE)
+    {
+      return YES;
+    } else {
+      return NO;
+    }
+    sqlite3_reset(statement);
+  }
+  return NO;
 }
 
 - (BOOL) deleteDataType: (id<DLSerializableProtocol>) row

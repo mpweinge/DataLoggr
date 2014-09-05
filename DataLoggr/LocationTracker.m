@@ -76,23 +76,23 @@
 
 
 - (void)startLocationTracking {
-    NSLog(@"startLocationTracking");
+    //NSLog(@"startLocationTracking");
   
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnterBackground) name:UIApplicationDidEnterBackgroundNotification object:nil];
   
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnterForeground) name:UIApplicationWillEnterForegroundNotification object:nil];
 
 	if ([CLLocationManager locationServicesEnabled] == NO) {
-        NSLog(@"locationServicesEnabled false");
+       // NSLog(@"locationServicesEnabled false");
 		UIAlertView *servicesDisabledAlert = [[UIAlertView alloc] initWithTitle:@"Location Services Disabled" message:@"You currently have all location services for this device disabled" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 		[servicesDisabledAlert show];
 	} else {
         CLAuthorizationStatus authorizationStatus= [CLLocationManager authorizationStatus];
         
         if(authorizationStatus == kCLAuthorizationStatusDenied || authorizationStatus == kCLAuthorizationStatusRestricted){
-            NSLog(@"authorizationStatus failed");
+            //NSLog(@"authorizationStatus failed");
         } else {
-            NSLog(@"authorizationStatus authorized");
+            //NSLog(@"authorizationStatus authorized");
             CLLocationManager *locationManager = [LocationTracker sharedLocationManager];
             locationManager.delegate = self;
             locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
@@ -104,7 +104,7 @@
 
 
 - (void)stopLocationTracking {
-    NSLog(@"stopLocationTracking");
+    //NSLog(@"stopLocationTracking");
     
     if (self.shareModel.timer) {
         [self.shareModel.timer invalidate];
@@ -123,8 +123,6 @@
 #pragma mark - CLLocationManagerDelegate Methods
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
-    
-    NSLog(@"locationManager didUpdateLocations");
     
     for(int i=0;i<locations.count;i++){
         CLLocation * newLocation = [locations objectAtIndex:i];
@@ -236,13 +234,13 @@
             }
         }
     }
-    NSLog(@"My Best location:%@",myBestLocation);
+    //NSLog(@"My Best location:%@",myBestLocation);
     
     //If the array is 0, get the last location
     //Sometimes due to network issue or unknown reason, you could not get the location during that  period, the best you can do is sending the last known location to the server
     if(self.shareModel.myLocationArray.count==0)
     {
-        NSLog(@"Unable to get location, use the last known location");
+       // NSLog(@"Unable to get location, use the last known location");
 
         self.myLocation=self.myLastLocation;
         self.myLocationAccuracy=self.myLastLocationAccuracy;
@@ -258,7 +256,6 @@
    // NSLog(@"Send to Server: Latitude(%f) Longitude(%f) Accuracy(%f)",self.myLocation.latitude, self.myLocation.longitude,self.myLocationAccuracy);
     
     //TODO: Your code to send the self.myLocation and self.myLocationAccuracy to your server
-  NSLog(@"Coming from location tracker");
   [_delegate DidGetLocation:self.myLocation];
   
     //After sending the location to the server successful, remember to clear the current array with the following code. It is to make sure that you clear up old location in the array and add the new locations from locationManager

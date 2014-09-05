@@ -97,7 +97,7 @@
 		FF6209DB1973C39C0032348F /* DLNewDataView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLNewDataView.m; sourceTree = "<group>"; };
 		FF664C771977B4EE00CFE1A0 /* DLDataRowObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DLDataRowObject.h; sourceTree = "<group>"; };
 		FF664C781977B4EE00CFE1A0 /* DLDataRowObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DLDataRowObject.m; sourceTree = "<group>"; };
-		FFA65426196E7D8D002BA286 /* DataLoggr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DataLoggr.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FFA65426196E7D8D002BA286 /* myTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = myTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFA65429196E7D8D002BA286 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FFA6542B196E7D8D002BA286 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		FFA6542D196E7D8D002BA286 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -219,7 +219,7 @@
 		FFA65427196E7D8D002BA286 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				FFA65426196E7D8D002BA286 /* DataLoggr.app */,
+				FFA65426196E7D8D002BA286 /* myTracker.app */,
 				FFA65441196E7D8D002BA286 /* DataLoggrTests.xctest */,
 			);
 			name = Products;
@@ -359,7 +359,7 @@
 			);
 			name = DataLoggr;
 			productName = DataLoggr;
-			productReference = FFA65426196E7D8D002BA286 /* DataLoggr.app */;
+			productReference = FFA65426196E7D8D002BA286 /* myTracker.app */;
 			productType = "com.apple.product-type.application";
 		};
 		FFA65440196E7D8D002BA286 /* DataLoggrTests */ = {
@@ -603,7 +603,7 @@
 					"$(PROJECT_DIR)/core-plot/build/Debug-iphoneos",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = myTracker;
 				PROVISIONING_PROFILE = "397b337d-48c0-4536-ba08-e58473881c4b";
 				WRAPPER_EXTENSION = app;
 			};
@@ -630,8 +630,8 @@
 					"$(PROJECT_DIR)/core-plot/build/Debug-iphoneos",
 				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "9be780e0-19ee-4776-989a-91e80aa2d2c1";
+				PRODUCT_NAME = myTracker;
+				PROVISIONING_PROFILE = "9e6a6ce8-622c-4f3c-bbc9-eb10bce6b042";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

@@ -15,7 +15,7 @@
 #import "DLDatabaseManager.h"
 #import "DLDataRowObject.h"
 
-@implementation DLGraphViewCell
+@implementation DLGraphViewCell 
 {
     DLDatePlot *_datePlot;
   DLDatePlot *_datePlot2;

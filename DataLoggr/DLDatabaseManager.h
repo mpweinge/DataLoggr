@@ -49,6 +49,8 @@
 
 - (BOOL) updateOldRow:(id<DLSerializableProtocol>)oldRow withNewUnits:(NSString *)units;
 
+-(BOOL) deleteAllPoints: (id<DLSerializableProtocol>) row;
+
 - (BOOL) deleteDataType: (id<DLSerializableProtocol>) row;
 
 - (BOOL) deleteDataPoint: (id<DLSerializableProtocol>) point;

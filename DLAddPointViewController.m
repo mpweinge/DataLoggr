@@ -22,7 +22,7 @@ static int kNotesOffsetY = 150;
 static const int kButtonOffsetY = 350;
 static const int kStartingNumPoints = 2000;
 
-@interface DLAddPointViewController () < UIPickerViewDataSource, UITextFieldDelegate, UITextViewDelegate, DLDataIconViewDelegate >
+@interface DLAddPointViewController () < UITextFieldDelegate, UITextViewDelegate, DLDataIconViewDelegate, MKMapViewDelegate >
 {
   //UITextField* _dataName;
   UIView* _dataName;
@@ -392,7 +392,7 @@ static const int kStartingNumPoints = 2000;
   i++;
   
   //Read in the distance
-  for ( i; i < value.length; i++)
+  for (; i < value.length; i++)
   {
     // Find the colon first
     if ([value characterAtIndex:i] == ':') {
@@ -412,7 +412,7 @@ static const int kStartingNumPoints = 2000;
   int longitudeEndIdx = 0;
   
   //Read in all of the stored points
-  for (i; i < value.length; i++)
+  for (; i < value.length; i++)
   {
     if ( [value characterAtIndex:i] == '\n') {
       latitudeStartIdx = i+1;
@@ -496,7 +496,6 @@ static const int kStartingNumPoints = 2000;
       }
     }
   }
-  NSLog(@"Point coming from cllocationdelegate");
   [self DidGetLocation:userLocation.coordinate];
 }
 
@@ -554,12 +553,10 @@ static const int kStartingNumPoints = 2000;
   location.latitude = mapPointCount / (double)5000.0;
   location.longitude = mapPointCount / (double)5000.0;
   
-  NSLog(@"Coming from test map update");
   [self DidGetLocation:location];
 }
 
 -(void)updateLocation {
-  NSLog(@"updateLocation");
   
   [locationTracker updateLocationToServer];
 }
@@ -748,8 +745,6 @@ static const int kStartingNumPoints = 2000;
 
 - (void) changeHighlightedLetter:(NSString *)text
 {
-  int newVal = [text intValue];
-  NSLog(@"Int val: %i", newVal);
   
   NSRange range = NSMakeRange(_selectedLetterNum,1);
   NSString *newText = [((UILabel *)_dataName).text stringByReplacingCharactersInRange:range withString:text];
@@ -770,6 +765,8 @@ static const int kStartingNumPoints = 2000;
   NSNumber *iMilliSeconds = [f numberFromString:milliSeconds];
   
   currPausedTime = [iMinutes intValue] * 60 + [iSeconds intValue] + [iMilliSeconds floatValue] / 100;
+  
+  _didEdit = YES;
 }
 
 - (void) highlightLetter:(NSInteger) letterNum
@@ -789,7 +786,6 @@ static const int kStartingNumPoints = 2000;
     return;
   
   CGPoint touchLoc = [touchRecognizer locationInView:_dataName];
-  NSLog(@"touchLoc x %f", touchLoc.x);
   if (touchLoc.x < 33) {
     [self highlightLetter:0];
   } else if (touchLoc.x < 75) {
@@ -1077,6 +1073,10 @@ static const int kStartingNumPoints = 2000;
       if (_elapsedTime < 0)
         _elapsedTime *= -1;
       
+      if (_elapsedDistance < 0) {
+        _elapsedDistance *= -1;
+      }
+      
       //Store total distance, time elapsed
       [dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f, \n", _elapsedTime, _elapsedDistance]];
       
@@ -1103,7 +1103,6 @@ static const int kStartingNumPoints = 2000;
       [_delegate didCreateNewObject:newObject];
       
     } else {
-      NSLog(@"Create Clicked");
       NSString* dataName = _setName;
       //NSInteger row = [_typeDataView selectedRowInComponent:0];
       NSString* dataValue =  ((UILabel *)_dataName).text;
@@ -1144,8 +1143,11 @@ static const int kStartingNumPoints = 2000;
         [self stopTrackingLocation];
       }
       
+      if (_elapsedTime < 0)
+        _elapsedTime *= -1;
+      
       //Store total distance, time elapsed
-      [(NSMutableString *)dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f, \n", -1 * _elapsedTime, _elapsedDistance]];
+      [(NSMutableString *)dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f, \n", _elapsedTime, _elapsedDistance]];
       
       for (int i = 0; i < mapPointCount; i++)
       {
@@ -1252,7 +1254,6 @@ static const int kStartingNumPoints = 2000;
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-  NSLog(@"Replacement string: %@", string);
   if ((range.location == 0) && ([string isEqualToString:@""]) && (textField.text.length == 1))
   {
     _backgroundText.hidden = NO;

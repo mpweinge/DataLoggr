@@ -57,7 +57,7 @@
                time:(NSString *)time
                type:(NSString *)type
               notes:(NSString *)notes
-    dataPointObject:(DLDataPointRowObject *)dataObject
+    dataPointObject:(DLDataPointRowObject *)dataPointObject
             pageNum:(NSInteger) page
         stringUnits:(NSString *) units
          dataObject:(DLDataRowObject *)dataObject
@@ -74,9 +74,9 @@
                         time:time
                         type:type
                        notes:notes
-             dataPointObject:dataObject
+             dataPointObject:dataPointObject
                      pageNum:page
-                       units:units
+                       units:0
                   dataObject:dataObject];
 }
 
@@ -139,7 +139,7 @@
         i++;
         
         //Read in the distance
-        for ( i; i < value.length; i++)
+        for ( ; i < value.length; i++)
         {
           // Find the colon first
           if ([value characterAtIndex:i] == ':') {
@@ -181,20 +181,20 @@
           [self addSubview:_notesIcon];
         }
       } else if ([type isEqualToString:@"Time"]){
-        _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
+        _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 110, 22)];
         _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
         _dataValue.text = [value stringByAppendingString:@"s"];
         [self addSubview:_dataValue];
         
         if ([notes length] > 0) {
-          _notesIcon = [[UILabel alloc] initWithFrame:CGRectMake(225, 12, 70, 22)];
+          _notesIcon = [[UILabel alloc] initWithFrame:CGRectMake(235, 12, 70, 22)];
           _notesIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:12];
           _notesIcon.textColor = [UIColor blackColor];
           _notesIcon.text = [NSString fontAwesomeIconStringForEnum:FAFileTextO];
           [self addSubview:_notesIcon];
         }
       } else {
-        _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 100, 22)];
+        _dataValue = [[UILabel alloc] initWithFrame:CGRectMake(150, 13, 130, 22)];
         _dataValue.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:16.0];
         if (_stringUnits) {
           _dataValue.text = [value stringByAppendingFormat:@" %@", _stringUnits];
@@ -238,6 +238,11 @@
       _circleDeleteIcon.alpha = 1.0;
       [self addSubview:_circleDeleteIcon];
       
+      _trashTapRegion = [[DLCircleView alloc] initWithFrame:CGRectMake(280, 1, 40, 40) strokeWidth:1.0 selectFill:YES selectColor:[UIColor clearColor] boundaryColor:[UIColor clearColor]];
+      _trashTapRegion.alpha = 1.0;
+      _trashTapRegion.backgroundColor = [UIColor clearColor];
+      [self addSubview:_trashTapRegion];
+      
       _trashIcon = [[UILabel alloc] initWithFrame:CGRectMake(290, 13, 100, 22)];
       _trashIcon.font = [UIFont fontWithName:kFontAwesomeFamilyName size:20];
       _trashIcon.textColor = [UIColor redColor];
@@ -268,7 +273,7 @@
       deleteTouchRecognizer2.numberOfTapsRequired = 1;
       [_circleDeleteBorder addGestureRecognizer:deleteTouchRecognizer2];
       
-      UITapGestureRecognizer * deleteRecognizer3 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(TrashEditClicked)];
+      UITapGestureRecognizer * deleteRecognizer3 = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(TrashEditClicked:)];
       deleteRecognizer3.delegate = self;
       deleteRecognizer3.numberOfTapsRequired = 1;
       
@@ -278,6 +283,13 @@
       _panRecognizer.delegate = self;
       [self addGestureRecognizer:_panRecognizer];
       _panRecognizer.cancelsTouchesInView = NO;
+      
+      _deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteRow:)];
+      _deleteRecognizer.delegate = self;
+      _deleteRecognizer.numberOfTapsRequired = 1;
+      
+      _trashIcon.userInteractionEnabled = YES;
+      [_trashIcon addGestureRecognizer:_deleteRecognizer];
       
       _notes = notes;
       _title = value;
@@ -292,6 +304,16 @@
 - (void) layoutSubviews {
   [[self contentView] setClipsToBounds:YES];
   [super layoutSubviews];
+}
+
+- (void) TrashEditClicked:(UIGestureRecognizer *)gestureRecognizer
+{
+  if (_deleteActive)
+  {
+    [self DeleteRow:gestureRecognizer];
+  } else {
+    [self tappedCell:gestureRecognizer];
+  }
 }
 
 - (BOOL) gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
@@ -319,8 +341,6 @@
       _circleDeleteIcon.textColor = [UIColor lightGrayColor];
     }];
     
-    [_trashIcon removeGestureRecognizer:_deleteRecognizer];
-    
   } else {
     _deleteActive = YES;
     
@@ -331,16 +351,6 @@
       _whiteView.frame = frame;
       _circleDeleteIcon.textColor = [UIColor redColor];
     }];
-    
-    if (!_deleteRecognizer) {
-      _deleteRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(DeleteRow:)];
-      _deleteRecognizer.delegate = self;
-      _deleteRecognizer.numberOfTapsRequired = 1;
-    }
-    
-    _trashIcon.userInteractionEnabled = YES;
-    [_trashIcon addGestureRecognizer:_deleteRecognizer];
-    
   }
 }
 

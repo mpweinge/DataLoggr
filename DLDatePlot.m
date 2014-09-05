@@ -179,7 +179,7 @@
     
     i +=2;
     
-    for (i; i < [value length]; i++ )
+    for (; i < [value length]; i++ )
     {
       if ([value characterAtIndex:i] == ':') {
         colonIdx = i;

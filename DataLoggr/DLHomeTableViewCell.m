@@ -404,7 +404,7 @@
 
 -(void) tappedCell : (UIGestureRecognizer *)gestureRecognizer
 {
-  [self.delegate CellViewTouched:self];
+  [self.delegate CellViewTouched:(DLDataViewCell *)self];
 }
 
 - (void)awakeFromNib

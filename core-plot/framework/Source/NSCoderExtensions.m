@@ -75,7 +75,7 @@ void MyCGPathApplierFunc(void *info, const CGPathElement *element);
 -(void)encodeCGColorSpace:(CGColorSpaceRef)colorSpace forKey:(NSString *)key
 {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-    NSLog(@"Color space encoding is not supported on iOS. Decoding will return a generic RGB color space.");
+    //NSLog(@"Color space encoding is not supported on iOS. Decoding will return a generic RGB color space.");
 #else
     if ( colorSpace ) {
         CFDataRef iccProfile = CGColorSpaceCopyICCProfile(colorSpace);
@@ -331,7 +331,7 @@ void MyCGPathApplierFunc(void *info, const CGPathElement *element)
     CGColorSpaceRef colorSpace = NULL;
 
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
-    NSLog(@"Color space decoding is not supported on iOS. Using generic RGB color space.");
+    //NSLog(@"Color space decoding is not supported on iOS. Using generic RGB color space.");
     colorSpace = CGColorSpaceCreateDeviceRGB();
 #else
     NSData *iccProfile = [self decodeObjectForKey:key];
@@ -339,7 +339,7 @@ void MyCGPathApplierFunc(void *info, const CGPathElement *element)
         colorSpace = CGColorSpaceCreateWithICCProfile( (__bridge CFDataRef)iccProfile );
     }
     else {
-        NSLog(@"Color space not available for key '%@'. Using generic RGB color space.", key);
+     //   NSLog(@"Color space not available for key '%@'. Using generic RGB color space.", key);
         colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
     }
 #endif

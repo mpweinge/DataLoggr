@@ -1024,7 +1024,7 @@ NSString *const CPTLayerBoundsDidChangeNotification = @"CPTLayerBoundsDidChangeN
  **/
 -(void)logLayers
 {
-    NSLog(@"Layer tree:\n%@", [self subLayersAtIndex:0]);
+    //NSLog(@"Layer tree:\n%@", [self subLayersAtIndex:0]);
 }
 
 /// @cond

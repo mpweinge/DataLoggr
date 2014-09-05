@@ -20,7 +20,7 @@
 @end
 
 
-@interface DLGraphViewCell : UITableViewCell
+@interface DLGraphViewCell : UITableViewCell < UIScrollViewDelegate, UITextFieldDelegate >
 
 @property (nonatomic, readwrite) id <DLGraphViewCellDelegate> delegate;
 

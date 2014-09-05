@@ -152,9 +152,6 @@
   NSArray *paths = [tableView indexPathsForVisibleRows];
   
   for (NSIndexPath *path in paths) {
-    /*if ([path row] == 0) {
-      continue;
-    }*/
     
     if ([tableView cellForRowAtIndexPath:path] == cell) {
       [rowData removeObjectAtIndex:([path row] )];
@@ -168,7 +165,6 @@
 - (void) EditClicked
 {
   //Shift all of the rows to the right
-  
   UITableView *tableView = (UITableView *)self.view; // Or however you get your table view
   NSArray *paths = [tableView indexPathsForVisibleRows];
   
@@ -176,9 +172,6 @@
   NSMutableSet *visibleCells = [[NSMutableSet alloc] init];
   
   for (NSIndexPath *path in paths) {
-    /*if ([path row] == 0) {
-      continue;
-    }*/
     
     [visibleCells addObject:[tableView cellForRowAtIndexPath:path]];
   }
@@ -198,14 +191,10 @@
   NSArray *paths = [tableView indexPathsForVisibleRows];
   
   //  For getting the cells themselves
-  NSMutableSet *visibleCells = [[NSMutableSet alloc] init];
   
   for (NSIndexPath *path in paths) {
-    /*if ([path row] == 0) {
-      continue;
-    }*/
     
-    DLHomeTableViewCell * currCell = [tableView cellForRowAtIndexPath:path];
+    DLHomeTableViewCell * currCell = (DLHomeTableViewCell *)[tableView cellForRowAtIndexPath:path];
     if (currCell == updatedCell)
     {
       currCell.title = newObject.DataName;

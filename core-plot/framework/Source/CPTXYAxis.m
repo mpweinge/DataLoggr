@@ -191,7 +191,7 @@
     }
 
     if ( isnan(point.x) || isnan(point.y) ) {
-        NSLog( @"[CPTXYAxis viewPointForCoordinateDecimalNumber:%@] was %@", NSDecimalString(&coordinateDecimalNumber, nil), CPTStringFromPoint(point) );
+        //NSLog( @"[CPTXYAxis viewPointForCoordinateDecimalNumber:%@] was %@", NSDecimalString(&coordinateDecimalNumber, nil), CPTStringFromPoint(point) );
 
         if ( isnan(point.x) ) {
             point.x = CPTFloat(0.0);
@@ -273,7 +273,8 @@
                 break;
 
             default:
-                NSLog(@"Invalid coordinate in [CPTXYAxis drawTicksInContext:]");
+               // NSLog(@"Invalid coordinate in [CPTXYAxis drawTicksInContext:]");
+                break;
         }
 
         startViewPoint = alignmentFunction(context, startViewPoint);
