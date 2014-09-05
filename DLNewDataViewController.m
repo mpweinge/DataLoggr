@@ -77,7 +77,7 @@ static const int kIconOffset = 170;
   self = [super init];
   if (self)
   {
-    self.title = @"New Series";
+    self.title = @"New Chart";
     
     _isEdit = isEdit;
     _didEdit = NO;

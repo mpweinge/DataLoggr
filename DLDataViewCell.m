@@ -373,6 +373,7 @@
   _stringUnits = unitString;
   
   _dataValue.text = [_title stringByAppendingFormat:@" %@", _stringUnits];
+  [_dataValue sizeToFit];
 }
 
 - (void) changeLabelForPage:(NSInteger) page units:(NSInteger) units

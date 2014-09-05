@@ -119,7 +119,7 @@
   return cell;
 }
 
-- (void) DoneClicked
+- (void) DoneClicked : (NSTimeInterval) delay
 {
   //Shift all of the rows to the left
   
@@ -140,7 +140,7 @@
   self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(EditClicked)];
   
   for (DLHomeTableViewCell * cell in visibleCells) {
-    [cell unAnimateForEdit];
+    [cell unAnimateForEdit:delay];
   }
   
   _isEditClicked = NO;
@@ -176,7 +176,7 @@
     [visibleCells addObject:[tableView cellForRowAtIndexPath:path]];
   }
   
-  self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(DoneClicked)];
+  self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(DoneClicked:)];
   
   for (DLHomeTableViewCell * cell in visibleCells) {
     [cell animateForEdit:YES];
@@ -230,6 +230,10 @@
 - (void) CellViewTouched :(DLDataViewCell *) cell
 {
   if (_isEditClicked) {
+    [self DoneClicked:1];
+  }
+  
+  if (_isEditClicked) {
     
     DLHomeTableViewCell *homeCell = (DLHomeTableViewCell *)cell;
     
@@ -251,6 +255,10 @@
   DLNewDataViewController *newDataController = [[ DLNewDataViewController alloc] initWithDelegate:self isEdit:NO cell:nil];
   
   [self.navigationController pushViewController:newDataController animated:YES];
+  
+  if (_isEditClicked) {
+    [self DoneClicked:1];
+  }
 }
 
 -(void) TitleCellTouched:(NSInteger) number

@@ -40,6 +40,6 @@
           rowObject:(DLDataRowObject *) rowObject;
 
 - (void) animateForEdit : (BOOL) animate;
-- (void) unAnimateForEdit;
+- (void) unAnimateForEdit : (NSTimeInterval) delay;
 
 @end

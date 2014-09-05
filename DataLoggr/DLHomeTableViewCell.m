@@ -355,13 +355,13 @@
   }
 }
 
--(void) unAnimateForEdit
+-(void) unAnimateForEdit : (NSTimeInterval ) delay
 {
   _trashIcon.alpha = 0;
   _circleTapRegion.alpha = 0;
   
   [UIView animateKeyframesWithDuration:0.5
-                                 delay:0.0
+                                 delay:delay
                                options:UIViewKeyframeAnimationOptionLayoutSubviews
                             animations:^{
                               CGRect chartIconFrame = _chartIcon.frame;
