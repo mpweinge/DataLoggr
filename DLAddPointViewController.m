@@ -20,7 +20,7 @@
 static const int kValueOffsetY = 25;
 static int kNotesOffsetY = 150;
 static const int kButtonOffsetY = 350;
-static const int kStartingNumPoints = 2000;
+static int kStartingNumPoints = 2000;
 
 @interface DLAddPointViewController () < UITextFieldDelegate, UITextViewDelegate, DLDataIconViewDelegate, MKMapViewDelegate >
 {
@@ -430,10 +430,17 @@ static const int kStartingNumPoints = 2000;
         mapPoints[mapPointCount] = CLLocationCoordinate2DMake([latitude doubleValue], [longitude doubleValue]);
         mapPointCount++;
         
+        if (mapPointCount > kStartingNumPoints) {
+          mapPoints = (CLLocationCoordinate2D *)realloc(mapPoints, kStartingNumPoints * 2);
+          kStartingNumPoints *= 2;
+        }
+        
         latitudeEndIdx = 0;
       }
     }
   }
+  
+  _previousLocation = [[CLLocation alloc] initWithLatitude:mapPoints[mapPointCount - 1].latitude longitude:mapPoints[mapPointCount - 1].longitude];
   
   myPolyline = [MKPolyline polylineWithCoordinates:mapPoints count:mapPointCount];
   [_addMap addOverlay:myPolyline];
@@ -614,6 +621,11 @@ static const int kStartingNumPoints = 2000;
     return;
   }
   
+  if (mapPointCount > 0 ) {
+    //Average out the two locations
+    location = CLLocationCoordinate2DMake((location.latitude + _previousLocation.coordinate.latitude) / 2, (location.longitude + _previousLocation.coordinate.longitude) / 2);
+  }
+  
   //Calculate distance elapsed
   CLLocation* newLocation = [[CLLocation alloc] initWithLatitude:location.latitude longitude:location.longitude];
   
@@ -651,10 +663,20 @@ static const int kStartingNumPoints = 2000;
   if (mapPointCount == 0) {
     mapPoints[mapPointCount] = location;
     mapPointCount++;
+    
+    if (mapPointCount > kStartingNumPoints) {
+      mapPoints = (CLLocationCoordinate2D *)realloc(mapPoints, kStartingNumPoints * 2);
+      kStartingNumPoints *= 2;
+    }
   } else if ((location.latitude != mapPoints[mapPointCount].latitude) ||
              (location.longitude != mapPoints[mapPointCount].longitude) ) {
     mapPoints[mapPointCount] = location;
     mapPointCount++;
+    
+    if (mapPointCount > kStartingNumPoints) {
+      mapPoints = (CLLocationCoordinate2D *)realloc(mapPoints, kStartingNumPoints * 2);
+      kStartingNumPoints *= 2;
+    }
   }
   
   if (mapPointCount > 1) {
