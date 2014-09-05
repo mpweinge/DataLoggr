@@ -158,7 +158,7 @@
         _timeNum = [time doubleValue];
         
         if (_timeNum == 0)
-          _timeNum = 1;
+          _timeNum = 0.0001;
         
         _distanceNum = [distance doubleValue];
         

@@ -469,7 +469,9 @@ static const int kStartingNumPoints = 2000;
   
   _timeText.text = [NSString stringWithFormat:@"%i%i:%i%i.%i%i", numMinutesTen, numMinutes, numSecondsTen, numSeconds, numMilliTen, numMilli];
   
+
   _elapsedTime = timeNum;
+  currPausedTime = _elapsedTime;
   _elapsedDistance = distanceNum;
   
   _userPanning = YES;
@@ -741,6 +743,13 @@ static const int kStartingNumPoints = 2000;
   
   [self.view addSubview:_startButton];
   [self.view addSubview:_resetButton];
+  
+  if (!_isAdd) {
+    [_resetButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [_resetCircle setBoundaryColor:[UIColor blackColor]];
+    
+    _resetButton.enabled = YES;
+  }
 }
 
 - (void) changeHighlightedLetter:(NSString *)text
@@ -848,6 +857,13 @@ static const int kStartingNumPoints = 2000;
   
   [self.view addSubview:_startButton];
   [self.view addSubview:_resetButton];
+  
+  if (!_isAdd) {
+    [_resetButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [_resetCircle setBoundaryColor:[UIColor blackColor]];
+    
+    _resetButton.enabled = YES;
+  }
 }
 
 - (void) StartGPSClicked: (UIButton *)gpsButton
@@ -892,6 +908,8 @@ static const int kStartingNumPoints = 2000;
     _startButton.titleLabel.text = @"Start";
     [_startButton setTitle:@"Start" forState:UIControlStateNormal];
   }
+  
+  _didEdit = YES;
 }
 
 - (void) ResetGPSClicked: (UIButton *)resetButton
@@ -1092,6 +1110,7 @@ static const int kStartingNumPoints = 2000;
       if (_start) {
         // User did not click stop before hitting save
         _elapsedTime = [_start timeIntervalSinceNow];
+        currPausedTime = [_start timeIntervalSinceNow] * -1 + currPausedTime;
         
         [_timer invalidate];
         _timer = nil;
@@ -1107,7 +1126,7 @@ static const int kStartingNumPoints = 2000;
       }
       
       //Store total distance, time elapsed
-      [dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f, \n", _elapsedTime, _elapsedDistance]];
+      [dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f, \n", currPausedTime, _elapsedDistance]];
       
       for (int i = 0; i < mapPointCount; i++)
       {
@@ -1169,6 +1188,7 @@ static const int kStartingNumPoints = 2000;
         // User did not click stop before hitting save
         _elapsedTime = [_start timeIntervalSinceNow];
         
+        currPausedTime = [_start timeIntervalSinceNow] * -1 + currPausedTime;
         [_timer invalidate];
         _timer = nil;
         
@@ -1179,7 +1199,7 @@ static const int kStartingNumPoints = 2000;
         _elapsedTime *= -1;
       
       //Store total distance, time elapsed
-      [(NSMutableString *)dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f, \n", _elapsedTime, _elapsedDistance]];
+      [(NSMutableString *)dataValue appendString:[NSString stringWithFormat:@"Time: %f, Distance: %f, \n", currPausedTime, _elapsedDistance]];
       
       for (int i = 0; i < mapPointCount; i++)
       {
